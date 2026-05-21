@@ -677,57 +677,58 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
         </div>
       </div>
 
-      <!-- BLOQUE: KEYWORDS A PARAR EN PAID -->
-      <div style="margin-top:24px">
-        <div style="background:var(--u-navy);border-radius:6px;padding:16px 20px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:16px">
-          <div style="display:flex;align-items:center;gap:12px">
-            <div style="width:36px;height:36px;background:var(--u-cyan);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
-            </div>
-            <div>
-              <div style="font-family:'Baikal',sans-serif;font-weight:700;color:#fff;font-size:14px;margin-bottom:2px">Recomendación Havas Market · Abril 2026</div>
-              <div style="font-size:12px;color:rgba(255,255,255,.65)">Pausar <strong style="color:var(--u-cyan)">111 keywords</strong> con posición SEO ≤ 3 · Reinversión estimada: <strong style="color:var(--u-yellow)">13.066 €/mes</strong></div>
-            </div>
-          </div>
-          <button onclick="downloadXLSX()" style="background:var(--u-cyan);color:#fff;border:none;padding:9px 18px;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Baikal','Roboto',sans-serif;white-space:nowrap;display:flex;align-items:center;gap:7px;letter-spacing:.3px;transition:opacity .15s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-            Descargar Excel
-          </button>
-        </div>
-        <div class="filters" style="margin-bottom:12px">
-          <input type="text" id="stop-q" placeholder="Buscar keyword..." oninput="renderStop()" style="min-width:220px">
-          <select id="stop-type" onchange="renderStop()">
-            <option value="">Brand + Non-Brand</option>
-            <option value="brand">Solo Brand</option>
-            <option value="nb">Solo Non-Brand</option>
-          </select>
-          <span id="stop-count" style="font-size:11px;color:var(--u-gray);align-self:center;margin-left:4px"></span>
-        </div>
-        <div class="tbl-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th onclick="sortStop('query')" style="cursor:pointer">Keyword ↕</th>
-                <th onclick="sortStop('clicsSEA')" style="cursor:pointer;text-align:right">Clics SEA ↕</th>
-                <th onclick="sortStop('coste')" style="cursor:pointer;text-align:right">Coste (€) ↕</th>
-                <th onclick="sortStop('impressions')" style="cursor:pointer;text-align:right">Impresiones ↕</th>
-                <th onclick="sortStop('clicsSEO')" style="cursor:pointer;text-align:right">Clics SEO ↕</th>
-                <th onclick="sortStop('rankingSEO')" style="cursor:pointer;text-align:right">Pos. SEO ↕</th>
-                <th style="text-align:right">CTR</th>
-                <th>Tipo</th>
-                <th style="text-align:center">Acción</th>
-              </tr>
-            </thead>
-            <tbody id="stop-tbody"></tbody>
-          </table>
-        </div>
-      </div>
-
     </div>
   </div>
 
-  <!-- PANEL: PARAR EN PAID (vacío, mantenido por compatibilidad con tabs) -->
-  <div id="osp-parar" class="os-panel" style="display:none"></div>
+  <!-- PANEL: PARAR EN PAID -->
+  <div id="osp-parar" class="os-panel" style="display:none">
+    <div class="section-pad" style="padding-top:20px">
+      <!-- Recommendation banner -->
+      <div style="background:var(--u-navy);border-radius:6px;padding:16px 20px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:36px;height:36px;background:var(--u-cyan);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+          </div>
+          <div>
+            <div style="font-family:'Baikal',sans-serif;font-weight:700;color:#fff;font-size:14px;margin-bottom:2px">Recomendación Havas Market · Abril 2026</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.65)">Pausar <strong style="color:var(--u-cyan)">111 keywords</strong> con posición SEO ≤ 3 · Reinversión estimada: <strong style="color:var(--u-yellow)">13.066 €/mes</strong></div>
+          </div>
+        </div>
+        <button onclick="downloadXLSX()" style="background:var(--u-cyan);color:#fff;border:none;padding:9px 18px;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Baikal','Roboto',sans-serif;white-space:nowrap;display:flex;align-items:center;gap:7px;letter-spacing:.3px;transition:opacity .15s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          Descargar Excel
+        </button>
+      </div>
+      <!-- Filters -->
+      <div class="filters" style="margin-bottom:12px">
+        <input type="text" id="stop-q" placeholder="Buscar keyword..." oninput="renderStop()" style="min-width:220px">
+        <select id="stop-type" onchange="renderStop()">
+          <option value="">Brand + Non-Brand</option>
+          <option value="brand">Solo Brand</option>
+          <option value="nb">Solo Non-Brand</option>
+        </select>
+        <span id="stop-count" style="font-size:11px;color:var(--u-gray);align-self:center;margin-left:4px"></span>
+      </div>
+      <div class="tbl-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th onclick="sortStop('query')" style="cursor:pointer">Keyword ↕</th>
+              <th onclick="sortStop('clicsSEA')" style="cursor:pointer;text-align:right">Clics SEA ↕</th>
+              <th onclick="sortStop('coste')" style="cursor:pointer;text-align:right">Coste (€) ↕</th>
+              <th onclick="sortStop('impressions')" style="cursor:pointer;text-align:right">Impresiones ↕</th>
+              <th onclick="sortStop('clicsSEO')" style="cursor:pointer;text-align:right">Clics SEO ↕</th>
+              <th onclick="sortStop('rankingSEO')" style="cursor:pointer;text-align:right">Pos. SEO ↕</th>
+              <th style="text-align:right">CTR</th>
+              <th>Tipo</th>
+              <th style="text-align:center">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="stop-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
   <!-- PANEL: TODAS LAS KEYWORDS -->
   <div id="osp-todas" class="os-panel" style="display:none">
@@ -1895,7 +1896,7 @@ function show(n,btn){
   document.getElementById('s'+n).classList.add('active');
   btn.classList.add('active');
   if(n===1)  buildSpainDaily();
-  if(n===11) { buildReinversionChart(); renderStop(); }
+  if(n===11) { buildReinversionChart(); }
   if(n===2)  { buildIA(); renderIA(); }
   if(n===3)  buildClicks();
   if(n===4)  buildCats();
@@ -2982,7 +2983,7 @@ async function exportPDF(){
     // Trigger chart build for this slide
     const n = parseInt(sid.replace('s',''));
     if(n===1)  { buildSpainDaily(); }
-    if(n===11) { buildReinversionChart(); renderStop(); }
+    if(n===11) { buildReinversionChart(); }
     if(n===2)  { buildIA(); renderIA(); }
     if(n===3)  { buildClicks(); }
     if(n===4)  { buildCats(); }
