@@ -2993,7 +2993,7 @@ async function exportPDF(){
     // Wait for charts to render — extra time for IA chart
     await new Promise(r => setTimeout(r, n===2 ? 900 : 600));
 
-    // ── CAPTURE: full slide height, no clipping ──
+    // ── CAPTURE: render at fixed 1400px width, paginate tall slides ──
     // Pre-convert Chart.js canvases to <img> so html2canvas captures them correctly
     const canvasEls = el.querySelectorAll('canvas');
     const canvasBackups = [];
@@ -3009,15 +3009,13 @@ async function exportPDF(){
       } catch(e) {}
     });
 
-    // Temporarily make the slide render at a fixed 1400px width
-    // so all slides use the same scale, but keep full natural height
-    const origStyle  = el.getAttribute('style') || '';
-    el.style.cssText = origStyle + ';width:1400px!important;max-height:none!important;overflow:visible!important;';
-
-    await new Promise(r => setTimeout(r, 120));
+    // Force 1400px width for consistent scale across all slides
+    const origStyle = el.getAttribute('style') || '';
+    el.style.cssText = origStyle + ';width:1400px!important;max-height:none!important;overflow:visible!important;position:relative!important;';
+    await new Promise(r => setTimeout(r, 150));
 
     const capturedCanvas = await html2canvas(el, {
-      scale: 1.5,
+      scale: 2,
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#F8FAFD',
@@ -3028,39 +3026,60 @@ async function exportPDF(){
       logging: false
     });
 
-    // Restore slide style
     el.setAttribute('style', origStyle);
-
-    // Restore canvas elements
     canvasBackups.forEach(({ cv, img }) => {
       cv.style.display = '';
       img.parentNode.removeChild(img);
     });
 
-    const imgData = capturedCanvas.toDataURL('image/jpeg', 0.93);
-    const imgW = capturedCanvas.width;  // 1400 * 1.5 = 2100 px
-    const imgH = capturedCanvas.height; // varies
+    // ── Paginate: split tall captures into multiple A4 pages ──
+    // Each A4 page: 297mm wide x 204mm tall content (6mm footer)
+    const pxPerMm  = 3.7795;
+    const footerMm = 6;
+    const pageContentH = PH - footerMm;  // mm available per page
 
-    // Fit into A4 landscape: always fill full width, scale height proportionally
-    // If the slide is taller than A4, it will shrink to fit — no content cut off
-    const pxPerMm   = 3.7795;
-    const footerMm  = 6;
-    const maxW      = PW;
-    const maxH      = PH - footerMm;
-    const scaleW    = maxW / (imgW / pxPerMm);
-    const scaleH    = maxH / (imgH / pxPerMm);
-    const fitScale  = Math.min(scaleW, scaleH);  // always fits, never clips
-    const finalW    = (imgW / pxPerMm) * fitScale;
-    const finalH    = (imgH / pxPerMm) * fitScale;
-    const offsetX   = (PW - finalW) / 2;
-    const offsetY   = (PH - footerMm - finalH) / 2;
+    // How many mm does the captured image represent at full A4 width?
+    const imgW = capturedCanvas.width;   // px at scale 2
+    const imgH = capturedCanvas.height;
+    const renderedWmm = PW;              // we always fill full width
+    const renderedHmm = (imgH / imgW) * PW;  // proportional height
 
-    if(!first) pdf.addPage();
-    first = false;
+    // How many pages do we need?
+    const numPages = Math.ceil(renderedHmm / pageContentH);
 
-    pdf.setFillColor(248, 250, 253);
-    pdf.rect(0, 0, PW, PH, 'F');
-    pdf.addImage(imgData, 'JPEG', offsetX, offsetY, finalW, finalH);
+    // Slice the canvas into page-height chunks and add each as a PDF page
+    const sliceHpx = Math.ceil(imgH / numPages);  // px per page slice
+
+    for (let p = 0; p < numPages; p++) {
+      const srcY  = p * sliceHpx;
+      const srcH  = Math.min(sliceHpx, imgH - srcY);
+      if (srcH <= 0) break;
+
+      // Draw this slice onto a temp canvas
+      const pageCanvas = document.createElement('canvas');
+      pageCanvas.width  = imgW;
+      pageCanvas.height = sliceHpx;  // fixed height so all slices same px count
+      const ctx = pageCanvas.getContext('2d');
+      ctx.fillStyle = '#F8FAFD';
+      ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+      ctx.drawImage(capturedCanvas, 0, srcY, imgW, srcH, 0, 0, imgW, srcH);
+
+      const sliceData = pageCanvas.toDataURL('image/jpeg', 0.93);
+      const sliceHmm  = (srcH / imgW) * PW;  // actual content height in mm
+
+      if (!first) pdf.addPage();
+      first = false;
+
+      pdf.setFillColor(248, 250, 253);
+      pdf.rect(0, 0, PW, PH, 'F');
+      pdf.addImage(sliceData, 'JPEG', 0, 0, PW, sliceHmm);
+
+      // Footer only on last page of this slide
+      pdf.setFontSize(7);
+      pdf.setTextColor(150, 150, 150);
+      const pageLabel = numPages > 1 ? ` (${p+1}/${numPages})` : '';
+      pdf.text(`${slideNames[i]}${pageLabel}  ·  ${i+1} / ${slideIds.length}`, PW/2, PH - 3, {align:'center'});
+    }
     btn.textContent = `Generando… ${i+1}/${slideIds.length}`;
   }
 
