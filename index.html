@@ -2992,7 +2992,31 @@ async function exportPDF(){
     // Wait for charts to render — extra time for IA chart
     await new Promise(r => setTimeout(r, n===2 ? 900 : 600));
 
-    // Pre-convert Chart.js canvases to <img> so html2canvas captures them correctly
+    // ── CAPTURE SETUP ──
+    // Target render size: 1400 x 900 logical px (16:9 approximation for A4 landscape)
+    // We wrap the slide in a fixed-size clipping container so every page looks
+    // the same scale regardless of the slide's natural scroll height.
+    const PDF_W_PX = 1400;
+    const PDF_H_PX = 900;
+
+    // Create a fixed-size wrapper that clips overflow
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = [
+      'position:fixed', 'top:0', 'left:0',
+      `width:${PDF_W_PX}px`, `height:${PDF_H_PX}px`,
+      'overflow:hidden', 'z-index:99999',
+      'background:#F8FAFD'
+    ].join(';');
+    document.body.appendChild(wrapper);
+
+    // Move the slide into the wrapper temporarily
+    const origParent = el.parentNode;
+    const origNext   = el.nextSibling;
+    const origStyle  = el.getAttribute('style') || '';
+    el.style.cssText = `display:block !important; width:${PDF_W_PX}px; min-height:${PDF_H_PX}px; max-height:none; overflow:visible; position:relative;`;
+    wrapper.appendChild(el);
+
+    // Pre-convert Chart.js canvases to <img> so html2canvas captures them
     const canvasEls = el.querySelectorAll('canvas');
     const canvasBackups = [];
     canvasEls.forEach(cv => {
@@ -3007,55 +3031,47 @@ async function exportPDF(){
       } catch(e) {}
     });
 
-    // Capture the slide at its natural rendered size
-    const canvas = await html2canvas(el, {
+    // Capture the wrapper (fixed viewport = same size every slide)
+    const capturedCanvas = await html2canvas(wrapper, {
       scale: 2,
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#F8FAFD',
       scrollX: 0,
       scrollY: 0,
-      windowWidth: document.documentElement.clientWidth,
+      width: PDF_W_PX,
+      height: PDF_H_PX,
+      windowWidth: PDF_W_PX,
+      windowHeight: PDF_H_PX,
       logging: false
     });
 
-    // Restore canvas elements
+    // Restore canvas elements, slide position and wrapper
     canvasBackups.forEach(({ cv, img }) => {
       cv.style.display = '';
       img.parentNode.removeChild(img);
     });
+    el.setAttribute('style', origStyle);
+    origParent.insertBefore(el, origNext);
+    document.body.removeChild(wrapper);
 
-    const imgData = canvas.toDataURL('image/jpeg', 0.93);
-    const imgW = canvas.width;
-    const imgH = canvas.height;
+    const imgData = capturedCanvas.toDataURL('image/jpeg', 0.93);
 
-    // Fit into A4 landscape preserving aspect ratio, with small margin
+    // Image is always PDF_W_PX*2 x PDF_H_PX*2 px (scale 2)
+    // Map to A4 landscape (297 x 210 mm) filling the whole page
     const pxPerMm = 3.7795;
-    const margin = 6; // mm margin on each side
-    const maxW = PW - margin * 2;
-    const maxH = PH - margin * 2 - 5; // 5mm for footer
-    const scaleW = maxW / (imgW / pxPerMm);
-    const scaleH = maxH / (imgH / pxPerMm);
-    const scale = Math.min(scaleW, scaleH);
-    const finalW = (imgW / pxPerMm) * scale;
-    const finalH = (imgH / pxPerMm) * scale;
-    const offsetX = (PW - finalW) / 2;
-    const offsetY = (PH - 5 - finalH) / 2;
+    const finalW = PW;
+    const finalH = PH - 6; // leave 6mm for footer
+    const offsetX = 0;
+    const offsetY = 0;
 
     if(!first) pdf.addPage();
     first = false;
 
-    // Background
     pdf.setFillColor(248, 250, 253);
     pdf.rect(0, 0, PW, PH, 'F');
 
     pdf.addImage(imgData, 'JPEG', offsetX, offsetY, finalW, finalH);
-
-    // Page number + slide name footer
-    pdf.setFontSize(7);
-    pdf.setTextColor(150, 150, 150);
-    pdf.text(`${slideNames[i]}  ·  ${i+1} / ${slideIds.length}`, PW/2, PH - 3, {align:'center'});
-
     btn.textContent = `Generando… ${i+1}/${slideIds.length}`;
   }
 
