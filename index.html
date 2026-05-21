@@ -1764,7 +1764,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
     </div>
 
   </div>
-  <div class="slide-footer"><div>Fuentes: <strong>Google Search Console · GA4 · Análisis Havas Market</strong> · Abril 2026</div><div>Slide 10 / 10</div></div>
 </div>
 
 
@@ -2993,8 +2992,24 @@ async function exportPDF(){
     // Wait for charts to render — extra time for IA chart
     await new Promise(r => setTimeout(r, n===2 ? 900 : 600));
 
-    // ── CAPTURE: render at fixed 1400px width, paginate tall slides ──
-    // Pre-convert Chart.js canvases to <img> so html2canvas captures them correctly
+    // ── CAPTURE: one slide = one PDF page, scaled to fit entirely ──
+    // Step 1: temporarily expand the slide to its full natural height
+    const origStyle = el.getAttribute('style') || '';
+    el.style.cssText = origStyle + ';width:1400px!important;max-height:none!important;overflow:visible!important;position:relative!important;';
+
+    // Also expand any internal scrollable containers
+    const scrollables = el.querySelectorAll('[style*="overflow"]');
+    const scrollBackups = [];
+    scrollables.forEach(s => {
+      scrollBackups.push({ el: s, orig: s.style.cssText });
+      s.style.maxHeight = 'none';
+      s.style.overflow  = 'visible';
+      s.style.height    = 'auto';
+    });
+
+    await new Promise(r => setTimeout(r, 200));
+
+    // Step 2: pre-convert Chart.js canvases → <img>
     const canvasEls = el.querySelectorAll('canvas');
     const canvasBackups = [];
     canvasEls.forEach(cv => {
@@ -3009,77 +3024,53 @@ async function exportPDF(){
       } catch(e) {}
     });
 
-    // Force 1400px width for consistent scale across all slides
-    const origStyle = el.getAttribute('style') || '';
-    el.style.cssText = origStyle + ';width:1400px!important;max-height:none!important;overflow:visible!important;position:relative!important;';
-    await new Promise(r => setTimeout(r, 150));
-
+    // Step 3: capture full slide at 1400px wide
     const capturedCanvas = await html2canvas(el, {
-      scale: 2,
+      scale: 1.5,
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#F8FAFD',
       scrollX: 0,
       scrollY: 0,
-      width: 1400,
+      width:  1400,
       windowWidth: 1400,
       logging: false
     });
 
+    // Step 4: restore everything
     el.setAttribute('style', origStyle);
+    scrollables.forEach((s, k) => { s.style.cssText = scrollBackups[k].orig; });
     canvasBackups.forEach(({ cv, img }) => {
       cv.style.display = '';
       img.parentNode.removeChild(img);
     });
 
-    // ── Paginate: split tall captures into multiple A4 pages ──
-    // Each A4 page: 297mm wide x 204mm tall content (6mm footer)
-    const pxPerMm  = 3.7795;
-    const footerMm = 6;
-    const pageContentH = PH - footerMm;  // mm available per page
-
-    // How many mm does the captured image represent at full A4 width?
-    const imgW = capturedCanvas.width;   // px at scale 2
+    // Step 5: fit the full capture into one A4 landscape page
+    // Always fill the full width; if taller than A4 it scales down to fit height too
+    const imgW = capturedCanvas.width;
     const imgH = capturedCanvas.height;
-    const renderedWmm = PW;              // we always fill full width
-    const renderedHmm = (imgH / imgW) * PW;  // proportional height
+    const pxPerMm   = 3.7795;
+    const footerMm  = 6;
+    const usableW   = PW;
+    const usableH   = PH - footerMm;
+    const scaleByW  = usableW / (imgW / pxPerMm);
+    const scaleByH  = usableH / (imgH / pxPerMm);
+    const fitScale  = Math.min(scaleByW, scaleByH);
+    const finalW    = (imgW / pxPerMm) * fitScale;
+    const finalH    = (imgH / pxPerMm) * fitScale;
+    const offsetX   = (PW - finalW) / 2;
+    const offsetY   = (usableH - finalH) / 2;
 
-    // How many pages do we need?
-    const numPages = Math.ceil(renderedHmm / pageContentH);
+    if(!first) pdf.addPage();
+    first = false;
 
-    // Slice the canvas into page-height chunks and add each as a PDF page
-    const sliceHpx = Math.ceil(imgH / numPages);  // px per page slice
+    pdf.setFillColor(248, 250, 253);
+    pdf.rect(0, 0, PW, PH, 'F');
+    pdf.addImage(capturedCanvas.toDataURL('image/jpeg', 0.93), 'JPEG', offsetX, offsetY, finalW, finalH);
 
-    for (let p = 0; p < numPages; p++) {
-      const srcY  = p * sliceHpx;
-      const srcH  = Math.min(sliceHpx, imgH - srcY);
-      if (srcH <= 0) break;
-
-      // Draw this slice onto a temp canvas
-      const pageCanvas = document.createElement('canvas');
-      pageCanvas.width  = imgW;
-      pageCanvas.height = sliceHpx;  // fixed height so all slices same px count
-      const ctx = pageCanvas.getContext('2d');
-      ctx.fillStyle = '#F8FAFD';
-      ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-      ctx.drawImage(capturedCanvas, 0, srcY, imgW, srcH, 0, 0, imgW, srcH);
-
-      const sliceData = pageCanvas.toDataURL('image/jpeg', 0.93);
-      const sliceHmm  = (srcH / imgW) * PW;  // actual content height in mm
-
-      if (!first) pdf.addPage();
-      first = false;
-
-      pdf.setFillColor(248, 250, 253);
-      pdf.rect(0, 0, PW, PH, 'F');
-      pdf.addImage(sliceData, 'JPEG', 0, 0, PW, sliceHmm);
-
-      // Footer only on last page of this slide
-      pdf.setFontSize(7);
-      pdf.setTextColor(150, 150, 150);
-      const pageLabel = numPages > 1 ? ` (${p+1}/${numPages})` : '';
-      pdf.text(`${slideNames[i]}${pageLabel}  ·  ${i+1} / ${slideIds.length}`, PW/2, PH - 3, {align:'center'});
-    }
+    pdf.setFontSize(7);
+    pdf.setTextColor(150, 150, 150);
+    pdf.text(`${slideNames[i]}  ·  ${i+1} / ${slideIds.length}`, PW/2, PH - 2, {align:'center'});
     btn.textContent = `Generando… ${i+1}/${slideIds.length}`;
   }
 
