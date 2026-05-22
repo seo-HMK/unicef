@@ -1591,18 +1591,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
           <div class="card-title" style="margin-bottom:0">Top URLs en Discover</div>
           <span style="font-size:9px;color:var(--u-gray);margin-left:auto">Últimos 16 meses</span>
         </div>
-        <div style="display:flex;flex-direction:column;gap:5px">
-          <div style="font-size:10px;padding:5px 7px;background:#FFF4F0;border-left:3px solid #FF6B35;border-radius:0 3px 3px 0;line-height:1.4"><span style="font-weight:700;color:#FF6B35">2.944 cl</span> · <span style="color:var(--u-gray)">Informe impacto tecnología infancia</span></div>
-          <div style="font-size:10px;padding:5px 7px;background:#FFF4F0;border-left:3px solid #FF6B35;border-radius:0 3px 3px 0;line-height:1.4"><span style="font-weight:700;color:#FF6B35">1.254 cl</span> · <span style="color:var(--u-gray)">Publicación: infancia y bienestar digital</span></div>
-          <div style="font-size:10px;padding:5px 7px;background:#FFF4F0;border-left:3px solid #FF6B35;border-radius:0 3px 3px 0;line-height:1.4"><span style="font-weight:700;color:#FF6B35">373 cl</span> · <span style="color:var(--u-gray)">Terremoto Afganistán: preparados para dar ayuda</span></div>
-          <div style="font-size:10px;padding:5px 7px;background:#FFF4F0;border-left:3px solid #FF6B35;border-radius:0 3px 3px 0;line-height:1.4"><span style="font-weight:700;color:#FF6B35">152 cl</span> · <span style="color:var(--u-gray)">Por qué hay que donar para Gaza ahora</span></div>
-          <div style="font-size:10px;padding:5px 7px;background:#FFF4F0;border-left:3px solid #FF6B35;border-radius:0 3px 3px 0;line-height:1.4"><span style="font-weight:700;color:#FF6B35">103 cl</span> · <span style="color:var(--u-gray)">Gaza: se declara la hambruna por primera vez</span></div>
-          <div style="font-size:10px;padding:5px 7px;background:#FFF4F0;border-left:3px solid #FF6B35;border-radius:0 3px 3px 0;line-height:1.4"><span style="font-weight:700;color:#FF6B35">100 cl</span> · <span style="color:var(--u-gray)">Cuatro años de guerra en Ucrania</span></div>
-        </div>
-      </div>
-
-    </div>
-    </div><!-- cierre grid tabla+col derecha -->
 
     <!-- ── GRÁFICOS DISCOVER + GOOGLE NEWS + DIARIO ── -->
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px">
@@ -1680,6 +1668,19 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
         <div style="font-size:11px;color:#555;line-height:1.5">Irán, Sudán, Gaza nuevas y alta el fuego no tienen posición media. Solicitarlas manualmente en Google Search Console para acelerar indexación.</div>
       </div>
     </div>
+
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="font-size:10px;padding:5px 7px;background:#FFF4F0;border-left:3px solid #FF6B35;border-radius:0 3px 3px 0;line-height:1.4"><span style="font-weight:700;color:#FF6B35">2.944 cl</span> · <span style="color:var(--u-gray)">Informe impacto tecnología infancia</span></div>
+          <div style="font-size:10px;padding:5px 7px;background:#FFF4F0;border-left:3px solid #FF6B35;border-radius:0 3px 3px 0;line-height:1.4"><span style="font-weight:700;color:#FF6B35">1.254 cl</span> · <span style="color:var(--u-gray)">Publicación: infancia y bienestar digital</span></div>
+          <div style="font-size:10px;padding:5px 7px;background:#FFF4F0;border-left:3px solid #FF6B35;border-radius:0 3px 3px 0;line-height:1.4"><span style="font-weight:700;color:#FF6B35">373 cl</span> · <span style="color:var(--u-gray)">Terremoto Afganistán: preparados para dar ayuda</span></div>
+          <div style="font-size:10px;padding:5px 7px;background:#FFF4F0;border-left:3px solid #FF6B35;border-radius:0 3px 3px 0;line-height:1.4"><span style="font-weight:700;color:#FF6B35">152 cl</span> · <span style="color:var(--u-gray)">Por qué hay que donar para Gaza ahora</span></div>
+          <div style="font-size:10px;padding:5px 7px;background:#FFF4F0;border-left:3px solid #FF6B35;border-radius:0 3px 3px 0;line-height:1.4"><span style="font-weight:700;color:#FF6B35">103 cl</span> · <span style="color:var(--u-gray)">Gaza: se declara la hambruna por primera vez</span></div>
+          <div style="font-size:10px;padding:5px 7px;background:#FFF4F0;border-left:3px solid #FF6B35;border-radius:0 3px 3px 0;line-height:1.4"><span style="font-weight:700;color:#FF6B35">100 cl</span> · <span style="color:var(--u-gray)">Cuatro años de guerra en Ucrania</span></div>
+        </div>
+      </div>
+
+    </div>
+    </div><!-- cierre grid tabla+col derecha -->
 
   </div>
 </div>
@@ -2985,36 +2986,35 @@ async function exportPDF(){
 
     // ── Helper: build a ghost page with slide header + a specific section ──
     async function captureSection(slideEl, sectionEl, pageLabel) {
-      // Clone the slide header (first child: the blue header div)
+      // Step 1: pre-convert ALL canvases in the ORIGINAL section to <img>
+      // before cloning — cloneNode copies blank canvases, not their pixels
+      const origCanvases = sectionEl.querySelectorAll('canvas');
+      const origBackups = [];
+      origCanvases.forEach(cv => {
+        try {
+          const dataURL = cv.toDataURL('image/png');
+          const img = document.createElement('img');
+          img.src = dataURL;
+          img.style.cssText = `width:${cv.offsetWidth || 600}px;height:${cv.offsetHeight || 300}px;display:block;`;
+          cv.parentNode.insertBefore(img, cv);
+          cv.style.display = 'none';
+          origBackups.push({ cv, img });
+        } catch(e) {}
+      });
+
+      // Step 2: build ghost with header + section clone (now contains <img> not blank canvas)
       const headerEl = slideEl.querySelector('[style*="linear-gradient"]') || slideEl.firstElementChild;
       const ghost = document.createElement('div');
-      ghost.style.cssText = 'position:fixed;top:0;left:0;width:1400px;background:#F8FAFD;z-index:99999;';
-      // Repeat header
+      ghost.style.cssText = 'position:fixed;top:0;left:0;width:1400px;background:#F8FAFD;z-index:99999;overflow:visible;';
       const hClone = headerEl.cloneNode(true);
       hClone.style.cssText = (hClone.getAttribute('style')||'') + ';margin-bottom:0';
       ghost.appendChild(hClone);
-      // Add the section
       const sClone = sectionEl.cloneNode(true);
       sClone.style.cssText = (sClone.getAttribute('style')||'') + ';max-height:none;overflow:visible;';
       ghost.appendChild(sClone);
       document.body.appendChild(ghost);
 
-      await new Promise(r => setTimeout(r, 150));
-
-      // Convert canvases in ghost
-      const canvasEls = ghost.querySelectorAll('canvas');
-      const canvasBackups = [];
-      canvasEls.forEach(cv => {
-        try {
-          const dataURL = cv.toDataURL('image/png');
-          const img = document.createElement('img');
-          img.src = dataURL;
-          img.style.cssText = `width:${cv.offsetWidth}px;height:${cv.offsetHeight}px;display:block`;
-          cv.parentNode.insertBefore(img, cv);
-          cv.style.display = 'none';
-          canvasBackups.push({ cv, img });
-        } catch(e) {}
-      });
+      await new Promise(r => setTimeout(r, 200));
 
       const captured = await html2canvas(ghost, {
         scale: 1.5, useCORS: true, allowTaint: true,
@@ -3022,8 +3022,13 @@ async function exportPDF(){
         width: 1400, windowWidth: 1400, logging: false
       });
 
-      canvasBackups.forEach(({ cv, img }) => { cv.style.display = ''; img.parentNode.removeChild(img); });
       document.body.removeChild(ghost);
+
+      // Step 3: restore original canvases
+      origBackups.forEach(({ cv, img }) => {
+        cv.style.display = '';
+        img.parentNode.removeChild(img);
+      });
 
       const iW = captured.width, iH = captured.height;
       const ppm = 3.7795, fMm = 6, uW = PW, uH = PH - fMm;
@@ -3046,21 +3051,25 @@ async function exportPDF(){
       await captureAndAdd(el, cfg.label);
       if (iaWrap) { delete iaWrap.dataset.pdfLimited; iaWrap.style.maxHeight = '320px'; iaWrap.style.overflow = 'auto'; }
 
-    // ── S10 Backlinks: show only first 10 rows ──
+    // ── S10 Backlinks: show only first 10 rows of blTableBody ──
     } else if (cfg.id === 's10') {
-      const allWraps = el.querySelectorAll('.tbl-wrap');
-      const blWrap = allWraps[allWraps.length - 1];
+      const blTbody = el.querySelector('#blTableBody') || el.querySelector('tbody');
       const hiddenRows = [];
-      if (blWrap) {
-        blWrap.dataset.pdfLimited = '1';
-        const rows = blWrap.querySelectorAll('tbody tr');
+      let blWrap = null;
+      if (blTbody) {
+        // Mark tbody and its scrollable parent wrapper as pdfLimited
+        blTbody.dataset.pdfLimited = '1';
+        blWrap = blTbody.closest('.tbl-wrap') || blTbody.parentElement;
+        if (blWrap) blWrap.dataset.pdfLimited = '1';
+        const rows = blTbody.querySelectorAll('tr');
         rows.forEach((r, idx) => {
           if (idx >= 10) { r.style.display = 'none'; hiddenRows.push(r); }
         });
       }
       await captureAndAdd(el, cfg.label);
-      if (blWrap) {
-        delete blWrap.dataset.pdfLimited;
+      if (blTbody) {
+        delete blTbody.dataset.pdfLimited;
+        if (blWrap) delete blWrap.dataset.pdfLimited;
         hiddenRows.forEach(r => { r.style.display = ''; });
       }
 
@@ -3068,11 +3077,13 @@ async function exportPDF(){
     } else if (cfg.splitBefore) {
       const splitEl = document.getElementById(cfg.splitBefore);
       if (splitEl) {
+        // Ensure SISTRIX chart is rendered before capturing (it lives in s1-sist)
+        if (cfg.id === 's1' && window.buildSistrix) { buildSistrix(); await new Promise(r => setTimeout(r, 900)); }
         // Page 1: hide the split section entirely
         splitEl.style.display = 'none';
         await captureAndAdd(el, cfg.label);
         splitEl.style.display = '';
-        // Page 2: show only header + split section (no duplication)
+        // Page 2: header + split section — canvases pre-converted in captureSection
         await captureSection(el, splitEl, cfg.splitLabel);
       } else {
         await captureAndAdd(el, cfg.label);
