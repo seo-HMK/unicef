@@ -413,64 +413,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
     </div>
   </div>
 
-  <!-- ── CLICS POR PAÍS — ABRIL 2026 ── -->
-  <div style="padding:0 40px 24px">
-
-    <!-- KPI row global + España -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
-      <div style="background:var(--u-navy);border-radius:6px;padding:14px 16px;display:flex;align-items:center;gap:12px">
-        <div style="font-size:36px;line-height:1;flex-shrink:0">🌍</div>
-        <div>
-          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.5);margin-bottom:3px">Total global</div>
-          <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:26px;font-weight:700;color:#fff;line-height:1">103.870</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.5);margin-top:2px">139 países · abril 2026</div>
-        </div>
-      </div>
-      <div style="background:var(--u-navy);border-radius:6px;padding:14px 16px;display:flex;align-items:center;gap:12px;border-left:4px solid var(--u-cyan)">
-        <div style="font-size:22px;font-weight:800;color:#fff;flex-shrink:0;font-family:'Baikal',sans-serif;letter-spacing:-1px;opacity:.9">ES</div>
-        <div>
-          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.5);margin-bottom:3px">España · Clics Google Search Console</div>
-          <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:22px;font-weight:700;color:var(--u-cyan);line-height:1">31.175 <span style="font-size:13px;color:var(--u-green)">+0,6%</span></div>
-          <div style="font-size:10px;color:rgba(255,255,255,.5);margin-top:4px">Sesiones GA4:</div>
-          <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:18px;font-weight:700;color:#fff;line-height:1.2">80.962 <span style="font-size:12px;color:var(--u-green)">+8,0%</span></div>
-        </div>
-      </div>
-      <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;padding:14px 16px;border-top:3px solid var(--u-navy)">
-        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--u-gray);margin-bottom:5px">Dispositivo #1 (global)</div>
-        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:20px;font-weight:700;color:var(--u-navy)">Ordenador</div>
-        <div style="font-size:10px;color:var(--u-gray);margin-top:2px">49,8% · CTR 2,06% vs 0,67% móvil</div>
-      </div>
-    </div>
-
-    <!-- Tabla países + España -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch">
-
-      <!-- Top 10 países tabla — mitad pantalla -->
-      <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;overflow:hidden;display:flex;flex-direction:column">
-        <div style="padding:8px 14px;background:var(--u-gray-light);border-bottom:1px solid var(--u-border);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--u-navy)">Clics por país — Abril 2026 · Top 10</div>
-        <table style="width:100%;border-collapse:collapse;font-size:11px;flex:1">
-          <thead><tr style="background:var(--u-gray-light)">
-            <th style="padding:5px 8px;text-align:left;width:24px;color:var(--u-gray);font-weight:600">#</th>
-            <th style="padding:5px 8px;text-align:left;color:var(--u-gray);font-weight:600">País</th>
-            <th style="padding:5px 10px;text-align:right;color:var(--u-gray);font-weight:600">Clics Google Search Console</th>
-            <th style="padding:5px 10px;text-align:right;color:var(--u-gray);font-weight:600">vs abr 25</th>
-            <th style="padding:5px 10px;text-align:right;color:var(--u-gray);font-weight:600">Sesiones</th>
-            <th style="padding:5px 10px;text-align:right;color:var(--u-gray);font-weight:600">vs abr 25</th>
-          </tr></thead>
-          <tbody id="paises-tbody"></tbody>
-        </table>
-      </div>
-
-      <!-- España diario -->
-      <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column">
-        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:11px;color:var(--u-navy);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">🇪🇸 Clics diarios España — Abril 2026</div>
-        <div style="flex:1;min-height:0"><canvas id="spainDaily" style="width:100%;height:100%"></canvas></div>
-        <div style="margin-top:8px;font-size:10px;color:var(--u-gray);line-height:1.5;padding:6px 8px;background:var(--u-cyan-light);border-left:2px solid var(--u-cyan);border-radius:0 3px 3px 0">Pico día 13 (lunes) con 1.487 cl. Lunes y martes concentran el máximo tráfico.</div>
-      </div>
-
-    </div>
-  </div>
-
   <div class="section-pad" style="padding-top:24px">
     <div class="two-col">
       <div>
@@ -529,8 +471,8 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
         <div id="sist-legend" style="display:flex;gap:16px;flex-wrap:wrap"></div>
         <div style="display:flex;gap:6px">
-          <button class="sist-range active" data-r="12" onclick="setRange(12,this)">3 meses</button>
-          <button class="sist-range" data-r="52" onclick="setRange(52,this)">1 año</button>
+          <button class="sist-range" data-r="12" onclick="setRange(12,this)">3 meses</button>
+          <button class="sist-range active" data-r="52" onclick="setRange(52,this)">1 año</button>
           <button class="sist-range" data-r="104" onclick="setRange(104,this)">2 años</button>
           <button class="sist-range" data-r="999" onclick="setRange(999,this)">Todo</button>
         </div>
@@ -547,6 +489,65 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
       </div>
     </div>
   </div>
+  <!-- ── CLICS POR PAÍS — ABRIL 2026 ── -->
+  <div style="padding:0 40px 24px">
+
+    <!-- KPI row global + España -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
+      <div style="background:var(--u-navy);border-radius:6px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+        <div style="font-size:36px;line-height:1;flex-shrink:0">🌍</div>
+        <div>
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.5);margin-bottom:3px">Total global</div>
+          <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:26px;font-weight:700;color:#fff;line-height:1">103.870</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.5);margin-top:2px">139 países · abril 2026</div>
+        </div>
+      </div>
+      <div style="background:var(--u-navy);border-radius:6px;padding:14px 16px;display:flex;align-items:center;gap:12px;border-left:4px solid var(--u-cyan)">
+        <div style="font-size:22px;font-weight:800;color:#fff;flex-shrink:0;font-family:'Baikal',sans-serif;letter-spacing:-1px;opacity:.9">ES</div>
+        <div>
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.5);margin-bottom:3px">España · Clics Google Search Console</div>
+          <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:22px;font-weight:700;color:var(--u-cyan);line-height:1">31.175 <span style="font-size:13px;color:var(--u-green)">+0,6%</span></div>
+          <div style="font-size:10px;color:rgba(255,255,255,.5);margin-top:4px">Sesiones GA4:</div>
+          <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:18px;font-weight:700;color:#fff;line-height:1.2">80.962 <span style="font-size:12px;color:var(--u-green)">+8,0%</span></div>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;padding:14px 16px;border-top:3px solid var(--u-navy)">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--u-gray);margin-bottom:5px">Dispositivo #1 (global)</div>
+        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:20px;font-weight:700;color:var(--u-navy)">Ordenador</div>
+        <div style="font-size:10px;color:var(--u-gray);margin-top:2px">49,8% · CTR 2,06% vs 0,67% móvil</div>
+      </div>
+    </div>
+
+    <!-- Tabla países + España -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch">
+
+      <!-- Top 10 países tabla — mitad pantalla -->
+      <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;overflow:hidden;display:flex;flex-direction:column">
+        <div style="padding:8px 14px;background:var(--u-gray-light);border-bottom:1px solid var(--u-border);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--u-navy)">Clics por país — Abril 2026 · Top 10</div>
+        <table style="width:100%;border-collapse:collapse;font-size:11px;flex:1">
+          <thead><tr style="background:var(--u-gray-light)">
+            <th style="padding:5px 8px;text-align:left;width:24px;color:var(--u-gray);font-weight:600">#</th>
+            <th style="padding:5px 8px;text-align:left;color:var(--u-gray);font-weight:600">País</th>
+            <th style="padding:5px 10px;text-align:right;color:var(--u-gray);font-weight:600">Clics Google Search Console</th>
+            <th style="padding:5px 10px;text-align:right;color:var(--u-gray);font-weight:600">vs abr 25</th>
+            <th style="padding:5px 10px;text-align:right;color:var(--u-gray);font-weight:600">Sesiones</th>
+            <th style="padding:5px 10px;text-align:right;color:var(--u-gray);font-weight:600">vs abr 25</th>
+          </tr></thead>
+          <tbody id="paises-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- España diario -->
+      <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column">
+        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:11px;color:var(--u-navy);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">🇪🇸 Clics diarios España — Abril 2026</div>
+        <div style="flex:1;min-height:0"><canvas id="spainDaily" style="width:100%;height:100%"></canvas></div>
+        <div style="margin-top:8px;font-size:10px;color:var(--u-gray);line-height:1.5;padding:6px 8px;background:var(--u-cyan-light);border-left:2px solid var(--u-cyan);border-radius:0 3px 3px 0">Pico día 13 (lunes) con 1.487 cl. Lunes y martes concentran el máximo tráfico.</div>
+      </div>
+
+    </div>
+  </div>
+
+
   <div class="slide-footer"><div>Fuentes: <strong>Google Search Console &amp; GA4</strong> · 1–30 Abril 2026</div><div>Slide 1 / 8</div></div>
 </div>
 
@@ -1237,185 +1238,11 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
         <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--u-border)"><a href="https://www.unicef.es/blog/educacion/acoso-escolar" target="_blank" style="text-decoration:none"><code style="font-size:10px;background:var(--u-gray-light);padding:2px 5px;border-radius:3px;color:var(--u-navy)">/blog/educacion/acoso-escolar</code></a><span style="font-size:11px;color:var(--u-gray);flex:1;margin-left:8px">205 cl · −57% · posición media 7,2 · FAQ schema urgente</span><span style="font-size:10px;font-weight:700;color:var(--u-red);background:var(--u-red-light);padding:2px 8px;border-radius:3px;white-space:nowrap">FAQ schema + meta</span></div>
         <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--u-border)"><a href="https://www.unicef.es/blog/infancia/causas-explotacion-infantil" target="_blank" style="text-decoration:none"><code style="font-size:10px;background:var(--u-gray-light);padding:2px 5px;border-radius:3px;color:var(--u-navy)">/blog/infancia/causas-explotacion-infantil</code></a><span style="font-size:11px;color:var(--u-gray);flex:1;margin-left:8px">60 cl · −55% · sin actualización desde 2023</span><span style="font-size:10px;font-weight:700;color:var(--u-red);background:var(--u-red-light);padding:2px 8px;border-radius:3px;white-space:nowrap">Reestructura + FAQ</span></div>
 
-        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--u-cyan-dark);margin:10px 0 4px">Contenidos sin publicar — 34 piezas (PENDIENTE DE SUBIR · PENDIENTE · REDACTADO)</div>
-        <div style="background:#f8f9fb;border:1px solid var(--u-border);border-radius:4px;padding:8px 12px;margin-bottom:4px">
-          <div style="display:flex;gap:8px;margin-bottom:8px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--u-gray)">
-            <span style="min-width:66px">Estado</span>
-            <span style="min-width:52px">Tipo</span>
-            <span style="min-width:90px">Categoría</span>
-            <span>Título</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#E85D04;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">SUBIR</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Vacunación</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Vacunación infantil en España</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#E85D04;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">SUBIR</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Landing</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Desnutrición</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Desnutrición infantil España</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#E85D04;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">SUBIR</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Landing</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Colabora</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Colabora → Educación</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#E85D04;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">SUBIR</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Pobreza</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Desigualdad social</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#E85D04;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">SUBIR</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Pobreza</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Países más pobres de Europa</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#E85D04;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">SUBIR</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Desnutrición</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">¿Qué es el hambre?</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#E85D04;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">SUBIR</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Enfermedades</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Diarrea aguda</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#E85D04;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">SUBIR</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Emergencias</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Dónde está Gaza</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#E85D04;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">SUBIR</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Emergencias</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Gaza antes y después</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#E85D04;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">SUBIR</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Emergencias</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Guerra Civil en Sudán</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#E85D04;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">SUBIR</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Emergencias</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Niños muertos en Gaza</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#D92B3A;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">PENDIENTE</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Landing</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Glosario</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Glosario</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#D92B3A;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">PENDIENTE</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Landing</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Causas</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Salud mental infantil</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#D92B3A;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">PENDIENTE</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Landing</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Causas</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Salud mental adolescentes</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#D92B3A;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">PENDIENTE</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Educación</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Educación en valores</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#D92B3A;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">PENDIENTE</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Landing</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Causas</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Migraciones</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#D92B3A;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">PENDIENTE</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Emergencias</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Refugiados climáticos</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#D92B3A;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">PENDIENTE</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Enfermedades</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Enfermedades infantiles</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#D92B3A;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">PENDIENTE</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Enfermedades</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Neumonía</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#D92B3A;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">PENDIENTE</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog (UNI)</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Infancia</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Justicia para adolescentes</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#D92B3A;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">PENDIENTE</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Infancia</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Violencia contra la infancia</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#D92B3A;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">PENDIENTE</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Landing</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Pobreza</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Pobreza infantil en el mundo</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#6B7A8D;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">REDACTADO</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Landing</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Landing</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">¿Qué es una ONG?</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#6B7A8D;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">REDACTADO</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Landing</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Landing</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">ONGs Españolas</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#6B7A8D;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">REDACTADO</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Pobreza</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Pobreza relativa</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#6B7A8D;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">REDACTADO</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Enfermedades</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">VIH/Sida</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#6B7A8D;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">REDACTADO</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Educación</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Educación infantil en España</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#6B7A8D;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">REDACTADO</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Emergencias</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Cómo acoger a niños afectados en Gaza</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#6B7A8D;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">REDACTADO</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Pobreza</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Riesgo de exclusión social en España</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#6B7A8D;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">REDACTADO</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Landing</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Colabora</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Colabora → África</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#6B7A8D;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">REDACTADO</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Landing</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Colabora</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Colabora → Contra la pobreza</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#6B7A8D;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">REDACTADO</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Landing</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Colabora</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Colabora → Lucha contra el hambre</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#6B7A8D;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">REDACTADO</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Blog</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Vacunación</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">¿Qué es una vacuna y para qué sirve?</span>
-          </div>          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)">
-            <span style="background:#6B7A8D;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;min-width:58px;text-align:center">REDACTADO</span>
-            <span style="font-size:10px;color:#666;flex-shrink:0;min-width:52px">Landing</span>
-            <span style="font-size:10px;color:#888;flex-shrink:0;min-width:90px">Colabora</span>
-            <span style="font-size:11px;color:var(--u-navy);font-weight:600;flex:1">Colabora → Campaña solidaria</span>
-          </div>
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--u-cyan-dark);margin:10px 0 6px">Contenidos sin publicar — 34 piezas</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;background:#f8f9fb;border:1px solid var(--u-border);border-radius:4px;padding:10px 12px;margin-bottom:4px">
+          <div style="display:flex;flex-direction:column;gap:1px"><div style="font-size:9px;font-weight:700;color:#E85D04;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;padding-bottom:3px;border-bottom:2px solid #E85D04">🟠 Pendiente de subir (11)</div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#E85D04;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">SUBIR</span><span style="font-size:10px;color:#333;line-height:1.3">Vacunación infantil en España</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#E85D04;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">SUBIR</span><span style="font-size:10px;color:#333;line-height:1.3">Desnutrición infantil España</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#E85D04;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">SUBIR</span><span style="font-size:10px;color:#333;line-height:1.3">Colabora → Educación</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#E85D04;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">SUBIR</span><span style="font-size:10px;color:#333;line-height:1.3">Desigualdad social</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#E85D04;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">SUBIR</span><span style="font-size:10px;color:#333;line-height:1.3">Países más pobres de Europa</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#E85D04;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">SUBIR</span><span style="font-size:10px;color:#333;line-height:1.3">¿Qué es el hambre?</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#E85D04;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">SUBIR</span><span style="font-size:10px;color:#333;line-height:1.3">Diarrea aguda</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#E85D04;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">SUBIR</span><span style="font-size:10px;color:#333;line-height:1.3">Dónde está Gaza</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#E85D04;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">SUBIR</span><span style="font-size:10px;color:#333;line-height:1.3">Gaza antes y después</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#E85D04;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">SUBIR</span><span style="font-size:10px;color:#333;line-height:1.3">Guerra Civil en Sudán</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#E85D04;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">SUBIR</span><span style="font-size:10px;color:#333;line-height:1.3">Niños muertos en Gaza</span></div></div>
+          <div style="display:flex;flex-direction:column;gap:1px"><div style="font-size:9px;font-weight:700;color:#D92B3A;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;padding-bottom:3px;border-bottom:2px solid #D92B3A">🔴 Pendiente (11)</div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#D92B3A;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">PEND</span><span style="font-size:10px;color:#333;line-height:1.3">Glosario</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#D92B3A;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">PEND</span><span style="font-size:10px;color:#333;line-height:1.3">Salud mental infantil</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#D92B3A;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">PEND</span><span style="font-size:10px;color:#333;line-height:1.3">Salud mental adolescentes</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#D92B3A;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">PEND</span><span style="font-size:10px;color:#333;line-height:1.3">Educación en valores</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#D92B3A;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">PEND</span><span style="font-size:10px;color:#333;line-height:1.3">Migraciones</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#D92B3A;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">PEND</span><span style="font-size:10px;color:#333;line-height:1.3">Refugiados climáticos</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#D92B3A;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">PEND</span><span style="font-size:10px;color:#333;line-height:1.3">Enfermedades infantiles</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#D92B3A;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">PEND</span><span style="font-size:10px;color:#333;line-height:1.3">Neumonía</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#D92B3A;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">PEND</span><span style="font-size:10px;color:#333;line-height:1.3">Justicia para adolescentes</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#D92B3A;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">PEND</span><span style="font-size:10px;color:#333;line-height:1.3">Violencia contra la infancia</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#D92B3A;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">PEND</span><span style="font-size:10px;color:#333;line-height:1.3">Pobreza infantil en el mundo</span></div></div>
+          <div style="display:flex;flex-direction:column;gap:1px"><div style="font-size:9px;font-weight:700;color:#6B7A8D;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;padding-bottom:3px;border-bottom:2px solid #6B7A8D">⚫ Redactado (12)</div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#6B7A8D;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">REDC</span><span style="font-size:10px;color:#333;line-height:1.3">¿Qué es una ONG?</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#6B7A8D;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">REDC</span><span style="font-size:10px;color:#333;line-height:1.3">ONGs Españolas</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#6B7A8D;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">REDC</span><span style="font-size:10px;color:#333;line-height:1.3">Pobreza relativa</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#6B7A8D;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">REDC</span><span style="font-size:10px;color:#333;line-height:1.3">VIH/Sida</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#6B7A8D;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">REDC</span><span style="font-size:10px;color:#333;line-height:1.3">Educación infantil en España</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#6B7A8D;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">REDC</span><span style="font-size:10px;color:#333;line-height:1.3">Cómo acoger a niños en Gaza</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#6B7A8D;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">REDC</span><span style="font-size:10px;color:#333;line-height:1.3">Riesgo exclusión social España</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#6B7A8D;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">REDC</span><span style="font-size:10px;color:#333;line-height:1.3">Colabora → África</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#6B7A8D;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">REDC</span><span style="font-size:10px;color:#333;line-height:1.3">Colabora → Contra la pobreza</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#6B7A8D;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">REDC</span><span style="font-size:10px;color:#333;line-height:1.3">Colabora → Lucha contra el hambre</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#6B7A8D;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">REDC</span><span style="font-size:10px;color:#333;line-height:1.3">¿Qué es una vacuna?</span></div><div style="display:flex;align-items:center;gap:5px;padding:3px 0"><span style="background:#6B7A8D;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;flex-shrink:0;white-space:nowrap">REDC</span><span style="font-size:10px;color:#333;line-height:1.3">Colabora → Campaña solidaria</span></div></div>
         </div>
       </div>
     </div>
@@ -1451,64 +1278,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
       </div>
     </div>
 
-    <!-- CONVERSIÓN — solo lo crítico -->
-    <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;overflow:hidden;margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:3px solid var(--u-cyan);background:var(--u-gray-light)">
-        <div style="width:10px;height:10px;border-radius:50%;background:var(--u-cyan);flex-shrink:0"></div>
-        <div style="font-family:'Baikal',sans-serif;font-weight:700;font-size:15px;color:var(--u-navy)">Conversión</div>
-        <div style="font-size:11px;color:var(--u-gray);margin-left:8px">Solo páginas de donación con caída real — el resto está bien</div>
-      </div>
-      <div style="padding:4px 18px 12px">
-        <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--u-border)"><a href="https://www.unicef.es/colabora/como-donar" target="_blank" style="text-decoration:none"><code style="font-size:10px;background:var(--u-gray-light);padding:2px 5px;border-radius:3px;color:var(--u-navy)">/colabora/como-donar</code></a><span style="font-size:11px;color:var(--u-gray);flex:1;margin-left:8px">158 cl · −22% · "donar unicef" · página clave de conversión</span><span style="font-size:10px;font-weight:700;color:var(--u-red);background:var(--u-red-light);padding:2px 8px;border-radius:3px;white-space:nowrap">A/B test CTA</span></div>
-        <div style="display:flex;align-items:center;gap:10px;padding:7px 0"><a href="https://www.unicef.es/testamento" target="_blank" style="text-decoration:none"><code style="font-size:10px;background:var(--u-gray-light);padding:2px 5px;border-radius:3px;color:var(--u-navy)">/testamento</code></a><span style="font-size:11px;color:var(--u-gray);flex:1;margin-left:8px">29 cl · −64% · "testamento unicef" · página principal testamento, bajo CTR orgánico</span><span style="font-size:10px;font-weight:700;color:var(--u-red);background:var(--u-red-light);padding:2px 8px;border-radius:3px;white-space:nowrap">H1 + FAQ schema</span></div>
-      </div>
-    </div>
-
-    <!-- RESUMEN DE PRIORIDADES -->
-    <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;overflow:hidden;margin-bottom:20px">
-      <div style="padding:12px 18px;border-bottom:1px solid var(--u-border);background:var(--u-gray-light)">
-        <div style="font-family:'Baikal',sans-serif;font-weight:700;font-size:14px;color:var(--u-navy)">Resumen de prioridades</div>
-      </div>
-      <table class="data-table">
-        <thead><tr>
-          <th style="width:30px">#</th>
-          <th>Acción</th>
-          <th>URLs clave</th>
-          <th style="text-align:right">Impacto estimado</th>
-          <th style="text-align:right">Esfuerzo</th>
-        </tr></thead>
-        <tbody>
-          <tr>
-            <td><span style="background:var(--u-red);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px">1</span></td>
-            <td><strong>FAQ Schema — Causas + Blog</strong></td>
-            <td style="font-size:11px;color:var(--u-gray)">/causas/derechos-ninos · /blog/educacion/acoso-escolar</td>
-            <td style="text-align:right"><span class="tag tag-up">+15–20% clics Causas</span></td>
-            <td style="text-align:right">Bajo</td>
-          </tr>
-          <tr>
-            <td><span style="background:var(--u-orange);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px">2</span></td>
-            <td><strong>Publicar landings salud mental</strong></td>
-            <td style="font-size:11px;color:var(--u-gray)">/causas/salud-mental-infantil · /causas/salud-mental-adolescentes</td>
-            <td style="text-align:right"><span class="tag tag-up">Tráfico nuevo Causas</span></td>
-            <td style="text-align:right">Bajo</td>
-          </tr>
-          <tr>
-            <td><span style="background:var(--u-cyan);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px">3</span></td>
-            <td><strong>Cluster grooming — artículos satélite</strong></td>
-            <td style="font-size:11px;color:var(--u-gray)">/blog/salud-mental/grooming + 3–5 artículos nuevos</td>
-            <td style="text-align:right"><span class="tag tag-up">+4.000 cl/mes est.</span></td>
-            <td style="text-align:right">Medio</td>
-          </tr>
-          <tr>
-            <td><span style="background:var(--u-green);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px">4</span></td>
-            <td><strong>One Search — pausar 111 keywords</strong></td>
-            <td style="font-size:11px;color:var(--u-gray)">/colabora/como-donar · unicef (SEO pos 1,89)</td>
-            <td style="text-align:right"><span class="tag tag-up">13.066 €/mes Paid</span></td>
-            <td style="text-align:right">Bajo</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
 
   </div>
   <div class="slide-footer"><div>Fuente: <strong>Google Search Console Abril 2026</strong> · Análisis Havas Market</div><div>Slide 8 / 9</div></div>
@@ -1816,7 +1585,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
       </div>
 
       <!-- Top páginas en Discover (histórico) -->
-      <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;padding:16px">
+      <div id="s9-p2" style="background:#fff;border:1px solid var(--u-border);border-radius:6px;padding:16px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
           <div style="width:10px;height:10px;border-radius:50%;background:#FF6B35;flex-shrink:0"></div>
           <div class="card-title" style="margin-bottom:0">Top URLs en Discover</div>
@@ -2327,7 +2096,7 @@ function buildSistrix(){
        <span style="width:22px;height:2px;background:${s.color};display:inline-block;border-radius:1px"></span>${s.label}
      </span>`).join('');
 
-  setRange(12, document.querySelector('.sist-range[data-r="12"]'));
+  setRange(52, document.querySelector('.sist-range[data-r="52"]'));
 }
 
 function setRange(n, btn){
@@ -3102,17 +2871,16 @@ async function exportPDF(){
 
   const { jsPDF } = window.jspdf;
   // Each entry: [elementId, label, slideNumber, options]
-  // options: limitTableSel = CSS selector for tables to cap height before capture
   const exportItems = [
-    { id:'s1',     label:'KPIs Generales',     num:1,  splitBefore:'s1-sist',  splitLabel:'KPIs Generales — SISTRIX' },
-    { id:'s2',     label:'Visibilidad IA',      num:2,  limitTable:'.tbl-wrap[style*="max-height"]', tableMaxRows: 8 },
+    { id:'s1',     label:'KPIs Generales',     num:1,  splitBefore:'s1-sist',  splitLabel:'KPIs Generales — Visibilidad SISTRIX' },
+    { id:'s2',     label:'Visibilidad IA',      num:2  },
     { id:'s3',     label:'Clics & Sesiones',    num:3  },
     { id:'s4',     label:'Tráfico Categorías',  num:4  },
     { id:'s5',     label:'Blog',                num:5  },
     { id:'s6',     label:'Resumen Ejecutivo',   num:6  },
-    { id:'s7',     label:'Next Steps',          num:7,  splitBefore:'s7-p2', splitLabel:'Next Steps — Causas & Conversión' },
+    { id:'s7',     label:'Next Steps',          num:7,  splitBefore:'s7-p2', splitLabel:'Next Steps — Causas & Desgravación' },
     { id:'s8',     label:'Días Mundiales',      num:8  },
-    { id:'s9',     label:'Noticias',            num:9  },
+    { id:'s9',     label:'Noticias',            num:9,  splitBefore:'s9-p2', splitLabel:'Noticias — Discover & Google News' },
     { id:'s10',    label:'Enlaces Externos',    num:10, limitBacklinks: true },
     { id:'s11',    label:'One Search',          num:11 },
   ];
@@ -3278,20 +3046,22 @@ async function exportPDF(){
       await captureAndAdd(el, cfg.label);
       if (iaWrap) { delete iaWrap.dataset.pdfLimited; iaWrap.style.maxHeight = '320px'; iaWrap.style.overflow = 'auto'; }
 
-    // ── S10 Backlinks: limit table to ~10 visible rows, no expand ──
+    // ── S10 Backlinks: show only first 10 rows ──
     } else if (cfg.id === 's10') {
-      // Find the backlinks table wrapper (last .tbl-wrap in the slide)
       const allWraps = el.querySelectorAll('.tbl-wrap');
       const blWrap = allWraps[allWraps.length - 1];
+      const hiddenRows = [];
       if (blWrap) {
         blWrap.dataset.pdfLimited = '1';
-        blWrap.style.cssText += ';max-height:240px!important;overflow:hidden!important;';
+        const rows = blWrap.querySelectorAll('tbody tr');
+        rows.forEach((r, idx) => {
+          if (idx >= 10) { r.style.display = 'none'; hiddenRows.push(r); }
+        });
       }
       await captureAndAdd(el, cfg.label);
       if (blWrap) {
         delete blWrap.dataset.pdfLimited;
-        blWrap.style.maxHeight = '';
-        blWrap.style.overflow = 'auto';
+        hiddenRows.forEach(r => { r.style.display = ''; });
       }
 
     // ── S1 / S7: hide split section for page 1, then show only split section for page 2 ──
