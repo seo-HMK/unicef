@@ -1,0 +1,39 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    { "path": "/api/sync?source=cron", "schedule": "0 3 * * *" }
+  ],
+  "functions": {
+    "api/sync.js":        { "maxDuration": 300 },
+    "api/data.js":        { "maxDuration": 10 },
+    "api/sync-status.js": { "maxDuration": 15 },
+    "api/calendar.js":    { "maxDuration": 10 },
+    "api/bot/narrative.js": { "maxDuration": 60 }
+  },
+  "headers": [
+    {
+      "source": "/api/data",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, s-maxage=300, stale-while-revalidate=600" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
+    },
+    {
+      "source": "/api/sync-status",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, s-maxage=60, stale-while-revalidate=300" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
+    },
+    {
+      "source": "/api/calendar",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, s-maxage=3600, stale-while-revalidate=86400" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
+    }
+  ],
+  "redirects": [
+    { "source": "/", "destination": "/index.html", "permanent": false }
+  ]
+}

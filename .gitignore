@@ -1,0 +1,40 @@
+# ── Dependencias ──────────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+
+# ── Variables de entorno (NUNCA commitear) ───────────────────────
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ── Vercel ────────────────────────────────────────────────────────
+.vercel
+.now
+
+# ── Logs ──────────────────────────────────────────────────────────
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# ── Editor / OS ───────────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# ── Build / cache locales ────────────────────────────────────────
+.cache/
+.parcel-cache/
+dist/
+build/
+
+# ── Archivos temporales del proyecto ─────────────────────────────
+tmp/
+*.tmp
