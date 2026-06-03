@@ -549,9 +549,9 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
 
       <!-- España diario -->
       <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column">
-        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:11px;color:var(--u-navy);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">🇪🇸 Clics diarios España — Abril 2026 <span style='font-size:9px;background:rgba(0,63,125,.15);padding:1px 6px;border-radius:3px;margin-left:4px'>ref. - falta export Mayo daily</span></div>
+        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:11px;color:var(--u-navy);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">🇪🇸 Clics diarios España — Mayo 2026</div>
         <div style="flex:1;min-height:0"><canvas id="spainDaily" style="width:100%;height:100%"></canvas></div>
-        <div style="margin-top:8px;font-size:10px;color:var(--u-gray);line-height:1.5;padding:6px 8px;background:var(--u-cyan-light);border-left:2px solid var(--u-cyan);border-radius:0 3px 3px 0">Pico día 13 (lunes) con 1.487 cl. Lunes y martes concentran el máximo tráfico.</div>
+        <div style="margin-top:8px;font-size:10px;color:var(--u-gray);line-height:1.5;padding:6px 8px;background:var(--u-cyan-light);border-left:2px solid var(--u-cyan);border-radius:0 3px 3px 0">Pico día 26 con 1.421 cl. Picos en martes-miércoles; valles claros en fines de semana (mínimo día 30 con 458 cl).</div>
       </div>
 
     </div>
@@ -2602,7 +2602,7 @@ let noticiasBuilt = false;
 function buildNoticiasDaily(){
   if(noticiasBuilt) return; noticiasBuilt = true;
 
-  const days = Array.from({length:30},(_,i)=>i+1);
+  const days = Array.from({length:31},(_,i)=>i+1);
 
   // ── Búsqueda web diaria ──
   const webData = [1935,1457,1313,1445,1882,3108,3707,3869,3933,3219,2391,2859,4833,4792,5121,4701,3594,2463,3293,4919,5067,4792,4344,3228,2313,2911,4497,4341,4190,3353];
@@ -2615,7 +2615,7 @@ function buildNoticiasDaily(){
     }]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>'Día '+c[0].label+' abr',label:c=>c.parsed.y.toLocaleString('es-ES')+' cl'}}},
-      scales:{x:{grid:{display:false},ticks:{font:{size:8},callback:(v,i)=>(i%4===0||i===29)?i+1:''}},
+      scales:{x:{grid:{display:false},ticks:{font:{size:8},callback:(v,i)=>(i%4===0||i===30)?i+1:''}},
               y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:8},callback:v=>v>=1000?(v/1000).toFixed(0)+'K':v}}}}
   });
 
@@ -2633,7 +2633,7 @@ function buildNoticiasDaily(){
       plugins:{legend:{display:true,labels:{boxWidth:8,font:{size:9},padding:8}},
         tooltip:{callbacks:{title:c=>'Día '+c[0].label+' abr'}}},
       scales:{
-        x:{grid:{display:false},ticks:{font:{size:8},callback:(v,i)=>(i%4===0||i===29)?i+1:''}},
+        x:{grid:{display:false},ticks:{font:{size:8},callback:(v,i)=>(i%4===0||i===30)?i+1:''}},
         y:{position:'left',grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:8}}},
         y2:{position:'right',grid:{display:false},ticks:{font:{size:8},callback:v=>v>=1000?(v/1000).toFixed(0)+'K':v}}
       }}
@@ -2652,7 +2652,7 @@ function buildNoticiasDaily(){
       plugins:{legend:{display:true,labels:{boxWidth:8,font:{size:9},padding:8}},
         tooltip:{callbacks:{title:c=>'Día '+c[0].label+' abr'}}},
       scales:{
-        x:{grid:{display:false},ticks:{font:{size:8},callback:(v,i)=>(i%4===0||i===29)?i+1:''}},
+        x:{grid:{display:false},ticks:{font:{size:8},callback:(v,i)=>(i%4===0||i===30)?i+1:''}},
         y:{position:'left',grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:8}}},
         y2:{position:'right',grid:{display:false},ticks:{font:{size:8},callback:v=>v>=100?(v/100).toFixed(0)+'×100':v}}
       }}
@@ -2700,8 +2700,8 @@ renderPaises();
 let spainBuilt = false;
 function buildSpainDaily(){
   if(spainBuilt) return; spainBuilt=true;
-  const days = Array.from({length:30},(_,i)=>i+1);
-  const data = [649,550,483,439,580,976,1286,1280,1287,1108,755,971,1487,1325,1462,1372,1036,583,768,1439,1462,1354,1221,938,591,727,1301,1352,1324,1069];
+  const days = Array.from({length:31},(_,i)=>i+1);
+  const data = [632,586,736,1211,1299,1293,1232,998,557,733,1132,1339,1262,1067,873,557,778,1247,1157,1140,1188,1142,779,841,1218,1421,1155,1108,815,458,662];
   new Chart(document.getElementById('spainDaily'),{
     type:'bar',
     data:{labels:days,datasets:[{
@@ -2712,11 +2712,11 @@ function buildSpainDaily(){
     options:{
       responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{
-        title:c=>'Día '+c[0].label+' abr · España',
+        title:c=>'Día '+c[0].label+' may · España',
         label:c=>c.parsed.y.toLocaleString('es-ES')+' clics'
       }}},
       scales:{
-        x:{grid:{display:false},ticks:{font:{size:8},callback:(v,i)=>(i%4===0||i===29)?i+1:''}},
+        x:{grid:{display:false},ticks:{font:{size:8},callback:(v,i)=>(i%4===0||i===30)?i+1:''}},
         y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:8},callback:v=>v>=1000?(v/1000).toFixed(1)+'K':v}}
       }
     }
