@@ -1798,6 +1798,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
   </div>
 </div>
 
+<script src="/js/snapshot-wiring.js" defer></script>
 <script src="/js/data-loader.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1845,6 +1846,7 @@ let osSort = {k:'coste',d:true};
 const STOP_KW = KW.filter(k=>k.stop);
 let stopSort = {k:'coste',d:true};
 
+window.KW = KW; window.STOP_KW = STOP_KW;
 function renderStop(){
   const q=(document.getElementById('stop-q')||{}).value?.toLowerCase()||'';
   const t=(document.getElementById('stop-type')||{}).value||'';
@@ -2433,6 +2435,7 @@ const IA_KWS=[{"kw":"sostenibilidad","pos":1,"sv":12100,"tr":420,"kd":63,"cat":"
 
 let iaSort={k:'tr',d:true};
 
+window.IA_KWS = IA_KWS;
 function renderIA(){
   const q=(document.getElementById('ia-q')||{}).value?.toLowerCase()||'';
   const cat=(document.getElementById('ia-cat')||{}).value||'';
@@ -2561,6 +2564,7 @@ const DIAS_CAL=[
 const MESES_ES=["","Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 let diasFilter={mes:'', estado:''};
 
+window.DIAS_CAL = DIAS_CAL;
 function renderDias(){
   const mes=+document.getElementById('dias-mes').value||0;
   const est=document.getElementById('dias-est').value||'';
@@ -2668,6 +2672,7 @@ const PAISES_APR=[
   {p:'Ecuador',       f:'🇪🇨', c:2410,  pct:-31.8, sess:3067,   sessPct:-32.7},
   {p:'Bolivia',       f:'🇧🇴', c:1647,  pct:-38.6, sess:1583,   sessPct:-43.0}
 ];
+window.PAISES_APR = PAISES_APR;
 function renderPaises(){
   const tbody=document.getElementById('paises-tbody');
   if(!tbody) return;

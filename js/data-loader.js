@@ -112,6 +112,11 @@
       if (pendingData.unicef_month) {
         injectMonthFromAPI(pendingData.unicef_month);
       }
+      // Wiring de tablas/listas hardcoded del dashboard con datos del snapshot
+      if (typeof window.applySnapshotWiring === 'function') {
+        try { window.applySnapshotWiring(pendingData); }
+        catch (e) { console.warn('[UNICEF] applySnapshotWiring failed:', e); }
+      }
       document.dispatchEvent(new CustomEvent('unicef:data-ready', {
         detail: { state, data: pendingData, error: null }
       }));
