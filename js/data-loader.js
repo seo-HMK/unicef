@@ -1,20 +1,26 @@
 /**
  * UNICEF Dashboard · Data loader
  *
- * 1. Carga GET /api/data al arrancar la pagina.
- * 2. Inyecta el unicef_month (KPI cabecera del periodo del snapshot) en el
- *    dashboard llamando a:
- *       window.MONTHS[key] = month       (solo si no existe en localStorage)
- *       window.ACTIVE_KEY  = key
- *       window.rebuildSelector()         (refresca el desplegable)
- *       window.applyMonthToUI(month)     (renderiza KPIs)
- *    Asi el usuario PUEDE seleccionar el periodo nuevo en el dropdown.
- * 3. No persiste a localStorage. Las ediciones manuales del modal siguen
- *    siendo el override prioritario para ese mes.
- * 4. Expone window.UNICEF_API_DATA para que otras secciones (charts, tablas)
- *    enganchen.
- * 5. Emite evento "unicef:data-ready".
- * 6. Actualiza el indicador #api-status del header.
+ * Carga GET /api/data al arrancar y, una vez el dashboard interno ha hecho
+ * su boot (DOMContentLoaded + sus propias inicializaciones), inyecta el
+ * unicef_month del periodo del snapshot.
+ *
+ * Importante: garantizamos que nuestra llamada a applyMonthToUI ocurre
+ * SIEMPRE DESPUES del DOMContentLoaded listener del dashboard (que
+ * renderiza el SEED_MONTH = Abril por defecto). Si no, hay una race en la
+ * que nuestra inyeccion ocurre antes y el dashboard la sobreescribe.
+ *
+ * Estrategia:
+ *   1. La fetch se inicia inmediatamente (no esperamos DOMContentLoaded).
+ *   2. Cuando llega la respuesta, guardamos pendingData.
+ *   3. Esperamos a que dashboardBooted=true antes de aplicar.
+ *   4. dashboardBooted=true se setea DESPUES de DOMContentLoaded + 200ms,
+ *      para dar tiempo a que el boot del dashboard corra sus propios
+ *      applyMonthToUI(April) primero.
+ *   5. Si llega pendingData antes de que dashboardBooted=true: la aplicacion
+ *      se ejecutara cuando dashboardBooted se active.
+ *   6. Si dashboardBooted=true llega antes que pendingData: la aplicacion
+ *      ocurre en cuanto resuelve la fetch.
  */
 
 (function () {
@@ -22,10 +28,15 @@
 
   const ENDPOINT = '/api/data';
   const TIMEOUT_MS = 12000;
+  const BOOT_DELAY_MS = 200;
   const STORAGE_KEY = 'unicef_seo_months';
 
   window.UNICEF_API_DATA = null;
   window.UNICEF_API_STATE = 'loading';
+
+  let pendingData = null;
+  let pendingError = null;
+  let dashboardBooted = false;
 
   function setStatusIndicator(state, detail) {
     const el = document.getElementById('api-status');
@@ -50,60 +61,75 @@
     } catch { return {}; }
   }
 
-  /**
-   * Inyecta el mes del API en el dashboard:
-   *   - Anade al objeto MONTHS (en memoria) si el usuario NO lo tiene en localStorage
-   *   - Refresca el dropdown con rebuildSelector
-   *   - Renderiza los KPIs con applyMonthToUI
-   */
   function injectMonthFromAPI(month) {
     if (!month || !month.key) return false;
 
     const stored = readUserStored();
     const userHasIt = !!stored[month.key];
 
-    // Anadir/actualizar en memoria (sin tocar localStorage)
     if (window.MONTHS && typeof window.MONTHS === 'object') {
       if (!userHasIt) {
         window.MONTHS[month.key] = month;
       }
-      // Activar el mes nuevo si no hay uno activo o el activo es mas viejo
       const cur = window.ACTIVE_KEY;
       if (!cur || cur < month.key) {
         window.ACTIVE_KEY = month.key;
       }
+    } else {
+      console.warn('[UNICEF] window.MONTHS no accesible — el HTML deployado puede tener cache vieja');
     }
 
-    // Refrescar selector
     if (typeof window.rebuildSelector === 'function') {
       try { window.rebuildSelector(); } catch (e) { console.warn('[UNICEF] rebuildSelector failed:', e); }
     }
 
-    // Renderizar (siempre con el mes del API, salvo que el usuario lo tenga en localStorage)
     const toRender = userHasIt ? stored[month.key] : month;
     if (typeof window.applyMonthToUI === 'function') {
-      try { window.applyMonthToUI(toRender); } catch (e) { console.warn('[UNICEF] applyMonthToUI failed:', e); }
+      try {
+        window.applyMonthToUI(toRender);
+        console.info('[UNICEF] applyMonthToUI con', month.key, '· user override:', userHasIt);
+      } catch (e) {
+        console.warn('[UNICEF] applyMonthToUI failed:', e);
+      }
+    } else {
+      console.warn('[UNICEF] window.applyMonthToUI no disponible');
     }
 
-    console.info('[UNICEF] month injected:', month.key, '· user override:', userHasIt);
     return true;
+  }
+
+  function tryApply() {
+    if (!dashboardBooted) {
+      console.debug('[UNICEF] tryApply: dashboard aun no booted, esperando');
+      return;
+    }
+    if (pendingData) {
+      const state = window.UNICEF_API_STATE;
+      setStatusIndicator(
+        state,
+        `Periodo: ${pendingData.snapshot?.period?.label || '?'} · Gen: ${pendingData.snapshot?.generated_at || pendingData.generated_at || '?'}`
+      );
+      if (pendingData.unicef_month) {
+        injectMonthFromAPI(pendingData.unicef_month);
+      }
+      document.dispatchEvent(new CustomEvent('unicef:data-ready', {
+        detail: { state, data: pendingData, error: null }
+      }));
+    } else if (pendingError) {
+      setStatusIndicator('error', pendingError.message || '');
+      document.dispatchEvent(new CustomEvent('unicef:data-ready', {
+        detail: { state: 'error', data: null, error: pendingError }
+      }));
+    }
   }
 
   function notify(state, data, error) {
     window.UNICEF_API_STATE = state;
     window.UNICEF_API_DATA = data || null;
-    setStatusIndicator(
-      state,
-      data ? `Periodo: ${data.snapshot?.period?.label || '?'} · Gen: ${data.snapshot?.generated_at || data.generated_at || '?'}` : (error?.message || '')
-    );
-
-    if (data && data.unicef_month) {
-      injectMonthFromAPI(data.unicef_month);
-    }
-
-    document.dispatchEvent(new CustomEvent('unicef:data-ready', {
-      detail: { state, data, error }
-    }));
+    if (data) pendingData = data;
+    if (error) pendingError = error;
+    setStatusIndicator(state, error?.message);
+    tryApply();
   }
 
   async function loadData() {
@@ -126,16 +152,33 @@
       const okCount = ['snapshot', 'ahrefs', 'gsc', 'ga4'].filter(k => sources[k]).length;
       const allReady = okCount === 4;
       notify(allReady ? 'live' : 'partial', data);
-      console.info('[UNICEF dashboard] /api/data:', `${okCount}/4 sources ready`, data);
+      console.info('[UNICEF dashboard] /api/data:', `${okCount}/4 sources ready`);
     } catch (e) {
       clearTimeout(t);
       notify('error', null, e);
     }
   }
 
+  // ── Inicio: arrancar fetch YA y esperar boot del dashboard ──
+
+  // 1) Fetch arranca inmediatamente
+  loadData();
+
+  // 2) Marcar boot completado DESPUES del DOMContentLoaded del dashboard
+  function markDashboardBooted() {
+    setTimeout(() => {
+      dashboardBooted = true;
+      console.debug('[UNICEF] dashboard booted, aplicando data si disponible');
+      tryApply();
+    }, BOOT_DELAY_MS);
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadData);
+    document.addEventListener('DOMContentLoaded', markDashboardBooted, { once: true });
   } else {
-    loadData();
+    // DOMContentLoaded ya paso (readyState=interactive o complete)
+    // El boot del dashboard puede haber corrido ya o estar a punto.
+    // Damos un pequeno margen igual.
+    markDashboardBooted();
   }
 })();
