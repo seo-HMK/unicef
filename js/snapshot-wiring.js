@@ -212,6 +212,49 @@
       catch (e) { results[name] = false; console.warn('[UNICEF] wiring ' + name + ' failed:', e); }
     }
     console.info('[UNICEF] applySnapshotWiring:', results);
+    showDebugBanner(data, results);
     return results;
   };
+
+  /**
+   * Banner DEBUG: prueba visual de que el wiring corrio.
+   * Se quita solo a los 8 segundos. Para retirarlo definitivamente,
+   * eliminar esta funcion y la llamada arriba.
+   */
+  function showDebugBanner(data, results) {
+    try {
+      const banner = document.createElement('div');
+      banner.id = 'unicef-debug-banner';
+      const okCount = Object.values(results).filter(Boolean).length;
+      const totalCount = Object.values(results).length;
+      const period = data.snapshot?.period?.label || data.unicef_month?.label || '?';
+      banner.innerHTML =
+        '<div style="position:fixed;top:10px;left:50%;transform:translateX(-50%);' +
+        'background:linear-gradient(90deg,#0CC0DF 0%,#003F7D 100%);color:#fff;' +
+        'padding:14px 28px;border-radius:8px;box-shadow:0 8px 32px rgba(0,63,125,.4);' +
+        'z-index:99999;font-family:Baikal,Roboto,sans-serif;font-weight:600;' +
+        'font-size:14px;letter-spacing:.3px;border:2px solid #fff;' +
+        'display:flex;align-items:center;gap:14px">' +
+        '<span style="font-size:22px">✓</span>' +
+        '<div>' +
+          '<div style="font-size:16px;font-weight:800;letter-spacing:.5px">DATOS API CARGADOS: ' + period + '</div>' +
+          '<div style="font-size:11px;opacity:.9;margin-top:3px">' +
+            'Wirings OK: ' + okCount + '/' + totalCount + ' · ' +
+            'Paises: ' + (results.paises ? 'OK' : 'KO') + ' · ' +
+            'IA kw: ' + (results.ia_kw ? 'OK' : 'KO') + ' · ' +
+            'Calendario: ' + (results.calendar ? 'OK' : 'KO') + ' · ' +
+            'One Search: ' + (results.one_search ? 'OK' : 'KO') +
+          '</div>' +
+        '</div>' +
+        '<button onclick="document.getElementById(\'unicef-debug-banner\').remove()" ' +
+          'style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);' +
+          'color:#fff;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:11px">cerrar</button>' +
+        '</div>';
+      document.body.appendChild(banner);
+      setTimeout(() => {
+        const el = document.getElementById('unicef-debug-banner');
+        if (el) el.remove();
+      }, 12000);
+    } catch (e) { console.warn('[UNICEF] banner failed:', e); }
+  }
 })();
