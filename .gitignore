@@ -38,3 +38,12 @@ build/
 # ── Archivos temporales del proyecto ─────────────────────────────
 tmp/
 *.tmp
+
+# ── Datos del cliente (CSV/Excel de Drive, exports, snapshots) ───
+# Contiene datos sensibles (keywords, conversiones, etc).
+# Solo en local; el pipeline los procesa y guarda JSON en JSONBin.
+data/
+*.csv
+*.xlsx
+*.xls
+!docs/**/*.csv

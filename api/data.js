@@ -1,20 +1,17 @@
 /**
  * GET /api/data
  *
- * Devuelve el snapshot de datos para el dashboard UNICEF.
+ * Devuelve datos consolidados para el dashboard UNICEF.
  *
- * Estado de fuentes:
- *   - Ahrefs:    listo si AHREFS_API_TOKEN definido
- *   - Sistrix:   listo si SISTRIX_API_KEY definido
- *   - GSC:       pendiente (espera credenciales del cliente)
- *   - GA4:       pendiente
- *   - Google Ads: opcional
+ * Fuentes (en orden de prioridad):
+ *   1. lib/snapshot.json   <- producido por `npm run build-snapshot` desde data/
+ *      Contiene GSC (Web + Discover + News + por seccion), GA4, Sistrix,
+ *      Calendario, One Search y Ahrefs Positions.
+ *   2. Ahrefs API live     <- consulta en cada request (con cache Vercel)
+ *      Domain rating, backlinks, top pages, top keywords frescos.
  *
- * Cuando falta una credencial, ese bloque devuelve null (no rompe el endpoint).
- * Promise.allSettled aisla fallos por API.
- *
- * Cache: vercel.json sirve este endpoint con s-maxage=300 (5 min).
- * Cuando anadamos JSONBin + cron, este endpoint solo leera del cache.
+ * El snapshot es estatico (cambia con cada commit). Ahrefs es dinamico.
+ * Cache: s-maxage=300 en vercel.json.
  */
 
 import {
@@ -23,6 +20,16 @@ import {
   organicKeywords as ahrefsOrganicKw
 } from '../lib/ahrefs.js';
 import { domainOverview as sistrixOverview, visibilityBySubpaths } from '../lib/sistrix.js';
+
+// snapshot.json existe si ya se corrio build-snapshot. Si no, devolvemos null.
+let snapshot = null;
+try {
+  const mod = await import('../lib/snapshot.json', { with: { type: 'json' } });
+  snapshot = mod.default || mod;
+} catch (e) {
+  // snapshot.json no existe todavia (primer deploy antes de generarlo)
+  snapshot = null;
+}
 
 const DOMAIN = process.env.DOMAIN || 'unicef.es';
 const COUNTRY = process.env.COUNTRY || 'es';
@@ -63,19 +70,19 @@ export default async function handler(req, res) {
       : Promise.resolve(null)
   ]);
 
-  const ahrefsBlock = {
+  const ahrefsLive = {
     overview: settled(ahrefsOv),
     top_pages: groupPagesBySection(settled(ahrefsPages)),
     top_keywords: settled(ahrefsKw)
   };
 
-  const sistrixBlock = {
+  const sistrixApi = {
     overview: settled(sistrixOv),
     subpaths: settled(sistrixSub)
   };
 
   res.status(200).json({
-    client: {
+    client: snapshot?.client || {
       id: process.env.CLIENT_ID || 'unicef',
       name: process.env.CLIENT_NAME || 'UNICEF Espana',
       domain: DOMAIN,
@@ -84,17 +91,26 @@ export default async function handler(req, res) {
     generated_at: new Date().toISOString(),
     elapsed_ms: Date.now() - startedAt,
     sources_available: {
+      snapshot: !!snapshot,
       ahrefs: !!process.env.AHREFS_API_TOKEN,
       sistrix: !!process.env.SISTRIX_API_KEY,
-      gsc: !!process.env.GSC_REFRESH_TOKEN,
-      ga4: !!(process.env.GA4_SERVICE_ACCOUNT_JSON || process.env.GA4_REFRESH_TOKEN),
-      google_ads: !!process.env.ADS_DEVELOPER_TOKEN
+      gsc: !!snapshot?.gsc,
+      ga4: !!snapshot?.ga4,
+      one_search: !!snapshot?.one_search
     },
-    ahrefs: ahrefsBlock,
-    sistrix: sistrixBlock,
-    gsc: null,
-    ga4: null,
-    google_ads: null
+    snapshot: snapshot ? {
+      generated_at: snapshot.generated_at,
+      period: snapshot.period,
+      comparison: snapshot.comparison
+    } : null,
+    unicef_month: snapshot?.unicef_month || null,
+    gsc: snapshot?.gsc || null,
+    ga4: snapshot?.ga4 || null,
+    sistrix: snapshot?.sistrix || sistrixApi,
+    calendar: snapshot?.calendar || null,
+    one_search: snapshot?.one_search || null,
+    ahrefs_positions: snapshot?.ahrefs_positions || null,
+    ahrefs_live: ahrefsLive
   });
 }
 
@@ -103,9 +119,6 @@ function settled(p) {
   return { error: p.reason?.message || String(p.reason) };
 }
 
-/**
- * Agrupa top_pages de Ahrefs por seccion del sitio (blog, causas, etc).
- */
 function groupPagesBySection(ahrefsPagesResp) {
   if (!ahrefsPagesResp || ahrefsPagesResp.error || !ahrefsPagesResp.pages) {
     return ahrefsPagesResp;
