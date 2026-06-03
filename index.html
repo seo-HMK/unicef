@@ -245,7 +245,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
     <div class="unicef-band-text">Canal SEO Orgánico · unicef.es · España</div>
   </div>
   <div class="unicef-band-tag" id="bandTag">Informe Abril 2026</div>
-  <span id="api-status" style="display:inline-block;margin-left:12px;font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;opacity:.7;font-family:'Baikal','Roboto',sans-serif">API · cargando</span>
 </div>
 <nav>
   <div class="nav-brand">
@@ -1123,7 +1122,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
         <div class="section-heading">Top 15 artículos del Blog — Abril 2026</div>
         <table class="data-table">
           <thead><tr><th>Artículo</th><th style="text-align:right">Clics</th><th style="text-align:right">vs 2025</th></tr></thead>
-          <tbody id="s5-blog-tbody">
+          <tbody>
             <tr><td style="max-width:320px"><a href="https://www.unicef.es/blog/pobreza/paises-mas-pobres-del-mundo" target="_blank" style="color:var(--u-red);font-size:12px;text-decoration:none;word-break:break-all">/blog/pobreza/paises-mas-pobres-del-mundo</a></td><td style="text-align:right">469</td><td><span class="tag tag-down">-1%</span></td></tr>
             <tr><td style="max-width:320px"><a href="https://www.unicef.es/blog/infancia/adolescencia-que-es-y-que-edad-empieza" target="_blank" style="color:var(--u-cyan-dark);font-size:12px;text-decoration:none;word-break:break-all">/blog/infancia/adolescencia-que-es-y-que-edad-empieza</a></td><td style="text-align:right">378</td><td><span class="tag tag-up">+25%</span></td></tr>
             <tr><td style="max-width:320px"><a href="https://www.unicef.es/blog/sostenibilidad/sostenibilidad-que-es-objetivos-planes" target="_blank" style="color:var(--u-cyan-dark);font-size:12px;text-decoration:none;word-break:break-all">/blog/sostenibilidad/sostenibilidad-que-es-objetivos-planes</a></td><td style="text-align:right">256</td><td><span class="tag tag-up">nueva</span></td></tr>
@@ -1429,7 +1428,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
               <th style="text-align:center">Tipo</th>
               <th style="text-align:right">Pos. media</th>
             </tr></thead>
-            <tbody id="s9-noticias-tbody">
+            <tbody>
               <tr>
                 <td style="max-width:320px">
                   <div style="font-size:12px;font-weight:600;color:var(--u-navy)">Gaza: dos años de guerra cruel que ha destrozado la infancia</div>
@@ -1798,8 +1797,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
   </div>
 </div>
 
-<script src="/js/snapshot-wiring.js" defer></script>
-<script src="/js/data-loader.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -1846,7 +1843,6 @@ let osSort = {k:'coste',d:true};
 const STOP_KW = KW.filter(k=>k.stop);
 let stopSort = {k:'coste',d:true};
 
-window.KW = KW; window.STOP_KW = STOP_KW;
 function renderStop(){
   const q=(document.getElementById('stop-q')||{}).value?.toLowerCase()||'';
   const t=(document.getElementById('stop-type')||{}).value||'';
@@ -2228,8 +2224,8 @@ const SEED_MONTH = {
   sist:{main:5.7146,blog:2.4523,causas:1.0333,educa:0.5656,noticia:0.6816}
 };
 
-var MONTHS = {};      // key → month data object
-var ACTIVE_KEY = '';  // currently displayed month
+let MONTHS = {};      // key → month data object
+let ACTIVE_KEY = '';  // currently displayed month
 
 // ── Persistence helpers ──
 function saveToStorage(){
@@ -2435,7 +2431,6 @@ const IA_KWS=[{"kw":"sostenibilidad","pos":1,"sv":12100,"tr":420,"kd":63,"cat":"
 
 let iaSort={k:'tr',d:true};
 
-window.IA_KWS = IA_KWS;
 function renderIA(){
   const q=(document.getElementById('ia-q')||{}).value?.toLowerCase()||'';
   const cat=(document.getElementById('ia-cat')||{}).value||'';
@@ -2564,7 +2559,6 @@ const DIAS_CAL=[
 const MESES_ES=["","Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 let diasFilter={mes:'', estado:''};
 
-window.DIAS_CAL = DIAS_CAL;
 function renderDias(){
   const mes=+document.getElementById('dias-mes').value||0;
   const est=document.getElementById('dias-est').value||'';
@@ -2672,7 +2666,6 @@ const PAISES_APR=[
   {p:'Ecuador',       f:'🇪🇨', c:2410,  pct:-31.8, sess:3067,   sessPct:-32.7},
   {p:'Bolivia',       f:'🇧🇴', c:1647,  pct:-38.6, sess:1583,   sessPct:-43.0}
 ];
-window.PAISES_APR = PAISES_APR;
 function renderPaises(){
   const tbody=document.getElementById('paises-tbody');
   if(!tbody) return;
