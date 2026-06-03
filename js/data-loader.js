@@ -2,17 +2,19 @@
  * UNICEF Dashboard · Data loader
  *
  * 1. Carga GET /api/data al arrancar la pagina.
- * 2. Si /api/data devuelve un `unicef_month` (KPI cabecera del mes), lo inyecta
- *    en el dashboard usando las funciones globales applyMonthToUI/MONTHS si
- *    estan disponibles. NO toca localStorage (las ediciones manuales del
- *    modal siguen siendo el override prioritario para esos meses).
- * 3. Expone window.UNICEF_API_DATA para que otras secciones (charts, tablas)
+ * 2. Inyecta el unicef_month (KPI cabecera del periodo del snapshot) en el
+ *    dashboard llamando a:
+ *       window.MONTHS[key] = month       (solo si no existe en localStorage)
+ *       window.ACTIVE_KEY  = key
+ *       window.rebuildSelector()         (refresca el desplegable)
+ *       window.applyMonthToUI(month)     (renderiza KPIs)
+ *    Asi el usuario PUEDE seleccionar el periodo nuevo en el dropdown.
+ * 3. No persiste a localStorage. Las ediciones manuales del modal siguen
+ *    siendo el override prioritario para ese mes.
+ * 4. Expone window.UNICEF_API_DATA para que otras secciones (charts, tablas)
  *    enganchen.
- * 4. Emite evento "unicef:data-ready" para integraciones futuras.
- * 5. Actualiza el indicador #api-status del header.
- *
- * Fallback: si /api/data falla o no esta disponible, el dashboard sigue
- * funcionando con los arrays JS hardcodeados / localStorage como antes.
+ * 5. Emite evento "unicef:data-ready".
+ * 6. Actualiza el indicador #api-status del header.
  */
 
 (function () {
@@ -20,6 +22,7 @@
 
   const ENDPOINT = '/api/data';
   const TIMEOUT_MS = 12000;
+  const STORAGE_KEY = 'unicef_seo_months';
 
   window.UNICEF_API_DATA = null;
   window.UNICEF_API_STATE = 'loading';
@@ -40,29 +43,50 @@
     el.title = detail || '';
   }
 
+  function readUserStored() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch { return {}; }
+  }
+
   /**
-   * Inyecta el unicef_month en el dashboard llamando a applyMonthToUI con los
-   * datos del API. NO toca MONTHS ni localStorage (no son accesibles desde
-   * aqui porque estan en let-scope). El selector de meses solo mostrara los
-   * meses que ya estaban en localStorage; este loader solo actualiza los
-   * NUMEROS visibles a los del periodo del snapshot.
-   *
-   * Si el usuario abre el modal y guarda un mes manualmente, ese si va a
-   * localStorage por el flujo normal del dashboard.
+   * Inyecta el mes del API en el dashboard:
+   *   - Anade al objeto MONTHS (en memoria) si el usuario NO lo tiene en localStorage
+   *   - Refresca el dropdown con rebuildSelector
+   *   - Renderiza los KPIs con applyMonthToUI
    */
   function injectMonthFromAPI(month) {
     if (!month || !month.key) return false;
-    if (typeof window.applyMonthToUI !== 'function') {
-      console.info('[UNICEF] applyMonthToUI no disponible aun; data-loader sin efecto en KPIs');
-      return false;
+
+    const stored = readUserStored();
+    const userHasIt = !!stored[month.key];
+
+    // Anadir/actualizar en memoria (sin tocar localStorage)
+    if (window.MONTHS && typeof window.MONTHS === 'object') {
+      if (!userHasIt) {
+        window.MONTHS[month.key] = month;
+      }
+      // Activar el mes nuevo si no hay uno activo o el activo es mas viejo
+      const cur = window.ACTIVE_KEY;
+      if (!cur || cur < month.key) {
+        window.ACTIVE_KEY = month.key;
+      }
     }
-    try {
-      window.applyMonthToUI(month);
-      return true;
-    } catch (e) {
-      console.warn('[UNICEF] applyMonthToUI failed:', e);
-      return false;
+
+    // Refrescar selector
+    if (typeof window.rebuildSelector === 'function') {
+      try { window.rebuildSelector(); } catch (e) { console.warn('[UNICEF] rebuildSelector failed:', e); }
     }
+
+    // Renderizar (siempre con el mes del API, salvo que el usuario lo tenga en localStorage)
+    const toRender = userHasIt ? stored[month.key] : month;
+    if (typeof window.applyMonthToUI === 'function') {
+      try { window.applyMonthToUI(toRender); } catch (e) { console.warn('[UNICEF] applyMonthToUI failed:', e); }
+    }
+
+    console.info('[UNICEF] month injected:', month.key, '· user override:', userHasIt);
+    return true;
   }
 
   function notify(state, data, error) {
@@ -73,10 +97,8 @@
       data ? `Periodo: ${data.snapshot?.period?.label || '?'} · Gen: ${data.snapshot?.generated_at || data.generated_at || '?'}` : (error?.message || '')
     );
 
-    // Inyectar KPIs cabecera si vienen
     if (data && data.unicef_month) {
-      const injected = injectMonthFromAPI(data.unicef_month);
-      if (injected) console.info('[UNICEF] unicef_month injected:', data.unicef_month.key, data.unicef_month);
+      injectMonthFromAPI(data.unicef_month);
     }
 
     document.dispatchEvent(new CustomEvent('unicef:data-ready', {
@@ -93,7 +115,7 @@
       clearTimeout(t);
       if (!res.ok) {
         if (res.status === 404) {
-          notify('offline', null, new Error('/api/data no disponible (servido como estatico)'));
+          notify('offline', null, new Error('/api/data no disponible'));
           return;
         }
         notify('error', null, new Error(`/api/data ${res.status}`));
@@ -102,10 +124,9 @@
       const data = await res.json();
       const sources = data.sources_available || {};
       const okCount = ['snapshot', 'ahrefs', 'gsc', 'ga4'].filter(k => sources[k]).length;
-      const totalCount = 4;
-      const allReady = okCount === totalCount;
+      const allReady = okCount === 4;
       notify(allReady ? 'live' : 'partial', data);
-      console.info('[UNICEF dashboard] /api/data:', `${okCount}/${totalCount} sources ready`, data);
+      console.info('[UNICEF dashboard] /api/data:', `${okCount}/4 sources ready`, data);
     } catch (e) {
       clearTimeout(t);
       notify('error', null, e);
