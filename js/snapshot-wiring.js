@@ -195,6 +195,180 @@
     return true;
   }
 
+  // ──────────────────────────────────────────────────────
+  // Wirings de tablas HARDCODED y CHARTS
+  // ──────────────────────────────────────────────────────
+
+  /**
+   * Wire: tbody#s5-blog-tbody ← snapshot.gsc.by_section.blog.top_pages
+   * Schema target (<tr> con 3 columnas): url corta · clics · vs 2025 tag
+   */
+  function wireTopBlogUrls(snapshot) {
+    const tbody = document.getElementById('s5-blog-tbody');
+    if (!tbody) return false;
+    const pages = snapshot?.gsc?.by_section?.blog?.top_pages;
+    if (!Array.isArray(pages) || pages.length === 0) return false;
+
+    const rows = pages.slice(0, 15).map(p => {
+      const shortUrl = (p.url || '').replace(/^https?:\/\/[^/]+/, '') || '(?)';
+      const clicks = (p.clicks || 0).toLocaleString('es-ES');
+      const prev = p.clicks_prev;
+      let delta;
+      if (prev === null || prev === undefined) {
+        delta = '<span class="tag tag-up">nueva</span>';
+      } else if (prev === 0) {
+        delta = '<span class="tag tag-up">nueva</span>';
+      } else {
+        const pct = Math.round((p.clicks - prev) / prev * 100);
+        const sign = pct >= 0 ? '+' : '';
+        const cls = pct >= 0 ? 'tag-up' : 'tag-down';
+        delta = '<span class="tag ' + cls + '">' + sign + pct + '%</span>';
+      }
+      const color = (prev && p.clicks < prev) ? 'var(--u-red)' : 'var(--u-cyan-dark)';
+      return '<tr><td style="max-width:320px">' +
+        '<a href="' + (p.url || '#') + '" target="_blank" style="color:' + color + ';font-size:12px;text-decoration:none;word-break:break-all">' + shortUrl + '</a>' +
+        '</td><td style="text-align:right">' + clicks + '</td>' +
+        '<td>' + delta + '</td></tr>';
+    });
+    tbody.innerHTML = rows.join('');
+    return true;
+  }
+
+  /**
+   * Wire: tbody#s9-noticias-tbody ← snapshot.gsc.by_section.noticia.top_pages
+   * Schema target (<tr> con 5 columnas): titulo+url · clics · vs 2025 · tipo · pos media
+   */
+  function wireTopNoticias(snapshot) {
+    const tbody = document.getElementById('s9-noticias-tbody');
+    if (!tbody) return false;
+    const pages = snapshot?.gsc?.by_section?.noticia?.top_pages;
+    if (!Array.isArray(pages) || pages.length === 0) return false;
+
+    const guessType = (url) => {
+      const u = (url || '').toLowerCase();
+      if (/gaza|ucrania|siria|sudan|conflict|guerra|israel|palestina|emergencia/.test(u)) {
+        return { label: '🔴 Emergencia', bg: 'var(--u-red-light)', fg: 'var(--u-red)' };
+      }
+      if (/informe|publicacion|reporte/.test(u)) {
+        return { label: '📊 Informe', bg: 'var(--u-cyan-light)', fg: 'var(--u-cyan-dark)' };
+      }
+      return { label: '🏢 Institucional', bg: 'var(--u-gray-light)', fg: 'var(--u-gray)' };
+    };
+
+    const titleFromUrl = (url) => {
+      const last = (url || '').replace(/\/$/, '').split('/').pop() || '';
+      return last.replace(/-/g, ' ').replace(/^\w/, c => c.toUpperCase());
+    };
+
+    const rows = pages.slice(0, 8).map(p => {
+      const shortUrl = (p.url || '').replace(/^https?:\/\/[^/]+/, '');
+      const tipo = guessType(p.url);
+      const title = titleFromUrl(p.url);
+      const clicks = (p.clicks || 0).toLocaleString('es-ES');
+      const prev = p.clicks_prev;
+      let deltaHtml;
+      if (!prev) {
+        deltaHtml = '<span style="font-size:11px;font-weight:700;color:var(--u-green)">Nueva</span>';
+      } else {
+        const pct = Math.round((p.clicks - prev) / prev * 100);
+        const color = pct >= 0 ? 'var(--u-green)' : 'var(--u-red)';
+        deltaHtml = '<span style="font-size:11px;font-weight:700;color:' + color + '">' + (pct >= 0 ? '+' : '') + pct + '%</span>';
+      }
+      const pos = p.position ? p.position.toFixed(2) : '—';
+
+      return '<tr><td style="max-width:320px">' +
+        '<div style="font-size:12px;font-weight:600;color:var(--u-navy)">' + title + '</div>' +
+        '<div style="font-size:10px;margin-top:2px"><a href="' + (p.url || '#') + '" target="_blank" style="color:var(--u-cyan-dark);text-decoration:none;word-break:break-all">' + shortUrl + '</a></div>' +
+        '</td>' +
+        '<td style="text-align:right;font-family:Baikal,sans-serif;font-weight:700;font-size:14px;color:var(--u-navy)">' + clicks + '</td>' +
+        '<td style="text-align:right">' + deltaHtml + '</td>' +
+        '<td style="text-align:center"><span style="font-size:10px;padding:2px 7px;border-radius:3px;font-weight:600;background:' + tipo.bg + ';color:' + tipo.fg + '">' + tipo.label + '</span></td>' +
+        '<td style="text-align:right;font-size:11px;color:var(--u-gray)">' + pos + '</td>' +
+        '</tr>';
+    });
+    tbody.innerHTML = rows.join('');
+    return true;
+  }
+
+  /**
+   * Wire: catChart (Chart.js bar horizontal) ← snapshot.ga4.by_category_clicks
+   * Cada categoria con su % delta (Url Clicks %Δ).
+   */
+  function wireCatChart(snapshot) {
+    if (typeof window.Chart === 'undefined') return false;
+    const canvas = document.getElementById('catChart');
+    if (!canvas) return false;
+    const cats = snapshot?.ga4?.by_category_clicks;
+    if (!Array.isArray(cats) || cats.length === 0) return false;
+
+    const sorted = cats
+      .filter(c => c.url_clicks_delta !== null && c.url_clicks_delta !== undefined)
+      .map(c => ({ n: c.category, v: c.url_clicks_delta * 100 }))
+      .sort((a, b) => b.v - a.v);
+
+    if (sorted.length === 0) return false;
+
+    const chart = window.Chart.getChart(canvas);
+    if (!chart) return false;
+
+    chart.data.labels = sorted.map(c => c.n);
+    chart.data.datasets[0].data = sorted.map(c => c.v);
+    chart.data.datasets[0].backgroundColor = sorted.map(c =>
+      c.v > 0 ? 'rgba(0,182,122,.85)' : 'rgba(232,0,45,.85)'
+    );
+    chart.update('none');
+    return true;
+  }
+
+  /**
+   * Wire: sessChart (Chart.js stacked bar) ← snapshot.ga4.monthly
+   * Anade el dato de Mayo 2026 al g26 dataset (global). Las series anteriores
+   * (2023, 2024, 2025) se mantienen ya que son historicas hardcoded.
+   */
+  function wireSessChart(snapshot) {
+    if (typeof window.Chart === 'undefined') return false;
+    const canvas = document.getElementById('sessChart');
+    if (!canvas) return false;
+    const monthly = snapshot?.ga4?.monthly;
+    if (!Array.isArray(monthly) || monthly.length === 0) return false;
+    const chart = window.Chart.getChart(canvas);
+    if (!chart) return false;
+
+    // Buscar el dataset "2026 global"
+    const ds2026Global = chart.data.datasets.find(d => /2026.*🌍|2026.*global/i.test(d.label));
+    if (!ds2026Global) return false;
+
+    // Rellenar meses 2026 que tenemos en monthly history
+    const monthlyMap = Object.fromEntries(monthly.map(r => [r.key, r.sessions]));
+    for (let m = 1; m <= 12; m++) {
+      const key = '2026-' + String(m).padStart(2, '0');
+      if (monthlyMap[key] !== undefined && monthlyMap[key] !== null) {
+        ds2026Global.data[m - 1] = monthlyMap[key];
+      }
+    }
+    chart.update('none');
+    return true;
+  }
+
+  /**
+   * Wire: actualizar referencias textuales "Abril 2026" -> "Mayo 2026" (etc)
+   * en encabezados de tablas y section-headings. Evitar tocar el bandTag
+   * que ya gestiona applyMonthToUI, y los textos analiticos (sum-body).
+   */
+  function wireDateLabels(snapshot) {
+    const label = snapshot?.snapshot?.period?.label || snapshot?.period?.label;
+    if (!label) return false;
+    // Solo modificar elementos con clase 'section-heading' que contengan "Abril 2026"
+    let count = 0;
+    document.querySelectorAll('.section-heading, .slide-footer div').forEach(el => {
+      if (el.textContent && el.textContent.includes('Abril 2026')) {
+        el.innerHTML = el.innerHTML.split('Abril 2026').join(label);
+        count++;
+      }
+    });
+    return count > 0;
+  }
+
   /**
    * Aplica TODO el wiring del snapshot. Cada uno aislado en try/catch.
    */
@@ -202,10 +376,15 @@
     if (!data) return;
     const results = {};
     const wirings = [
-      ['paises',    () => wirePaises(data)],
-      ['ia_kw',     () => wireIAKeywords(data)],
-      ['calendar',  () => wireDiasCalendar(data)],
-      ['one_search', () => wireOneSearchKeywords(data)]
+      ['paises',      () => wirePaises(data)],
+      ['ia_kw',       () => wireIAKeywords(data)],
+      ['calendar',    () => wireDiasCalendar(data)],
+      ['one_search',  () => wireOneSearchKeywords(data)],
+      ['top_blog',    () => wireTopBlogUrls(data)],
+      ['top_noticia', () => wireTopNoticias(data)],
+      ['cat_chart',   () => wireCatChart(data)],
+      ['sess_chart',  () => wireSessChart(data)],
+      ['date_labels', () => wireDateLabels(data)]
     ];
     for (const [name, fn] of wirings) {
       try { results[name] = fn(); }
@@ -228,23 +407,20 @@
       const okCount = Object.values(results).filter(Boolean).length;
       const totalCount = Object.values(results).length;
       const period = data.snapshot?.period?.label || data.unicef_month?.label || '?';
+      const summary = Object.entries(results)
+        .map(([k, v]) => k + ':' + (v ? 'OK' : 'KO'))
+        .join(' · ');
       banner.innerHTML =
         '<div style="position:fixed;top:10px;left:50%;transform:translateX(-50%);' +
         'background:linear-gradient(90deg,#0CC0DF 0%,#003F7D 100%);color:#fff;' +
         'padding:14px 28px;border-radius:8px;box-shadow:0 8px 32px rgba(0,63,125,.4);' +
         'z-index:99999;font-family:Baikal,Roboto,sans-serif;font-weight:600;' +
         'font-size:14px;letter-spacing:.3px;border:2px solid #fff;' +
-        'display:flex;align-items:center;gap:14px">' +
+        'display:flex;align-items:center;gap:14px;max-width:90vw">' +
         '<span style="font-size:22px">✓</span>' +
         '<div>' +
-          '<div style="font-size:16px;font-weight:800;letter-spacing:.5px">DATOS API CARGADOS: ' + period + '</div>' +
-          '<div style="font-size:11px;opacity:.9;margin-top:3px">' +
-            'Wirings OK: ' + okCount + '/' + totalCount + ' · ' +
-            'Paises: ' + (results.paises ? 'OK' : 'KO') + ' · ' +
-            'IA kw: ' + (results.ia_kw ? 'OK' : 'KO') + ' · ' +
-            'Calendario: ' + (results.calendar ? 'OK' : 'KO') + ' · ' +
-            'One Search: ' + (results.one_search ? 'OK' : 'KO') +
-          '</div>' +
+          '<div style="font-size:16px;font-weight:800;letter-spacing:.5px">DATOS ACTUALIZADOS A ' + period + '</div>' +
+          '<div style="font-size:10px;opacity:.9;margin-top:3px">Wirings ' + okCount + '/' + totalCount + ' OK · ' + summary + '</div>' +
         '</div>' +
         '<button onclick="document.getElementById(\'unicef-debug-banner\').remove()" ' +
           'style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);' +
