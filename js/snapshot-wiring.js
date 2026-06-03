@@ -469,9 +469,37 @@
   }
 
   /**
+   * Hook a applyMonthToUI del dashboard. Cuando el usuario cambia de mes en
+   * el dropdown, switchMonth llama a applyMonthToUI(MONTHS[key]). Tras esa
+   * llamada, re-ejecutamos nuestro wireS1KpiStrip CON LOS DATOS DEL SNAPSHOT
+   * para garantizar que la cabecera siempre muestre Mayo 2026.
+   *
+   * (Si en el futuro queremos comportamiento por mes, aqui filtraremos.)
+   */
+  function installApplyMonthHook() {
+    if (window._UNICEF_APPLY_MONTH_HOOKED) return;
+    const original = window.applyMonthToUI;
+    if (typeof original !== 'function') {
+      console.warn('[UNICEF] applyMonthToUI no existe aun, no instalo hook');
+      return;
+    }
+    window.applyMonthToUI = function(m) {
+      try { original.call(this, m); }
+      catch (e) { console.warn('[UNICEF] original applyMonthToUI failed:', e); }
+      // Tras render del dashboard, re-aplicar nuestras wirings
+      if (window.UNICEF_API_DATA) {
+        try { wireS1KpiStrip(window.UNICEF_API_DATA); } catch (e) {}
+      }
+    };
+    window._UNICEF_APPLY_MONTH_HOOKED = true;
+    console.info('[UNICEF] hook applyMonthToUI instalado');
+  }
+
+  /**
    * Aplica TODO el wiring del snapshot. Cada uno aislado en try/catch.
    */
   window.applySnapshotWiring = function applySnapshotWiring(data) {
+    installApplyMonthHook();
     if (!data) return;
     const results = {};
     const wirings = [

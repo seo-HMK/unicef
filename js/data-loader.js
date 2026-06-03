@@ -54,27 +54,36 @@
     el.title = detail || '';
   }
 
-  function readUserStored() {
+  /**
+   * BORRA del localStorage el mes que esta sirviendo el snapshot.
+   * Si el usuario tenia un valor stale guardado (de versiones anteriores con
+   * bugs), lo limpiamos para que la API siempre gane para ese periodo.
+   * Otros meses (ej. ediciones manuales de Abril) se conservan.
+   */
+  function purgeStaleSnapshotMonth(month) {
+    if (!month || !month.key) return;
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : {};
-    } catch { return {}; }
+      if (!raw) return;
+      const stored = JSON.parse(raw);
+      if (stored[month.key]) {
+        delete stored[month.key];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+        console.info('[UNICEF] Limpiado localStorage["' + month.key + '"] (sera reemplazado por snapshot)');
+      }
+    } catch (e) { /* noop */ }
   }
 
   function injectMonthFromAPI(month) {
     if (!month || !month.key) return false;
 
-    const stored = readUserStored();
-    const userHasIt = !!stored[month.key];
+    // FORZAR la prioridad del snapshot: borrar cualquier override stale
+    purgeStaleSnapshotMonth(month);
 
     if (window.MONTHS && typeof window.MONTHS === 'object') {
-      if (!userHasIt) {
-        window.MONTHS[month.key] = month;
-      }
-      const cur = window.ACTIVE_KEY;
-      if (!cur || cur < month.key) {
-        window.ACTIVE_KEY = month.key;
-      }
+      // SIEMPRE sobrescribir con snapshot (no respetar localStorage para este mes)
+      window.MONTHS[month.key] = month;
+      window.ACTIVE_KEY = month.key;
     } else {
       console.warn('[UNICEF] window.MONTHS no accesible — el HTML deployado puede tener cache vieja');
     }
@@ -83,11 +92,10 @@
       try { window.rebuildSelector(); } catch (e) { console.warn('[UNICEF] rebuildSelector failed:', e); }
     }
 
-    const toRender = userHasIt ? stored[month.key] : month;
     if (typeof window.applyMonthToUI === 'function') {
       try {
-        window.applyMonthToUI(toRender);
-        console.info('[UNICEF] applyMonthToUI con', month.key, '· user override:', userHasIt);
+        window.applyMonthToUI(month);
+        console.info('[UNICEF] applyMonthToUI con', month.key, '(snapshot)');
       } catch (e) {
         console.warn('[UNICEF] applyMonthToUI failed:', e);
       }
@@ -142,7 +150,9 @@
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
     try {
-      const res = await fetch(ENDPOINT, { signal: ctrl.signal });
+      // Cache-busting: query param para saltar caches intermedias (CDN, proxy corp)
+      const cacheBust = ENDPOINT + '?_=' + Date.now();
+      const res = await fetch(cacheBust, { signal: ctrl.signal, cache: 'no-store' });
       clearTimeout(t);
       if (!res.ok) {
         if (res.status === 404) {
