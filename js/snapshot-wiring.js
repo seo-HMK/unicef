@@ -200,6 +200,105 @@
   // ──────────────────────────────────────────────────────
 
   /**
+   * Wire: s1 KPI strip — los 4 cells grandes que el usuario ve nada mas cargar.
+   * Esos cells NO tienen clases (kpi-strip/kpi-cell), solo estilos inline,
+   * por eso applyMonthToUI no los modifica.
+   *
+   * Estructura de cada cell (4 cells, en orden):
+   *   children[0] = titulo
+   *   children[1] = numero grande (delta % o conteo)
+   *   children[2] = valor vs previous
+   *   children[3] = footer global / contexto
+   */
+  function wireS1KpiStrip(snapshot) {
+    const sec = document.getElementById('s1');
+    if (!sec) return false;
+    // El strip es el div grid con 4 columnas justo despues del header
+    const strip = sec.querySelector('div[style*="grid-template-columns:repeat(4,1fr)"]');
+    if (!strip) return false;
+    const cells = strip.children;
+    if (cells.length < 4) return false;
+
+    const fmtNum = (n) => n === null || n === undefined ? '—' : n.toLocaleString('es-ES');
+    const fmtBig = (n) => {
+      if (n === null || n === undefined) return '—';
+      if (Math.abs(n) >= 1e6) return (n / 1e6).toFixed(2).replace('.', ',') + 'M';
+      if (Math.abs(n) >= 1e3) return (n / 1e3).toFixed(2).replace('.', ',') + 'K';
+      return n.toLocaleString('es-ES');
+    };
+    const pct = (a, b) => (a !== null && b) ? ((a - b) / b * 100) : null;
+    const fmtPct = (p) => p === null ? '—' : (p >= 0 ? '+' : '') + p.toFixed(1).replace('.', ',') + '%';
+    const colorPct = (p, inverse) => {
+      if (p === null) return 'var(--u-gray)';
+      const good = inverse ? (p < 0) : (p >= 0);
+      return good ? 'var(--u-green)' : 'var(--u-red)';
+    };
+
+    // Datos snapshot
+    const spainKpi = snapshot?.gsc?.spain?.kpi || {};
+    const topCountries = snapshot?.gsc?.global?.top_countries || [];
+    const ia = snapshot?.unicef_month?.ia ?? snapshot?.ahrefs_positions?.keywords_with_ai_overview;
+    const ga4 = snapshot?.ga4?.kpi || {};
+
+    // Calcular global como suma de top countries
+    const globalClicks = topCountries.reduce((s, c) => s + (c.clicks || 0), 0);
+    const globalClicksPrev = topCountries.reduce((s, c) => s + (c.clicks_prev || 0), 0);
+    const globalImpr = topCountries.reduce((s, c) => s + (c.impressions || 0), 0);
+
+    const periodLabel = snapshot?.snapshot?.period?.label || snapshot?.unicef_month?.label || '';
+    const comparisonLabel = snapshot?.snapshot?.comparison?.label || '';
+    const vsLabel = comparisonLabel ? ' (' + comparisonLabel + ')' : '';
+
+    // Helper: actualizar el cell
+    function updateCell(cell, { titleHtml, bigText, bigColor, valueHtml, footerHtml }) {
+      if (cell.children.length < 4) return;
+      if (titleHtml)  cell.children[0].innerHTML = titleHtml;
+      if (bigText)    cell.children[1].textContent = bigText;
+      if (bigColor)   cell.children[1].style.color = bigColor;
+      if (valueHtml)  cell.children[2].innerHTML = valueHtml;
+      if (footerHtml) cell.children[3].innerHTML = footerHtml;
+    }
+
+    // ── Cell 1: Clics España ──
+    const clicksDelta = pct(spainKpi.clicks, spainKpi.clicks_prev);
+    const globalClicksDelta = pct(globalClicks, globalClicksPrev);
+    updateCell(cells[0], {
+      bigText: fmtPct(clicksDelta),
+      bigColor: colorPct(clicksDelta),
+      valueHtml: fmtNum(spainKpi.clicks) + ' <span style="font-size:11px;font-weight:400;color:var(--u-gray)">vs ' + fmtNum(spainKpi.clicks_prev) + vsLabel + '</span>',
+      footerHtml: 'Global: <span style="color:' + colorPct(globalClicksDelta) + ';font-weight:600">' + fmtPct(globalClicksDelta) + '</span> · ' + fmtNum(globalClicks) + ' vs ' + fmtNum(globalClicksPrev)
+    });
+
+    // ── Cell 2: Impresiones España ──
+    const imprDelta = pct(spainKpi.impressions, spainKpi.impressions_prev);
+    updateCell(cells[1], {
+      bigText: fmtPct(imprDelta),
+      bigColor: colorPct(imprDelta),
+      valueHtml: fmtBig(spainKpi.impressions) + ' <span style="font-size:11px;font-weight:400;color:var(--u-gray)">vs ' + fmtBig(spainKpi.impressions_prev) + vsLabel + '</span>',
+      footerHtml: 'Global: <span style="color:var(--u-gray);font-weight:600">' + fmtBig(globalImpr) + '</span> imp · top ' + topCountries.length + ' paises'
+    });
+
+    // ── Cell 3: Sesiones GA4 ──
+    const sessDelta = pct(ga4.sessions, ga4.sessions_yoy);
+    updateCell(cells[2], {
+      bigText: fmtPct(sessDelta),
+      bigColor: colorPct(sessDelta),
+      valueHtml: fmtNum(ga4.sessions) + ' <span style="font-size:11px;font-weight:400;color:var(--u-gray)">vs ' + fmtNum(ga4.sessions_yoy) + vsLabel + '</span>',
+      footerHtml: 'Periodo: <span style="font-weight:600;color:var(--u-navy)">' + periodLabel + '</span> · YoY'
+    });
+
+    // ── Cell 4: Keywords en IA Overview ──
+    updateCell(cells[3], {
+      bigText: ia !== null && ia !== undefined ? ia.toLocaleString('es-ES') : '—',
+      bigColor: 'var(--u-navy)',
+      valueHtml: '<strong>Mayo 2026</strong>',
+      footerHtml: 'CTR España: <span style="font-weight:600;color:var(--u-navy)">' + (spainKpi.ctr ? spainKpi.ctr.toFixed(2).replace('.', ',') + '%' : '—') + '</span> · Posición: ' + (spainKpi.position ? spainKpi.position.toFixed(2).replace('.', ',') : '—')
+    });
+
+    return true;
+  }
+
+  /**
    * Wire: tbody#s5-blog-tbody ← snapshot.gsc.by_section.blog.top_pages
    * Schema target (<tr> con 3 columnas): url corta · clics · vs 2025 tag
    */
@@ -376,6 +475,7 @@
     if (!data) return;
     const results = {};
     const wirings = [
+      ['s1_kpi',      () => wireS1KpiStrip(data)],
       ['paises',      () => wirePaises(data)],
       ['ia_kw',       () => wireIAKeywords(data)],
       ['calendar',    () => wireDiasCalendar(data)],
