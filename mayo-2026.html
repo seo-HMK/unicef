@@ -424,7 +424,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
   <div class="section-pad" style="padding-top:24px">
     <div class="two-col">
       <div>
-                <div class="section-heading">Tops &amp; Flops — España · Abril 2026 vs Abril 2025</div>
+                <div class="section-heading">Tops &amp; Flops — España · Mayo 2026 vs Mayo 2025</div>
         <table class="data-table">
           <thead><tr><th>Página</th><th style="text-align:right">Clics</th><th>vs abr 2025</th></tr></thead>
           <tbody>
@@ -466,7 +466,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
   </div>
 
   <div class="section-pad" style="padding-top:24px" id="s1-sist">
-    <div class="section-heading">Índice de visibilidad en España SISTRIX — unicef.es</div>
+    <div class="section-heading">Índice de visibilidad en España SISTRIX — unicef.es <span style='font-size:9px;background:rgba(0,63,125,.15);padding:1px 6px;border-radius:3px;margin-left:4px;font-weight:400'>último dato 4 may</span></div>
     <!-- SISTRIX KPI row: last 4 weeks -->
     <div style="background:#f8f9fb;border:1px solid var(--u-border);border-left:3px solid var(--u-navy);border-radius:0 6px 6px 0;padding:12px 16px;margin-bottom:16px;font-size:11.5px;color:#444;line-height:1.75">
       El <strong>índice de visibilidad SISTRIX</strong> es una métrica propietaria que estima cuánto tráfico orgánico potencial tiene un dominio en Google, ponderando el volumen de búsqueda de cada keyword por la posición media en la que aparece y la CTR esperada para esa posición. Se actualiza semanalmente rastreando millones de palabras clave en el mercado español. <strong>Un índice más alto indica que el dominio rankea para más keywords de alto volumen y en mejores posiciones.</strong> Es especialmente útil como indicador de tendencia a largo plazo — más fiable que los clics mensuales para detectar si la autoridad del dominio sube o baja estructuralmente, independientemente de la estacionalidad.
@@ -531,7 +531,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
 
       <!-- Top 10 países tabla — mitad pantalla -->
       <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;overflow:hidden;display:flex;flex-direction:column">
-        <div style="padding:8px 14px;background:var(--u-gray-light);border-bottom:1px solid var(--u-border);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--u-navy)">Clics por país — Abril 2026 · Top 10</div>
+        <div style="padding:8px 14px;background:var(--u-gray-light);border-bottom:1px solid var(--u-border);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--u-navy)">Clics por país — Mayo 2026 · Top 10</div>
         <table style="width:100%;border-collapse:collapse;font-size:11px;flex:1">
           <thead><tr style="background:var(--u-gray-light)">
             <th style="padding:5px 8px;text-align:left;width:24px;color:var(--u-gray);font-weight:600">#</th>
@@ -547,7 +547,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
 
       <!-- España diario -->
       <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column">
-        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:11px;color:var(--u-navy);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">🇪🇸 Clics diarios España — Abril 2026</div>
+        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:11px;color:var(--u-navy);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">🇪🇸 Clics diarios España — Abril 2026 <span style='font-size:9px;background:rgba(0,63,125,.15);padding:1px 6px;border-radius:3px;margin-left:4px'>ref. - falta export Mayo daily</span></div>
         <div style="flex:1;min-height:0"><canvas id="spainDaily" style="width:100%;height:100%"></canvas></div>
         <div style="margin-top:8px;font-size:10px;color:var(--u-gray);line-height:1.5;padding:6px 8px;background:var(--u-cyan-light);border-left:2px solid var(--u-cyan);border-radius:0 3px 3px 0">Pico día 13 (lunes) con 1.487 cl. Lunes y martes concentran el máximo tráfico.</div>
       </div>
@@ -556,7 +556,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
   </div>
 
 
-  <div class="slide-footer"><div>Fuentes: <strong>Google Search Console &amp; GA4</strong> · 1–30 Abril 2026</div><div>Slide 1 / 8</div></div>
+  <div class="slide-footer"><div>Fuentes: <strong>Google Search Console &amp; GA4</strong> · 1-31 Mayo 2026</div><div>Slide 1 / 8</div></div>
 </div>
 
 <!-- ══════════════════════════════════════
@@ -2222,11 +2222,11 @@ function setupCrosshair(){
 
 // Datos base de Abril 2026 (seed por defecto)
 const SEED_MONTH = {
-  key:'2026-04', label:'Abril 2026',
-  clicks:103870, clicksPrev:113992,
-  impr:10191466, imprPrev:9341720,
-  sess:171978,   sessPrev:181091,
-  ia:1078,
+  key:'2026-05', label:'Mayo 2026',
+  clicks:101081, clicksPrev:129703,
+  impr:9751232,  imprPrev:9900607,
+  sess:85825,    sessPrev:215049,
+  ia:1311,
   sist:{main:5.7146,blog:2.4523,causas:1.0333,educa:0.5656,noticia:0.6816}
 };
 
@@ -2661,16 +2661,16 @@ function buildNoticiasDaily(){
 
 // ── PAÍSES ABRIL 2026 — fuente: Google Search Console __3_ + GA4 Tabla__1_.csv ──
 const PAISES_APR=[
-  {p:'España',        f:'🇪🇸', c:31175, pct:+0.6,  sess:81297,  sessPct:+8.8},
-  {p:'México',        f:'🇲🇽', c:22401, pct:-2.3,  sess:27618,  sessPct:-3.0},
-  {p:'Perú',          f:'🇵🇪', c:8814,  pct:-30.5, sess:10881,  sessPct:-33.6},
-  {p:'Argentina',     f:'🇦🇷', c:7100,  pct:-1.4,  sess:8493,   sessPct:-6.2},
-  {p:'Colombia',      f:'🇨🇴', c:6392,  pct:-27.0, sess:8056,   sessPct:-32.1},
-  {p:'Guatemala',     f:'🇬🇹', c:6000,  pct:-12.9, sess:6032,   sessPct:-17.4},
-  {p:'Chile',         f:'🇨🇱', c:3747,  pct:-9.5,  sess:5173,   sessPct:-10.4},
-  {p:'Venezuela',     f:'🇻🇪', c:3505,  pct:-2.6,  sess:3021,   sessPct:-11.7},
-  {p:'Ecuador',       f:'🇪🇨', c:2410,  pct:-31.8, sess:3067,   sessPct:-32.7},
-  {p:'Bolivia',       f:'🇧🇴', c:1647,  pct:-38.6, sess:1583,   sessPct:-43.0}
+  {p:'España',        f:'🇪🇸', c:30616, pct:-14.3, sess:81297,  sessPct:+8.8},
+  {p:'México',        f:'🇲🇽', c:22760, pct:-16.5, sess:27618,  sessPct:-3.0},
+  {p:'Perú',          f:'🇵🇪', c:7218,  pct:-34.0, sess:10881,  sessPct:-33.6},
+  {p:'Argentina',     f:'🇦🇷', c:5927,  pct:-35.0, sess:8493,   sessPct:-6.2},
+  {p:'Colombia',      f:'🇨🇴', c:5721,  pct:-34.6, sess:8056,   sessPct:-32.1},
+  {p:'Guatemala',     f:'🇬🇹', c:5610,  pct:-29.0, sess:6032,   sessPct:-17.4},
+  {p:'Ecuador',       f:'🇪🇨', c:4566,  pct:-31.1, sess:3067,   sessPct:-32.7},
+  {p:'Venezuela',     f:'🇻🇪', c:3747,  pct:-20.8, sess:3021,   sessPct:-11.7},
+  {p:'Chile',         f:'🇨🇱', c:3352,  pct:-21.0, sess:5173,   sessPct:-10.4},
+  {p:'Bolivia',       f:'🇧🇴', c:1472,  pct:-34.9, sess:1583,   sessPct:-43.0}
 ];
 function renderPaises(){
   const tbody=document.getElementById('paises-tbody');
