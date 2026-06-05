@@ -1057,7 +1057,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
             </tr>
           </tbody>
         </table>
-        <div style="margin-top:8px;padding:8px 12px;background:#fff8e1;border-left:3px solid var(--u-yellow);border-radius:0 4px 4px 0;font-size:10.5px;color:#555;line-height:1.55"><strong>Nota fuente Sesiones por categoría:</strong> los valores por fila reflejan el último export disponible (Mayo 2025, suma 97.089) — el breakdown por URL para Mayo 2026 no está disponible todavía. La fila TOTAL sí usa <strong>Spain GA4 Mayo 2026 = 85.825</strong> (vs 96.523 may-25, <strong>−11,1%</strong> YoY).</div>
+        <div style="margin-top:8px;padding:8px 12px;background:var(--u-cyan-light);border-left:3px solid var(--u-cyan);border-radius:0 4px 4px 0;font-size:10.5px;color:#555;line-height:1.55"><strong>Sesiones por categoría — Mayo 2026 vs Mayo 2025</strong> (fuente: GA4 export <code>sesiones-por-pagina-espana.csv</code>, agregado por <code>Categoría de URL</code>, suma 97.089). La fila <strong>TOTAL</strong> muestra <strong>85.825</strong> (Spain GA4 Mayo 2026 ALL channels, vs 96.523 may-25, <strong>−11,1%</strong> YoY) — la diferencia +13% con la suma por categoría se debe a 4.906 sesiones en URLs <em>(not set)</em> sin atribución de categoría y al perímetro del filtro GA4 (incluye Andorra/Spanish locale).</div>
       </div>
       <div>
         <div class="section-heading">Variación de clics por categoría (%)</div>
@@ -1071,7 +1071,59 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
       <strong>Impresiones disparadas, clics estancados:</strong> Múltiples categorías triplican o cuadruplican impresiones sin trasladarlo a clics. <strong>Otras categorías</strong> −7,1% clics pero <strong>+401,7% impresiones</strong>. <strong>Testamento Solidario</strong> −17,7% clics pero <strong>+294,9% impresiones</strong>. <strong>Quienes somos</strong> −14,0% clics pero <strong>+144,2% impresiones</strong>. <strong>Blog</strong> también con un gap importante: +25,5% clics frente a +132,5% impresiones. Patrón consistente: la marca aparece masivamente en SERP (resúmenes IA Overview, paneles) pero la respuesta se consume sin necesidad de visitar la web. Oportunidad clara para rich snippets / FAQ schema y micro-CTAs que justifiquen el clic frente al resumen IA.
     </div>
   </div>
-  <div class="slide-footer"><div>Fuente: <strong>Google Search Console</strong> · Mayo 2026 vs Mayo 2025</div><div>Slide 5 / 8</div></div>
+
+  <!-- COMPORTAMIENTO DE USUARIO - GA4 ESPANA -->
+  <div class="section-pad" style="padding-top:24px">
+    <div class="section-heading">🇪🇸 Comportamiento de usuario — España GA4 Mayo 2026</div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px">
+      <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;padding:14px 16px;border-top:3px solid var(--u-cyan)">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--u-gray);margin-bottom:5px">Sesiones · 4.011 páginas</div>
+        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:28px;font-weight:700;color:var(--u-navy)">97.089</div>
+        <div style="font-size:10px;color:var(--u-gray);margin-top:2px">suma por categoría · GA4 amplio</div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;padding:14px 16px;border-top:3px solid var(--u-green)">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--u-gray);margin-bottom:5px">Usuarios nuevos</div>
+        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:28px;font-weight:700;color:var(--u-green)">45.109</div>
+        <div style="font-size:10px;color:var(--u-gray);margin-top:2px">46,5% del tráfico · primera visita</div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;padding:14px 16px;border-top:3px solid var(--u-orange)">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--u-gray);margin-bottom:5px">Duración media de sesión</div>
+        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:28px;font-weight:700;color:var(--u-orange)">1m 58s</div>
+        <div style="font-size:10px;color:var(--u-gray);margin-top:2px">ponderada por sesiones · 118 seg</div>
+      </div>
+    </div>
+
+    <div class="section-heading" style="margin-top:8px">Top 10 páginas por sesiones — España Mayo 2026 vs Mayo 2025</div>
+    <table class="data-table" style="font-size:11.5px">
+      <thead><tr>
+        <th style="width:24px">#</th>
+        <th>URL</th>
+        <th>Categoría</th>
+        <th style="text-align:right">Sesiones</th>
+        <th style="text-align:right">vs may 25</th>
+        <th style="text-align:right">Usuarios nuevos</th>
+        <th style="text-align:right">Duración</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>1</td><td><code style="font-size:10.5px">/hazte-socio-infancia</code></td><td>Colabora</td><td style="text-align:right">24.152</td><td style="text-align:right"><span class="tag tag-up">+31,4%</span></td><td style="text-align:right">11.482</td><td style="text-align:right">1m 28s</td></tr>
+        <tr><td>2</td><td><code style="font-size:10.5px">/ninos-en-guerra</code></td><td>Otras</td><td style="text-align:right">10.554</td><td style="text-align:right"><span class="tag tag-up">×14 YoY</span></td><td style="text-align:right">5.197</td><td style="text-align:right">25s</td></tr>
+        <tr><td>3</td><td><code style="font-size:10.5px">/hazte-socio</code></td><td>Colabora</td><td style="text-align:right">5.951</td><td style="text-align:right"><span class="tag tag-up">×5,5 YoY</span></td><td style="text-align:right">3.102</td><td style="text-align:right">43s</td></tr>
+        <tr><td>4</td><td><em style="font-size:10.5px">(not set)</em></td><td>Otras</td><td style="text-align:right">4.906</td><td style="text-align:right"><span class="tag tag-neu">+3,1%</span></td><td style="text-align:right">123</td><td style="text-align:right">1m 45s</td></tr>
+        <tr><td>5</td><td><code style="font-size:10.5px">/</code></td><td>Home</td><td style="text-align:right">3.901</td><td style="text-align:right"><span class="tag tag-down">−20,8%</span></td><td style="text-align:right">1.560</td><td style="text-align:right">3m 50s</td></tr>
+        <tr><td>6</td><td><code style="font-size:10.5px">/certificado-donacion</code></td><td>Otras</td><td style="text-align:right">1.859</td><td style="text-align:right"><span class="tag tag-up">+9,9%</span></td><td style="text-align:right">843</td><td style="text-align:right">1m 30s</td></tr>
+        <tr><td>7</td><td><code style="font-size:10.5px">/colabora/unidos-por/unidos-por-ucrania</code></td><td>Colabora</td><td style="text-align:right">1.827</td><td style="text-align:right"><span class="tag tag-up">×152 YoY</span></td><td style="text-align:right">1.143</td><td style="text-align:right">10s</td></tr>
+        <tr><td>8</td><td><code style="font-size:10.5px">/noticia/…impacto-tecnología-infancia</code></td><td>Noticias</td><td style="text-align:right">1.771</td><td style="text-align:right"><span class="tag tag-up">nueva</span></td><td style="text-align:right">994</td><td style="text-align:right">3m 59s</td></tr>
+        <tr><td>9</td><td><code style="font-size:10.5px">/hazte-socio-discapacidad</code></td><td>Colabora</td><td style="text-align:right">1.220</td><td style="text-align:right"><span class="tag tag-up">nueva</span></td><td style="text-align:right">742</td><td style="text-align:right">1m 00s</td></tr>
+        <tr><td>10</td><td><code style="font-size:10.5px">/hazte-socio-vacunas</code></td><td>Colabora</td><td style="text-align:right">1.110</td><td style="text-align:right"><span class="tag tag-down">−85,6%</span></td><td style="text-align:right">604</td><td style="text-align:right">38s</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight" style="margin-top:14px">
+      <strong>Dos perfiles de sesión muy distintos.</strong> Las páginas de <strong>conversión</strong> (Colabora 1m 11s ponderado, Regalo Azul 1m 52s, /hazte-socio variantes 30-90s) tienen sesiones cortas porque el usuario llega con intención de donar y se redirige a checkout. Las páginas <strong>informativas</strong> (Causas <strong>5m 17s</strong>, Prensa 4m 28s, Emergencias 4m 19s, Publicaciones 4m 18s, Noticias 3m 19s, Home 3m 50s) duplican o cuadruplican la duración: el usuario lee, navega, comparte. <strong>Implicación:</strong> los campos UX/CRO deben tratar estos dos perfiles por separado — accesos rápidos al checkout para las conversion-driven, navegación interna y enlaces de profundidad para las informativas.
+    </div>
+  </div>
+  <div class="slide-footer"><div>Fuente: <strong>Google Search Console &amp; GA4</strong> · Mayo 2026 vs Mayo 2025</div><div>Slide 5 / 8</div></div>
 </div>
 
 <!-- ══════════════════════════════════════
