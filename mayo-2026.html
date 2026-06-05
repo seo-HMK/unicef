@@ -2264,18 +2264,11 @@ function saveToStorage(){
   try{ localStorage.setItem('unicef_seo_months', JSON.stringify(MONTHS)); }catch(e){}
 }
 function loadFromStorage(){
-  try{
-    const raw = localStorage.getItem('unicef_seo_months');
-    if(raw){ MONTHS = JSON.parse(raw); }
-  }catch(e){}
-  // Migrate: if stored abril 2026 has old wrong sessions (21473), overwrite with correct data
-  if(MONTHS['2026-04'] && MONTHS['2026-04'].sess < 100000){
-    MONTHS['2026-04'] = SEED_MONTH;
-  }
-  if(!Object.keys(MONTHS).length){
-    MONTHS[SEED_MONTH.key] = SEED_MONTH;
-  }
-  saveToStorage();
+  // Cada archivo HTML representa un mes específico (Mayo 2026 = mayo-2026.html).
+  // Ignoramos localStorage para evitar que datos persistidos de meses anteriores
+  // sobreescriban el contenido estático de este informe.
+  MONTHS = {};
+  MONTHS[SEED_MONTH.key] = SEED_MONTH;
 }
 
 // ── Selector ──
@@ -2295,66 +2288,18 @@ function switchMonth(key){
 }
 
 function applyMonthToUI(m){
-  // Update band tag
+  // ══════════════════════════════════════════════════════════════════
+  // Esta función se conserva como no-op por compatibilidad con el
+  // selector de mes y el modal. Cada archivo HTML del informe es un
+  // snapshot estático de un mes concreto (mayo-2026.html, junio-2026.html…)
+  // y todo el contenido visible (KPIs, h1, sum-bodies, fechas de slide)
+  // está hardcodeado con los datos de ese mes verificados contra CSV.
+  // Las re-escrituras dinámicas previas estaban heredadas del Abril
+  // dashboard y sobreescribían contenido correcto con texto genérico
+  // o (peor) con datos del mes anterior cacheados en localStorage.
+  // ══════════════════════════════════════════════════════════════════
   const tag = document.getElementById('bandTag');
   if(tag) tag.textContent = 'Informe '+m.label;
-
-  // Helper: delta %
-  const pct = (a,b) => b ? ((a-b)/b*100) : 0;
-  const fmt = n => Math.abs(n)>=1000000 ? (n/1000000).toFixed(1)+'M' : Math.abs(n)>=1000 ? (n/1000).toFixed(0)+'K' : n.toLocaleString('es-ES');
-  const sign = n => n>=0?'+':'';
-  const colorPct = (n,pos) => {
-    const good = pos ? n>=0 : n<0;
-    return `color:${good?'var(--u-green)':'var(--u-red)'}`;
-  };
-
-  // ── SLIDE 1: KPI Strip ──
-  const clicksDelta = pct(m.clicks, m.clicksPrev);
-  const imprDelta   = pct(m.impr,   m.imprPrev);
-  const sessDelta   = pct(m.sess,   m.sessPrev);
-
-  const strip = document.querySelector('.kpi-strip');
-  if(strip){
-    const cells = strip.querySelectorAll('.kpi-cell');
-    if(cells[0]){
-      cells[0].querySelector('.kpi-big').textContent = sign(clicksDelta)+clicksDelta.toFixed(1)+'%';
-      cells[0].querySelector('.kpi-big').style.color = clicksDelta<0?'var(--u-red)':'var(--u-green)';
-      cells[0].querySelector('.kpi-sub').innerHTML = fmt(m.clicks)+' <strong>vs '+fmt(m.clicksPrev)+'</strong>';
-    }
-    if(cells[1]){
-      cells[1].querySelector('.kpi-big').textContent = sign(imprDelta)+imprDelta.toFixed(1)+'%';
-      cells[1].querySelector('.kpi-big').style.color = imprDelta>=0?'var(--u-green)':'var(--u-red)';
-      cells[1].querySelector('.kpi-sub').innerHTML = fmt(m.impr)+' <strong>vs '+fmt(m.imprPrev)+'</strong>';
-    }
-    if(cells[2]){
-      cells[2].querySelector('.kpi-big').textContent = sign(sessDelta)+sessDelta.toFixed(1)+'%';
-      cells[2].querySelector('.kpi-big').style.cssText += ';color:'+(sessDelta<0?'var(--u-red)':'var(--u-green)');
-      cells[2].querySelector('.kpi-sub').innerHTML = m.sess.toLocaleString('es-ES')+' <strong>vs '+m.sessPrev.toLocaleString('es-ES')+'</strong>';
-    }
-    if(cells[5]){
-      cells[5].querySelector('.kpi-big').textContent = m.ia.toLocaleString('es-ES');
-    }
-  }
-
-  // ── Slide 1 header title ──
-  const s1header = document.querySelector('#s1 h1');
-  if(s1header) s1header.innerHTML = 'Canal orgánico · <span style="color:var(--u-cyan)">' + m.label + '</span><br>Google Search Console, GA4 y Visibilidad';
-
-  // ── SISTRIX KPI cards ──
-  if(m.sist && window.buildSistrix) buildSistrix(m.sist);
-
-  // ── Evolution chart: update titles/labels ──
-  const s4header = document.querySelector('#s4 h1');
-  if(s4header) s4header.innerHTML = 'Clics Google Search Console en <span style="color:var(--u-cyan)">descenso gradual</span>;<br>sesiones GA4 — histórico hasta '+m.label;
-
-  // ── Summary slide 7 ──
-  const sumBodies = document.querySelectorAll('#s7 .sum-body');
-  if(sumBodies[0]) sumBodies[0].innerHTML = 'Los clics Google Search Console registran <strong>'+fmt(m.clicks)+'</strong> vs <strong>'+fmt(m.clicksPrev)+'</strong> del mismo mes del año anterior (<strong>'+sign(clicksDelta)+clicksDelta.toFixed(1)+'%</strong>). Las impresiones ' + (imprDelta>=0?'suben':'bajan') + ' un <strong>'+sign(imprDelta)+imprDelta.toFixed(1)+'%</strong>. Las sesiones GA4 cierran en <strong>'+m.sess.toLocaleString('es-ES')+'</strong> ('+sign(sessDelta)+sessDelta.toFixed(1)+'% interanual).';
-
-  // ── Slide header dates (all slides) ──
-  document.querySelectorAll('.slide-date, [class*="slide-date"]').forEach(el=>{
-    if(el.innerHTML.includes('Abril 2026')) el.innerHTML = el.innerHTML.replace(/Abril 2026/g, m.label);
-  });
 }
 
 // ── Modal logic ──
