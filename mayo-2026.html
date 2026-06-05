@@ -542,8 +542,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
             <th style="padding:5px 8px;text-align:left;color:var(--u-gray);font-weight:600">País</th>
             <th style="padding:5px 10px;text-align:right;color:var(--u-gray);font-weight:600">Clics Google Search Console</th>
             <th style="padding:5px 10px;text-align:right;color:var(--u-gray);font-weight:600">vs may 25</th>
-            <th style="padding:5px 10px;text-align:right;color:var(--u-gray);font-weight:600">Sesiones</th>
-            <th style="padding:5px 10px;text-align:right;color:var(--u-gray);font-weight:600">vs may 25</th>
           </tr></thead>
           <tbody id="paises-tbody"></tbody>
         </table>
@@ -2681,18 +2679,13 @@ function renderPaises(){
   if(!tbody) return;
   tbody.innerHTML=PAISES_APR.map((p,i)=>{
     const isEs=p.p==='España';
-    const barW=Math.round(p.c/PAISES_APR[0].c*100);
     const pct     = p.pct     != null ? p.pct     : 0;
-    const sessPct = p.sessPct != null ? p.sessPct : 0;
-    const clColor   = pct>=0    ? 'var(--u-green)' : 'var(--u-red)';
-    const sessColor = sessPct>=0 ? 'var(--u-green)' : 'var(--u-red)';
+    const clColor = pct>=0 ? 'var(--u-green)' : 'var(--u-red)';
     return `<tr style="border-bottom:1px solid var(--u-border)${isEs?';background:var(--u-cyan-light)':''}">
       <td style="padding:4px 8px;color:var(--u-gray);font-size:10px">${i+1}</td>
       <td style="padding:4px 8px"><span style="font-size:13px;margin-right:4px">${p.f}</span><span style="font-size:11px${isEs?';font-weight:700':''}">${p.p}</span></td>
       <td style="padding:4px 10px;text-align:right;font-size:11px;font-weight:${isEs?'700':'400'}">${p.c.toLocaleString('es-ES')}</td>
       <td style="padding:4px 10px;text-align:right;font-size:11px;font-weight:600;color:${clColor}">${pct>=0?'+':''}${pct.toFixed(1)}%</td>
-      <td style="padding:4px 10px;text-align:right;font-size:11px">${(p.sess||0).toLocaleString('es-ES')}</td>
-      <td style="padding:4px 10px;text-align:right;font-size:11px;font-weight:600;color:${sessColor}">${sessPct>=0?'+':''}${sessPct.toFixed(1)}%</td>
     </tr>`;
   }).join('');
 }
