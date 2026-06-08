@@ -2836,6 +2836,23 @@ async function exportPDF(){
   btn.textContent = 'Generando PDF…';
   btn.disabled = true;
 
+  // Hoja de estilos temporal aplicada DURANTE el export PDF.
+  // Fuerza body/slide a 1400px y las grids a su definición original.
+  // Necesaria porque html2canvas 1.4.1 no honra correctamente windowWidth
+  // y algunas slides (catChart, newsDaily, top3Chart/linkTypeChart) salen
+  // cortadas por la derecha si el body sigue en ancho viewport (~1200px).
+  const pdfStyle = document.createElement('style');
+  pdfStyle.id = 'pdf-export-overrides';
+  pdfStyle.textContent = `
+    body.pdf-exporting { width: 1400px !important; min-width: 1400px !important; }
+    body.pdf-exporting .slide.active { width: 1400px !important; min-width: 1400px !important; max-width: 1400px !important; }
+    body.pdf-exporting .two-col { grid-template-columns: minmax(0,1fr) minmax(0,1fr) !important; }
+    body.pdf-exporting .chart-wrap { width: 100% !important; max-width: 100% !important; overflow: visible !important; }
+    body.pdf-exporting .section-pad { box-sizing: border-box !important; }
+  `;
+  document.head.appendChild(pdfStyle);
+  document.body.classList.add('pdf-exporting');
+
   const { jsPDF } = window.jspdf;
   // Each entry: [elementId, label, slideNumber, options]
   const exportItems = [
@@ -2910,6 +2927,22 @@ async function exportPDF(){
 
       await new Promise(r => setTimeout(r, 200));
 
+      // Force Chart.js instances inside this slide to resize to the new 1400px layout
+      // before we pre-convert canvases. Sin esto, el canvas mantiene la rejilla de
+      // píxeles del viewport original y al estirar el <img> al ancho nuevo se ve
+      // cortado o pixelado en la derecha.
+      if (typeof Chart !== 'undefined' && Chart.instances) {
+        Object.values(Chart.instances).forEach(ci => {
+          try {
+            if (ci && ci.canvas && captureEl.contains(ci.canvas)) {
+              ci.resize();
+              ci.update('none');
+            }
+          } catch(e) {}
+        });
+      }
+      await new Promise(r => setTimeout(r, 350));
+
       // Pre-convert logo <img> tags to canvas so html2canvas captures them correctly
       const logoImgs = captureEl.querySelectorAll('img[alt="UNICEF"]');
       const logoBackups = [];
@@ -2955,6 +2988,12 @@ async function exportPDF(){
       scrollables.forEach((s, k) => { s.style.cssText = scrollBackups[k].orig; });
       logoBackups.forEach(({ img, cv }) => { img.style.display = ''; cv.parentNode.removeChild(cv); });
       canvasBackups.forEach(({ cv, img }) => { cv.style.display = ''; img.parentNode.removeChild(img); });
+      // Resize charts back to viewport width
+      if (typeof Chart !== 'undefined' && Chart.instances) {
+        Object.values(Chart.instances).forEach(ci => {
+          try { if (ci && ci.canvas && captureEl.contains(ci.canvas)) ci.resize(); } catch(e) {}
+        });
+      }
 
       const iW = captured.width, iH = captured.height;
       const ppm = 3.7795, fMm = 6, uW = PW, uH = PH - fMm;
@@ -2973,6 +3012,26 @@ async function exportPDF(){
 
     // ── Helper: build a ghost page with slide header + a specific section ──
     async function captureSection(slideEl, sectionEl, pageLabel) {
+      // Step 0: expand the parent slide to 1400px so Chart.js instances inside
+      // re-render to the wider layout BEFORE we capture their pixel grid.
+      // Sin esto, los charts del Sistrix / Discover-News / Backlinks salen
+      // con la rejilla de píxeles del viewport (~1200px) y al pegarlos en
+      // el ghost de 1400px se ven cortados o desalineados.
+      const origSlideStyle = slideEl.getAttribute('style') || '';
+      slideEl.style.cssText = origSlideStyle + ';width:1400px!important;max-width:1400px!important;overflow:visible!important;';
+      await new Promise(r => setTimeout(r, 100));
+      if (typeof Chart !== 'undefined' && Chart.instances) {
+        Object.values(Chart.instances).forEach(ci => {
+          try {
+            if (ci && ci.canvas && sectionEl.contains(ci.canvas)) {
+              ci.resize();
+              ci.update('none');
+            }
+          } catch(e) {}
+        });
+      }
+      await new Promise(r => setTimeout(r, 350));
+
       // Step 1: pre-convert ALL canvases in the ORIGINAL section to <img>
       // before cloning — cloneNode copies blank canvases, not their pixels
       const origCanvases = sectionEl.querySelectorAll('canvas');
@@ -3034,6 +3093,17 @@ async function exportPDF(){
         cv.style.display = '';
         img.parentNode.removeChild(img);
       });
+
+      // Step 4: restore parent slide style and re-resize charts back to viewport width
+      slideEl.setAttribute('style', origSlideStyle);
+      await new Promise(r => setTimeout(r, 50));
+      if (typeof Chart !== 'undefined' && Chart.instances) {
+        Object.values(Chart.instances).forEach(ci => {
+          try {
+            if (ci && ci.canvas && sectionEl.contains(ci.canvas)) ci.resize();
+          } catch(e) {}
+        });
+      }
 
       const iW = captured.width, iH = captured.height;
       const ppm = 3.7795, fMm = 6, uW = PW, uH = PH - fMm;
@@ -3124,6 +3194,11 @@ async function exportPDF(){
   if(activeBtn) activeBtn.classList.add('active');
 
   pdf.save(`UNICEF_SEO_Dashboard_${SEED_MONTH.label.replace(/\s/g,'_')}.pdf`);
+
+  // Limpiar la hoja de estilos temporal y la clase pdf-exporting
+  document.body.classList.remove('pdf-exporting');
+  const pdfStyleEl = document.getElementById('pdf-export-overrides');
+  if (pdfStyleEl) pdfStyleEl.remove();
 
   // Auto-download IA Overview Excel alongside the PDF
   btn.textContent = 'Generando Excel IA…';
