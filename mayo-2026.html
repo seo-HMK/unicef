@@ -3083,7 +3083,20 @@ async function exportPDF(){
       const splitEl = document.getElementById(cfg.splitBefore);
       if (splitEl) {
         // Ensure SISTRIX chart is rendered before capturing (it lives in s1-sist)
-        if (cfg.id === 's1' && window.buildSistrix) { buildSistrix(); await new Promise(r => setTimeout(r, 900)); }
+        if (cfg.id === 's1' && window.buildSistrix) {
+          buildSistrix();
+          await new Promise(r => setTimeout(r, 900));
+          // Clear hovered state on Sistrix chart (crosshair vertical line + highlighted active points)
+          // so they don't quedar fijos en el PNG capturado para el PDF.
+          if (typeof sistChart !== 'undefined' && sistChart) {
+            sistChart._crosshairIdx = null;
+            sistChart.setActiveElements([]);
+            sistChart.update('none');
+          }
+          const stip = document.getElementById('sist-tooltip');
+          if (stip) stip.style.display = 'none';
+          await new Promise(r => setTimeout(r, 150));
+        }
         // Page 1: hide the split section entirely
         splitEl.style.display = 'none';
         await captureAndAdd(el, cfg.label);
