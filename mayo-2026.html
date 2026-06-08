@@ -1963,7 +1963,7 @@ function downloadXLSX(){
   wsMeta['!cols']=[{wch:22},{wch:42}];
   XLSX.utils.book_append_sheet(wb, wsMeta, 'Info');
 
-  XLSX.writeFile(wb, 'UNICEF_OneSearch_Keywords_Pausar_Mayo2026.xlsx');
+  XLSX.writeFile(wb, `UNICEF_OneSearch_Keywords_Pausar_${SEED_MONTH.label.replace(/\s/g,'_')}.xlsx`);
 }
 
 function renderOS(){
@@ -2487,7 +2487,7 @@ function downloadIAXLSX(){
   ]);
   meta['!cols']=[{wch:28},{wch:50}];
   XLSX.utils.book_append_sheet(wb,meta,'Info');
-  XLSX.writeFile(wb,'UNICEF_IA_Overview_Keywords_Abril2026.xlsx');
+  XLSX.writeFile(wb,`UNICEF_IA_Overview_Keywords_${SEED_MONTH.label.replace(/\s/g,'_')}.xlsx`);
 }
 
 // Render on slide show
@@ -3123,7 +3123,7 @@ async function exportPDF(){
   if(origSlide) origSlide.classList.add('active');
   if(activeBtn) activeBtn.classList.add('active');
 
-  pdf.save('UNICEF_SEO_Dashboard_Abril_2026.pdf');
+  pdf.save(`UNICEF_SEO_Dashboard_${SEED_MONTH.label.replace(/\s/g,'_')}.pdf`);
 
   // Auto-download IA Overview Excel alongside the PDF
   btn.textContent = 'Generando Excel IA…';
