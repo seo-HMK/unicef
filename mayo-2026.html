@@ -3208,6 +3208,21 @@ async function exportPDF(){
   await new Promise(r => setTimeout(r, 400));
   downloadIAXLSX();
 
+  // Auto-download One Search "Parar en Paid" keywords alongside the PDF + IA Excel.
+  // Limpiamos los filtros DOM antes para garantizar export completo aunque la
+  // usuaria tenga un filtro activo en la pestaña One Search.
+  btn.textContent = 'Generando Excel Parar en Paid…';
+  await new Promise(r => setTimeout(r, 400));
+  const stopQ = document.getElementById('stop-q');
+  const stopType = document.getElementById('stop-type');
+  const stopQOrig = stopQ ? stopQ.value : null;
+  const stopTypeOrig = stopType ? stopType.value : null;
+  if (stopQ) stopQ.value = '';
+  if (stopType) stopType.value = '';
+  downloadXLSX();
+  if (stopQ && stopQOrig !== null) stopQ.value = stopQOrig;
+  if (stopType && stopTypeOrig !== null) stopType.value = stopTypeOrig;
+
   btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Exportar PDF';
   btn.disabled = false;
 }
