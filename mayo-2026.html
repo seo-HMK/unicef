@@ -916,24 +916,44 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
           <div style="margin-top:8px;font-size:10.5px;color:var(--u-gray);line-height:1.5"><strong>Lectura:</strong> Enero 26 superó forecast (+24%); a partir de febrero el real cae por debajo del objetivo, con un gap del −67% en marzo, −49% en abril y −51% en mayo. La causa principal del gap es el despliegue masivo de IA Overview en queries evergreen — ver verificación directa abajo.</div>
         </div>
 
-        <!-- Verificación directa AIO + top kws -->
+        <!-- Verificación con datos REALES GSC + decomposición AIO vs otras causas -->
         <div style="background:var(--u-gray-light);border-radius:6px;padding:14px 16px;margin-bottom:14px">
-          <div style="font-size:10px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">Verificación directa AIO · cruce GSC España × Semrush Mayo 2026</div>
-          <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:20px">
-            <div>
-              <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:26px;font-weight:800;color:var(--u-red);line-height:1">−1.233 clics</div>
-              <div style="font-size:10px;color:var(--u-gray);margin-top:3px;line-height:1.5">Pérdida atribuible <strong>directamente</strong> a AIO en Mayo 2026 · 197 kws AIO matched en GSC España · CTR cae <strong>4,06% → 2,19%</strong> YoY (−1,87 pp) sobre 65.933 impresiones.</div>
-              <div style="font-size:10px;color:var(--u-gray);margin-top:8px;line-height:1.5">El resto del gap vs forecast (~335K sesiones) incluye factores adicionales: caída estructural CTR en SERP, algorithm updates, estacionalidad y caída no-AIO.</div>
+          <div style="font-size:10px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">Pérdida verificada con datos reales GSC España · Mayo 2026 vs Mayo 2025</div>
+          <div style="font-size:10.5px;color:#555;line-height:1.5;margin-bottom:12px"><strong>Metodología:</strong> sobre las 1.062 consultas con datos en GSC España ambos años, calculamos la "pérdida vs CTR 2025" = (CTR<sub>may25</sub> × Impr<sub>may26</sub>) − Clics<sub>may26</sub>. Segmentamos por presencia de AI Overview cruzando con la lista Semrush AIO (772 kws). Todos los datos abajo son GSC reales, no estimaciones Semrush.</div>
+
+          <!-- 3 KPI descomposición -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+            <div style="background:#fff;border:1px solid #F5C2CC;border-left:3px solid var(--u-red);border-radius:4px;padding:10px 12px">
+              <div style="font-size:9px;font-weight:700;color:var(--u-red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">AIO directo (197 kws)</div>
+              <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:24px;font-weight:800;color:var(--u-red);line-height:1">−846 clics</div>
+              <div style="font-size:10px;color:#666;margin-top:3px">CTR cae <strong>4,06% → 2,19%</strong> · 15,8% del loss total</div>
             </div>
-            <div>
-              <div style="font-size:10px;font-weight:700;color:var(--u-navy);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Top 5 keywords más impactadas (kws AIO con histórico)</div>
-              <div style="font-size:11px;line-height:1.7">
-                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #DCDCDC;padding:3px 0"><span style="color:#333">derechos de los niños</span><span style="font-weight:700;color:var(--u-red)">−81 clics</span></div>
-                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #DCDCDC;padding:3px 0"><span style="color:#333">derechos de la infancia</span><span style="font-weight:700;color:var(--u-red)">−75 clics</span></div>
-                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #DCDCDC;padding:3px 0"><span style="color:#333">países más pobres del mundo</span><span style="font-weight:700;color:var(--u-red)">−55 clics</span></div>
-                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #DCDCDC;padding:3px 0"><span style="color:#333">testamentos y herencias</span><span style="font-weight:700;color:var(--u-red)">−34 clics</span></div>
-                <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:#333">pobreza infantil españa</span><span style="font-weight:700;color:var(--u-red)">−30 clics</span></div>
-              </div>
+            <div style="background:#fff;border:1px solid var(--u-border);border-left:3px solid var(--u-orange);border-radius:4px;padding:10px 12px">
+              <div style="font-size:9px;font-weight:700;color:#b87000;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Otras causas (865 kws)</div>
+              <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:24px;font-weight:800;color:#b87000;line-height:1">−4.511 clics</div>
+              <div style="font-size:10px;color:#666;margin-top:3px">CTR cae <strong>2,91% → 1,28%</strong> · 84,2% del loss · zero-click features, updates</div>
+            </div>
+            <div style="background:#fff;border:2px solid var(--u-navy);border-radius:4px;padding:10px 12px">
+              <div style="font-size:9px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Loss total Mayo</div>
+              <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:24px;font-weight:800;color:var(--u-navy);line-height:1">−5.356 clics</div>
+              <div style="font-size:10px;color:#666;margin-top:3px">≈ <strong>5.356 sesiones orgánicas</strong> (ratio ~1:1)</div>
+            </div>
+          </div>
+
+          <!-- Contextualización vs GA4 total -->
+          <div style="font-size:11px;color:#333;line-height:1.6;padding:10px 12px;background:#fff;border-left:3px solid var(--u-cyan);border-radius:0 4px 4px 0;margin-bottom:10px">
+            <strong>Equivalencia en sesiones GA4:</strong> Spain GSC clics May 26 = 30.616 vs ses GA4 May 26 = 85.825 (ratio 1 clic ≈ 1 sesión orgánica de las 85.825 totales). La pérdida SEO de <strong>~5.356 sesiones orgánicas</strong> explica aprox. <strong>50%</strong> del descenso GA4 total May 26 vs May 25 (−10.698 sesiones). El otro 50% son canales no-orgánicos.
+          </div>
+
+          <!-- Top 5 keywords -->
+          <div>
+            <div style="font-size:10px;font-weight:700;color:var(--u-navy);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Top 5 keywords AIO con mayor pérdida individual (datos reales GSC)</div>
+            <div style="font-size:11px;line-height:1.7">
+              <div style="display:flex;justify-content:space-between;border-bottom:1px solid #DCDCDC;padding:3px 0"><span style="color:#333">derechos de los niños</span><span style="font-weight:700;color:var(--u-red)">−81 clics</span></div>
+              <div style="display:flex;justify-content:space-between;border-bottom:1px solid #DCDCDC;padding:3px 0"><span style="color:#333">derechos de la infancia</span><span style="font-weight:700;color:var(--u-red)">−75 clics</span></div>
+              <div style="display:flex;justify-content:space-between;border-bottom:1px solid #DCDCDC;padding:3px 0"><span style="color:#333">países más pobres del mundo</span><span style="font-weight:700;color:var(--u-red)">−55 clics</span></div>
+              <div style="display:flex;justify-content:space-between;border-bottom:1px solid #DCDCDC;padding:3px 0"><span style="color:#333">testamentos y herencias</span><span style="font-weight:700;color:var(--u-red)">−34 clics</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:#333">pobreza infantil españa</span><span style="font-weight:700;color:var(--u-red)">−30 clics</span></div>
             </div>
           </div>
         </div>
@@ -967,7 +987,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
             </div>
           </div>
           <div style="font-size:11px;color:#333;line-height:1.65;padding:10px 12px;background:var(--u-cyan-light);border-left:3px solid var(--u-cyan);border-radius:0 4px 4px 0">
-            <strong>Recomendación realista:</strong> Spain cerrará 2026 entorno a <strong>~940K sesiones</strong> (escenario central) — prácticamente <strong>flat vs los 937K de 2025</strong>. La caída brutal aparece solo cuando se compara contra el forecast +25% SEO, que asumía un crecimiento pre-IA Overview. La narrativa correcta para el cliente: <em>"hemos defendido la base 2025 a pesar del impacto AIO; el crecimiento +25% que proyectamos pre-AIO no es viable en este nuevo escenario SERP"</em>. Repensar el objetivo 2026 a la baja (target realista: 0% a +5% vs 2025, no +25%).
+            <strong>Recomendación basada en datos reales:</strong> la pérdida verificable Mayo 2026 es <strong>~5.356 sesiones orgánicas</strong> (datos GSC, no estimaciones Semrush). Spain cerrará 2026 entorno a <strong>~940K sesiones</strong> (escenario central) — prácticamente <strong>flat vs los 937K de 2025</strong>. El AIO directo solo explica el 15,8% de la pérdida CTR mensual; el 84,2% restante viene de la colapso CTR general en SERP (zero-click features, Discover/News reducidos, algorithm updates). La narrativa correcta al cliente: <em>"hemos defendido la base 2025 a pesar del impacto AIO + colapso CTR general; el crecimiento +25% que proyectamos pre-AIO no es viable en este nuevo escenario SERP"</em>. Repensar el objetivo 2026 a la baja (target realista: 0% a +5% vs 2025, no +25%).
           </div>
         </div>
       </div>
