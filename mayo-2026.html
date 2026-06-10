@@ -274,6 +274,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
     <button class="nav-tab" onclick="show(9,this)">Noticias</button>
     <button class="nav-tab" onclick="show(10,this)">Enlaces Externos</button>
     <button class="nav-tab" onclick="show(11,this)">One Search</button>
+    <button class="nav-tab" onclick="show(12,this)" style="background:linear-gradient(135deg,rgba(139,21,56,.15) 0%,rgba(185,28,60,.15) 100%);color:#B91C3C;font-weight:700">📉 Forecast 2026</button>
   </div>
   <div class="nav-meta" style="gap:10px">
     <span class="live-dot"></span>
@@ -870,161 +871,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
         <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--u-gray);margin-bottom:5px">KW en posición 1</div>
         <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:28px;font-weight:700;color:var(--u-navy)">98%</div>
         <div style="font-size:10px;color:var(--u-gray);margin-top:2px">1.290 de 1.311 keywords</div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════════
-         WIDGET: Estimación de pérdida de tráfico por IA Overview
-         Forecast SEO +25% vs Tráfico real GA4 España 2026
-         ═══════════════════════════════════════════════════════ -->
-    <div style="background:#fff;border:1px solid var(--u-border);border-radius:8px;margin-bottom:16px;overflow:hidden">
-      <div style="background:linear-gradient(135deg,#8B1538 0%,#B91C3C 100%);padding:12px 18px;display:flex;align-items:center;gap:10px">
-        <div style="font-size:18px">📉</div>
-        <div style="font-family:'Baikal',sans-serif;font-weight:700;font-size:13px;letter-spacing:.5px;color:#fff;text-transform:uppercase">Estimación de pérdida de tráfico por IA Overview</div>
-        <div style="margin-left:auto;font-size:10px;color:rgba(255,255,255,.75)">Forecast +25% SEO vs GA4 real España 2026</div>
-      </div>
-      <div style="padding:18px">
-        <!-- 3 KPI grandes -->
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:1px solid var(--u-border);border-radius:6px;overflow:hidden;margin-bottom:16px">
-          <div style="padding:14px 18px;border-right:1px solid var(--u-border);background:#FAFBFC">
-            <div style="font-size:9.5px;color:var(--u-gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Forecast SEO +25% · Ene-May 26</div>
-            <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:30px;font-weight:800;color:var(--u-cyan);line-height:1">785.289</div>
-            <div style="font-size:10px;color:var(--u-gray);margin-top:3px">sesiones objetivo · cierre año 1,67M</div>
-          </div>
-          <div style="padding:14px 18px;border-right:1px solid var(--u-border)">
-            <div style="font-size:9.5px;color:var(--u-gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Real GA4 España · Ene-May 26</div>
-            <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:30px;font-weight:800;color:var(--u-navy);line-height:1">448.597</div>
-            <div style="font-size:10px;color:var(--u-gray);margin-top:3px">sesiones acumuladas reales</div>
-          </div>
-          <div style="padding:14px 18px;background:#FDF2F4">
-            <div style="font-size:9.5px;color:var(--u-red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">Gap acumulado vs forecast</div>
-            <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:30px;font-weight:800;color:var(--u-red);line-height:1">−336.692</div>
-            <div style="font-size:10px;color:var(--u-red);margin-top:3px;font-weight:600">−42,9% bajo forecast · 5 meses</div>
-          </div>
-        </div>
-
-        <!-- Chart 12 meses forecast vs actual -->
-        <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;padding:14px 16px;margin-bottom:14px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <div style="font-size:10px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.6px">Forecast +25% SEO vs Tráfico real GA4 — 2026 mes a mes</div>
-            <div style="display:flex;gap:14px;font-size:10px">
-              <span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:2px;background:var(--u-cyan);display:inline-block"></span>Forecast +25% SEO</span>
-              <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;background:var(--u-navy);display:inline-block;border-radius:2px"></span>Real GA4 España</span>
-            </div>
-          </div>
-          <div style="height:250px;position:relative"><canvas id="aioLossChart"></canvas></div>
-          <div style="margin-top:8px;font-size:10.5px;color:var(--u-gray);line-height:1.5"><strong>Lectura:</strong> Enero 26 superó forecast (+24%); a partir de febrero el real cae por debajo del objetivo, con un gap del −67% en marzo, −49% en abril y −51% en mayo. La causa principal del gap es el despliegue masivo de IA Overview en queries evergreen — ver verificación directa abajo.</div>
-        </div>
-
-        <!-- Verificación con datos REALES GSC + decomposición AIO vs otras causas -->
-        <div style="background:var(--u-gray-light);border-radius:6px;padding:14px 16px;margin-bottom:14px">
-          <div style="font-size:10px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">Pérdida verificada con datos reales GSC España · Mayo 2026 vs Mayo 2025</div>
-          <div style="font-size:10.5px;color:#555;line-height:1.5;margin-bottom:12px"><strong>Metodología:</strong> sobre las 1.062 consultas con datos en GSC España ambos años, calculamos la "pérdida vs CTR 2025" = (CTR<sub>may25</sub> × Impr<sub>may26</sub>) − Clics<sub>may26</sub>. Segmentamos por presencia de AI Overview cruzando con la lista Semrush AIO (772 kws). Todos los datos abajo son GSC reales, no estimaciones Semrush.</div>
-
-          <!-- 3 KPI descomposición -->
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
-            <div style="background:#fff;border:1px solid #F5C2CC;border-left:3px solid var(--u-red);border-radius:4px;padding:10px 12px">
-              <div style="font-size:9px;font-weight:700;color:var(--u-red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">AIO directo (197 kws)</div>
-              <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:24px;font-weight:800;color:var(--u-red);line-height:1">−846 clics</div>
-              <div style="font-size:10px;color:#666;margin-top:3px">CTR cae <strong>4,06% → 2,19%</strong> · 15,8% del loss total</div>
-            </div>
-            <div style="background:#fff;border:1px solid var(--u-border);border-left:3px solid var(--u-orange);border-radius:4px;padding:10px 12px">
-              <div style="font-size:9px;font-weight:700;color:#b87000;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Otras causas (865 kws)</div>
-              <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:24px;font-weight:800;color:#b87000;line-height:1">−4.511 clics</div>
-              <div style="font-size:10px;color:#666;margin-top:3px">CTR cae <strong>2,91% → 1,28%</strong> · 84,2% del loss · zero-click features, updates</div>
-            </div>
-            <div style="background:#fff;border:2px solid var(--u-navy);border-radius:4px;padding:10px 12px">
-              <div style="font-size:9px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Loss total Mayo</div>
-              <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:24px;font-weight:800;color:var(--u-navy);line-height:1">−5.356 clics</div>
-              <div style="font-size:10px;color:#666;margin-top:3px">≈ <strong>5.356 sesiones orgánicas</strong> (ratio ~1:1)</div>
-            </div>
-          </div>
-
-          <!-- Contextualización vs GA4 total -->
-          <div style="font-size:11px;color:#333;line-height:1.6;padding:10px 12px;background:#fff;border-left:3px solid var(--u-cyan);border-radius:0 4px 4px 0;margin-bottom:10px">
-            <strong>Equivalencia en sesiones GA4:</strong> Spain GSC clics May 26 = 30.616 vs ses GA4 May 26 = 85.825 (ratio 1 clic ≈ 1 sesión orgánica de las 85.825 totales). La pérdida SEO de <strong>~5.356 sesiones orgánicas</strong> explica aprox. <strong>50%</strong> del descenso GA4 total May 26 vs May 25 (−10.698 sesiones). El otro 50% son canales no-orgánicos.
-          </div>
-
-          <!-- Top 5 keywords -->
-          <div>
-            <div style="font-size:10px;font-weight:700;color:var(--u-navy);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Top 5 keywords AIO con mayor pérdida individual (datos reales GSC)</div>
-            <div style="font-size:11px;line-height:1.7">
-              <div style="display:flex;justify-content:space-between;border-bottom:1px solid #DCDCDC;padding:3px 0"><span style="color:#333">derechos de los niños</span><span style="font-weight:700;color:var(--u-red)">−81 clics</span></div>
-              <div style="display:flex;justify-content:space-between;border-bottom:1px solid #DCDCDC;padding:3px 0"><span style="color:#333">derechos de la infancia</span><span style="font-weight:700;color:var(--u-red)">−75 clics</span></div>
-              <div style="display:flex;justify-content:space-between;border-bottom:1px solid #DCDCDC;padding:3px 0"><span style="color:#333">países más pobres del mundo</span><span style="font-weight:700;color:var(--u-red)">−55 clics</span></div>
-              <div style="display:flex;justify-content:space-between;border-bottom:1px solid #DCDCDC;padding:3px 0"><span style="color:#333">testamentos y herencias</span><span style="font-weight:700;color:var(--u-red)">−34 clics</span></div>
-              <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:#333">pobreza infantil españa</span><span style="font-weight:700;color:var(--u-red)">−30 clics</span></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ─────────────────────────────────────────────
-             ESTIMACIÓN REALISTA CIERRE 2026
-             ───────────────────────────────────────────── -->
-        <div style="background:#fff;border:1px solid var(--u-navy);border-left:4px solid var(--u-navy);border-radius:6px;padding:14px 18px">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-            <div style="font-size:14px">🎯</div>
-            <div style="font-size:11px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.7px">Estimación realista cierre 2026</div>
-          </div>
-          <div style="font-size:11.5px;color:#333;line-height:1.65;margin-bottom:12px">
-            Spain Ene-May 26 ha cerrado en <strong>448.597 sesiones (+14,2% vs Ene-May 25)</strong>, pero la tendencia se deteriora: <strong>Mayo 26 cae −11,1% vs Mayo 25</strong> por el impacto de AIO en queries evergreen. Aplicando 3 escenarios al periodo Jun-Dic (sobre los 545.466 reales de Jun-Dic 25):
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
-            <div style="background:#EFF9F1;border:1px solid #C8E6CC;border-radius:6px;padding:11px 13px">
-              <div style="font-size:9px;font-weight:700;color:#1a7a38;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Optimista · Jun-Dic flat vs 25</div>
-              <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:22px;font-weight:800;color:#1a7a38;line-height:1">~994K</div>
-              <div style="font-size:10px;color:#1a7a38;margin-top:3px"><strong>+6%</strong> vs 2025 · <strong>−41%</strong> vs forecast</div>
-            </div>
-            <div style="background:#FFF8E1;border:2px solid var(--u-orange);border-radius:6px;padding:11px 13px">
-              <div style="font-size:9px;font-weight:700;color:#b87000;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Realista · Jun-Dic −10% vs 25 ★</div>
-              <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:22px;font-weight:800;color:#b87000;line-height:1">~940K</div>
-              <div style="font-size:10px;color:#b87000;margin-top:3px"><strong>~flat</strong> vs 2025 · <strong>−44%</strong> vs forecast</div>
-            </div>
-            <div style="background:#FEE8EC;border:1px solid #F5C2CC;border-radius:6px;padding:11px 13px">
-              <div style="font-size:9px;font-weight:700;color:var(--u-red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Pesimista · Jun-Dic −20% vs 25</div>
-              <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:22px;font-weight:800;color:var(--u-red);line-height:1">~885K</div>
-              <div style="font-size:10px;color:var(--u-red);margin-top:3px"><strong>−6%</strong> vs 2025 · <strong>−47%</strong> vs forecast</div>
-            </div>
-          </div>
-          <div style="font-size:11px;color:#333;line-height:1.65;padding:10px 12px;background:var(--u-cyan-light);border-left:3px solid var(--u-cyan);border-radius:0 4px 4px 0;margin-bottom:14px">
-            <strong>Recomendación basada en datos reales:</strong> la pérdida verificable Mayo 2026 es <strong>~5.356 sesiones orgánicas</strong> (datos GSC, no estimaciones Semrush). Spain cerrará 2026 entorno a <strong>~940K sesiones</strong> (escenario central) — prácticamente <strong>flat vs los 937K de 2025</strong>. El AIO directo solo explica el 15,8% de la pérdida CTR mensual; el 84,2% restante viene de la colapso CTR general en SERP (zero-click features, Discover/News reducidos, algorithm updates). La narrativa correcta al cliente: <em>"hemos defendido la base 2025 a pesar del impacto AIO + colapso CTR general; el crecimiento +25% que proyectamos pre-AIO no es viable en este nuevo escenario SERP"</em>. Repensar el objetivo 2026 a la baja (target realista: 0% a +5% vs 2025, no +25%).
-          </div>
-
-          <!-- Tabla detallada mes a mes 2026 -->
-          <div style="font-size:10px;font-weight:700;color:var(--u-navy);margin-bottom:8px;text-transform:uppercase;letter-spacing:.6px">Evolución mes a mes 2026 · datos reales Ene-May + proyección realista Jun-Dic (−10% YoY)</div>
-          <div style="overflow-x:auto">
-            <table style="width:100%;border-collapse:collapse;font-size:11px">
-              <thead>
-                <tr style="background:#F2F4F8;border-bottom:2px solid var(--u-navy)">
-                  <th style="padding:7px 10px;text-align:left;font-weight:700;color:var(--u-navy)">Mes</th>
-                  <th style="padding:7px 10px;text-align:right;font-weight:700;color:var(--u-cyan-dark)">Forecast +25%</th>
-                  <th style="padding:7px 10px;text-align:right;font-weight:700;color:var(--u-navy)">Real / Estimado</th>
-                  <th style="padding:7px 10px;text-align:right;font-weight:700;color:var(--u-red)">Gap</th>
-                  <th style="padding:7px 10px;text-align:right;font-weight:700;color:var(--u-red)">%</th>
-                  <th style="padding:7px 10px;text-align:center;font-weight:700;color:var(--u-gray)">Tipo</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr style="border-bottom:1px solid #E5E7EB;background:#EFF9F1"><td style="padding:5px 10px;font-weight:600">Enero</td><td style="padding:5px 10px;text-align:right">82.091</td><td style="padding:5px 10px;text-align:right;font-weight:700;color:#1a7a38">102.077</td><td style="padding:5px 10px;text-align:right;color:#1a7a38;font-weight:600">+19.986</td><td style="padding:5px 10px;text-align:right;color:#1a7a38;font-weight:700">+24,3%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-green-light);color:#1a7a38">REAL</span></td></tr>
-                <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600">Febrero</td><td style="padding:5px 10px;text-align:right">97.482</td><td style="padding:5px 10px;text-align:right;font-weight:700">91.239</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−6.243</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−6,4%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-green-light);color:#1a7a38">REAL</span></td></tr>
-                <tr style="border-bottom:1px solid #E5E7EB;background:#FDF2F4"><td style="padding:5px 10px;font-weight:600">Marzo</td><td style="padding:5px 10px;text-align:right">272.415</td><td style="padding:5px 10px;text-align:right;font-weight:700">88.494</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−183.921</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−67,5%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-green-light);color:#1a7a38">REAL</span></td></tr>
-                <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600">Abril</td><td style="padding:5px 10px;text-align:right">158.358</td><td style="padding:5px 10px;text-align:right;font-weight:700">80.962</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−77.396</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−48,9%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-green-light);color:#1a7a38">REAL</span></td></tr>
-                <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600">Mayo</td><td style="padding:5px 10px;text-align:right">174.943</td><td style="padding:5px 10px;text-align:right;font-weight:700">85.825</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−89.118</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−50,9%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-green-light);color:#1a7a38">REAL</span></td></tr>
-                <tr style="border-bottom:1px solid #E5E7EB;border-top:2px solid #DDD"><td style="padding:5px 10px;font-weight:600;color:var(--u-gray)">Junio</td><td style="padding:5px 10px;text-align:right;color:var(--u-gray)">124.674</td><td style="padding:5px 10px;text-align:right;font-weight:700;color:#b87000">~62.716</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−61.958</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−49,7%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-orange-light);color:#b87000">EST</span></td></tr>
-                <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600;color:var(--u-gray)">Julio</td><td style="padding:5px 10px;text-align:right;color:var(--u-gray)">77.499</td><td style="padding:5px 10px;text-align:right;font-weight:700;color:#b87000">~38.082</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−39.417</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−50,9%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-orange-light);color:#b87000">EST</span></td></tr>
-                <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600;color:var(--u-gray)">Agosto</td><td style="padding:5px 10px;text-align:right;color:var(--u-gray)">63.114</td><td style="padding:5px 10px;text-align:right;font-weight:700;color:#b87000">~33.643</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−29.471</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−46,7%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-orange-light);color:#b87000">EST</span></td></tr>
-                <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600;color:var(--u-gray)">Septiembre</td><td style="padding:5px 10px;text-align:right;color:var(--u-gray)">152.885</td><td style="padding:5px 10px;text-align:right;font-weight:700;color:#b87000">~77.821</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−75.064</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−49,1%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-orange-light);color:#b87000">EST</span></td></tr>
-                <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600;color:var(--u-gray)">Octubre</td><td style="padding:5px 10px;text-align:right;color:var(--u-gray)">168.761</td><td style="padding:5px 10px;text-align:right;font-weight:700;color:#b87000">~89.532</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−79.229</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−46,9%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-orange-light);color:#b87000">EST</span></td></tr>
-                <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600;color:var(--u-gray)">Noviembre</td><td style="padding:5px 10px;text-align:right;color:var(--u-gray)">150.000</td><td style="padding:5px 10px;text-align:right;font-weight:700;color:#b87000">~114.790</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−35.210</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−23,5%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-orange-light);color:#b87000">EST</span></td></tr>
-                <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600;color:var(--u-gray)">Diciembre</td><td style="padding:5px 10px;text-align:right;color:var(--u-gray)">150.000</td><td style="padding:5px 10px;text-align:right;font-weight:700;color:#b87000">~74.335</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−75.665</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−50,4%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-orange-light);color:#b87000">EST</span></td></tr>
-                <tr style="background:var(--u-navy);color:#fff;font-weight:700"><td style="padding:8px 10px">TOTAL 2026</td><td style="padding:8px 10px;text-align:right">1.672.222</td><td style="padding:8px 10px;text-align:right">~939.516</td><td style="padding:8px 10px;text-align:right;color:#FFC1CB">−732.706</td><td style="padding:8px 10px;text-align:right;color:#FFC1CB">−43,8%</td><td style="padding:8px 10px;text-align:center">Mixto</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div style="font-size:10px;color:var(--u-gray);margin-top:10px;line-height:1.55;padding:8px 12px;background:#F8FAFD;border-radius:4px">
-            <strong>Notas:</strong> Las celdas <strong style="color:#1a7a38">REAL</strong> son sesiones GA4 España verificadas (Ene-May 2026). Las celdas <strong style="color:#b87000">EST</strong> aplican el escenario central <em>(Jun-Dic = 2025 × 0,90)</em>, alineado con la tendencia de Mayo 26 (−11,1% YoY). Total estimado <strong>~939K</strong> ≈ <strong>flat vs Spain 2025 (938K)</strong>. Reportar a UNICEF que el target +25% no es viable post-AIO Overview y proponer recalibrar a <strong>0% a +5% vs 2025</strong>.
-          </div>
-        </div>
       </div>
     </div>
 
@@ -1985,6 +1831,179 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
   </div>
 </div>
 
+<!-- ══════════════════════════════════════
+     SLIDE 12 — FORECAST 2026 (consolidado)
+══════════════════════════════════════ -->
+<div class="slide" id="s12">
+  <!-- Hero -->
+  <div style="background:linear-gradient(135deg,#8B1538 0%,#B91C3C 100%);padding:28px 40px 32px;margin-bottom:24px;position:relative;overflow:hidden">
+    <div style="position:absolute;bottom:-2px;left:0;right:0;height:3px;background:#fff;opacity:.3"></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative">
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.85);margin-bottom:8px;display:flex;align-items:center;gap:6px"><span style="width:14px;height:2px;background:#fff;display:inline-block;border-radius:1px"></span>12 — Forecast 2026</div>
+        <h1 style="font-family:'Baikal',sans-serif;font-weight:500;font-size:26px;font-weight:700;line-height:1.15;color:#fff;letter-spacing:-.1px;max-width:660px">Pérdida de tráfico orgánico estimada:<br>AIO + colapso CTR + canibalización Paid</h1>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,.75);text-align:right;line-height:1.6;background:rgba(255,255,255,.1);padding:10px 14px;border-radius:4px;border-left:3px solid #fff;flex-shrink:0">Forecast +25% SEO vs<br>Real GA4 España 2026<br><strong style="color:#fff">Datos GSC + GA4 + One Search</strong></div>
+    </div>
+  </div>
+
+  <div class="section-pad">
+    <!-- DESCOMPOSICION PERDIDA ORGANICA MAYO 2026 -->
+    <div class="section-heading">Descomposición de la pérdida en el canal orgánico — Mayo 2026</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;border:1px solid var(--u-border);border-radius:8px;overflow:hidden;background:#fff;margin-bottom:18px">
+      <div style="padding:14px 16px;border-right:1px solid var(--u-border);border-top:3px solid var(--u-red)">
+        <div style="font-size:9px;font-weight:700;color:var(--u-red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">AIO directo</div>
+        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:26px;font-weight:800;color:var(--u-red);line-height:1">−846 clics</div>
+        <div style="font-size:10px;color:var(--u-gray);margin-top:3px"><strong>8,1%</strong> · 197 kws AIO matched · CTR 4,06% → 2,19%</div>
+      </div>
+      <div style="padding:14px 16px;border-right:1px solid var(--u-border);border-top:3px solid var(--u-orange)">
+        <div style="font-size:9px;font-weight:700;color:#b87000;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Otras causas CTR</div>
+        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:26px;font-weight:800;color:#b87000;line-height:1">−4.511 clics</div>
+        <div style="font-size:10px;color:var(--u-gray);margin-top:3px"><strong>43,1%</strong> · 865 kws · zero-click features, updates</div>
+      </div>
+      <div style="padding:14px 16px;border-right:1px solid var(--u-border);border-top:3px solid #7C3AED">
+        <div style="font-size:9px;font-weight:700;color:#6D28D9;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Canibalización SEA Paid</div>
+        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:26px;font-weight:800;color:#6D28D9;line-height:1">−5.105 clics</div>
+        <div style="font-size:10px;color:var(--u-gray);margin-top:3px"><strong>48,8%</strong> · 107 kws pos SEO ≤3 · recuperable</div>
+      </div>
+      <div style="padding:14px 16px;border-top:3px solid var(--u-navy);background:#F0F4F8">
+        <div style="font-size:9px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">TOTAL pérdida orgánica</div>
+        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:26px;font-weight:800;color:var(--u-navy);line-height:1">−10.462 clics</div>
+        <div style="font-size:10px;color:var(--u-gray);margin-top:3px"><strong>Mayo 2026</strong> · ≈ 10.500 sesiones/mes</div>
+      </div>
+    </div>
+
+    <!-- FORECAST vs REAL Ene-May 26 -->
+    <div class="section-heading" style="margin-top:6px">Forecast SEO +25% vs Tráfico real GA4 — Ene-May 2026</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:1px solid var(--u-border);border-radius:8px;overflow:hidden;background:#fff;margin-bottom:18px">
+      <div style="padding:14px 18px;border-right:1px solid var(--u-border);background:#FAFBFC">
+        <div style="font-size:9.5px;color:var(--u-gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Forecast SEO +25%</div>
+        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:30px;font-weight:800;color:var(--u-cyan);line-height:1">785.289</div>
+        <div style="font-size:10px;color:var(--u-gray);margin-top:3px">sesiones objetivo Ene-May · cierre 1,67M</div>
+      </div>
+      <div style="padding:14px 18px;border-right:1px solid var(--u-border)">
+        <div style="font-size:9.5px;color:var(--u-gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Real GA4 España</div>
+        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:30px;font-weight:800;color:var(--u-navy);line-height:1">448.597</div>
+        <div style="font-size:10px;color:var(--u-gray);margin-top:3px">Ene-May 2026 · +14,2% vs Ene-May 25</div>
+      </div>
+      <div style="padding:14px 18px;background:#FDF2F4">
+        <div style="font-size:9.5px;color:var(--u-red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">Gap acumulado vs forecast</div>
+        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:30px;font-weight:800;color:var(--u-red);line-height:1">−336.692</div>
+        <div style="font-size:10px;color:var(--u-red);margin-top:3px;font-weight:600">−42,9% bajo forecast · 5 meses</div>
+      </div>
+    </div>
+
+    <!-- Chart 12 meses forecast vs actual -->
+    <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;padding:14px 16px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:10px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.6px">Forecast +25% SEO vs Tráfico real GA4 — 2026 mes a mes</div>
+        <div style="display:flex;gap:14px;font-size:10px">
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:2px;background:var(--u-cyan);display:inline-block"></span>Forecast +25% SEO</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;background:var(--u-navy);display:inline-block;border-radius:2px"></span>Real GA4 España</span>
+        </div>
+      </div>
+      <div style="height:260px;position:relative"><canvas id="aioLossChart"></canvas></div>
+      <div style="margin-top:8px;font-size:10.5px;color:var(--u-gray);line-height:1.5"><strong>Lectura:</strong> Enero 26 superó forecast (+24%); a partir de febrero el real cae por debajo del objetivo (−67% en marzo, −49% abril, −51% mayo). Causas: AIO + colapso CTR general + canibalización SEA en brand kws.</div>
+    </div>
+
+    <!-- 2 paneles: Verificacion AIO + Canibalizacion SEA -->
+    <div class="two-col" style="margin-bottom:18px">
+      <div style="background:var(--u-gray-light);border-radius:6px;padding:14px 16px">
+        <div style="font-size:10px;font-weight:700;color:var(--u-red);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">🤖 Verificación AIO · GSC × Semrush</div>
+        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:24px;font-weight:800;color:var(--u-red);line-height:1;margin-bottom:4px">−846 clics</div>
+        <div style="font-size:10.5px;color:#555;line-height:1.5;margin-bottom:10px">Sobre 197 kws AIO con histórico en GSC España. Impr Mayo 26 = 65.933, Clics 26 = 1.443, vs CTR 25 esperado de 4,06% → pérdida 846 clics directos.</div>
+        <div style="font-size:10px;font-weight:700;color:var(--u-navy);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Top 5 kws AIO impactadas</div>
+        <div style="font-size:11px;line-height:1.7">
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid #DCDCDC;padding:3px 0"><span>derechos de los niños</span><span style="font-weight:700;color:var(--u-red)">−81</span></div>
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid #DCDCDC;padding:3px 0"><span>derechos de la infancia</span><span style="font-weight:700;color:var(--u-red)">−75</span></div>
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid #DCDCDC;padding:3px 0"><span>países más pobres del mundo</span><span style="font-weight:700;color:var(--u-red)">−55</span></div>
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid #DCDCDC;padding:3px 0"><span>testamentos y herencias</span><span style="font-weight:700;color:var(--u-red)">−34</span></div>
+          <div style="display:flex;justify-content:space-between;padding:3px 0"><span>pobreza infantil españa</span><span style="font-weight:700;color:var(--u-red)">−30</span></div>
+        </div>
+      </div>
+      <div style="background:#F5F0FF;border-radius:6px;padding:14px 16px">
+        <div style="font-size:10px;font-weight:700;color:#6D28D9;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">💰 Canibalización SEA · One Search</div>
+        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:24px;font-weight:800;color:#6D28D9;line-height:1;margin-bottom:4px">−5.105 clics/mes</div>
+        <div style="font-size:10.5px;color:#555;line-height:1.5;margin-bottom:10px">107 kws con pos SEO ≤3 (57 brand + 50 NB) reciben <strong>6.048 clics SEA/mes</strong> (13.027 €). Asumiendo 85% canibalización brand + 50% NB → <strong>5.105 clics recuperables</strong> al orgánico si se pausa Paid.</div>
+        <div style="font-size:10px;font-weight:700;color:var(--u-navy);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Top 5 brand canibalizadas (clics SEA/mes)</div>
+        <div style="font-size:11px;line-height:1.7">
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid #E0D4F2;padding:3px 0"><span>unicef</span><span style="font-weight:700;color:#6D28D9">−4.553</span></div>
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid #E0D4F2;padding:3px 0"><span>unicef españa</span><span style="font-weight:700;color:#6D28D9">−1.167</span></div>
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid #E0D4F2;padding:3px 0"><span>unicef es</span><span style="font-weight:700;color:#6D28D9">−78</span></div>
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid #E0D4F2;padding:3px 0"><span>unicef certificado donaciones</span><span style="font-weight:700;color:#6D28D9">−13</span></div>
+          <div style="display:flex;justify-content:space-between;padding:3px 0"><span>fundación unicef</span><span style="font-weight:700;color:#6D28D9">−12</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTIMACION REALISTA CIERRE 2026 - 4 escenarios -->
+    <div style="background:#fff;border:1px solid var(--u-navy);border-left:4px solid var(--u-navy);border-radius:6px;padding:14px 18px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div style="font-size:14px">🎯</div>
+        <div style="font-size:11px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.7px">Estimación realista cierre 2026 — 4 escenarios</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+        <div style="background:#EFF9F1;border:1px solid #C8E6CC;border-radius:6px;padding:11px 13px">
+          <div style="font-size:9px;font-weight:700;color:#1a7a38;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Optimista</div>
+          <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:21px;font-weight:800;color:#1a7a38;line-height:1">~994K</div>
+          <div style="font-size:9.5px;color:#1a7a38;margin-top:3px">Jun-Dic flat vs 25<br><strong>+6%</strong> vs 25 · <strong>−41%</strong> forecast</div>
+        </div>
+        <div style="background:#FFF8E1;border:2px solid var(--u-orange);border-radius:6px;padding:11px 13px">
+          <div style="font-size:9px;font-weight:700;color:#b87000;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Realista ★</div>
+          <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:21px;font-weight:800;color:#b87000;line-height:1">~940K</div>
+          <div style="font-size:9.5px;color:#b87000;margin-top:3px">Jun-Dic −10% vs 25<br><strong>~flat</strong> vs 25 · <strong>−44%</strong> forecast</div>
+        </div>
+        <div style="background:#FEE8EC;border:1px solid #F5C2CC;border-radius:6px;padding:11px 13px">
+          <div style="font-size:9px;font-weight:700;color:var(--u-red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Pesimista</div>
+          <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:21px;font-weight:800;color:var(--u-red);line-height:1">~885K</div>
+          <div style="font-size:9.5px;color:var(--u-red);margin-top:3px">Jun-Dic −20% vs 25<br><strong>−6%</strong> vs 25 · <strong>−47%</strong> forecast</div>
+        </div>
+        <div style="background:#F5F0FF;border:2px solid #6D28D9;border-radius:6px;padding:11px 13px">
+          <div style="font-size:9px;font-weight:700;color:#6D28D9;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">+ Pausa SEA brand</div>
+          <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:21px;font-weight:800;color:#6D28D9;line-height:1">~970K</div>
+          <div style="font-size:9.5px;color:#6D28D9;margin-top:3px">Realista + recup. 5,1K/mes<br><strong>+3,5%</strong> vs 25 · ahorro 91K €</div>
+        </div>
+      </div>
+
+      <div style="font-size:11px;color:#333;line-height:1.6;padding:10px 12px;background:var(--u-cyan-light);border-left:3px solid var(--u-cyan);border-radius:0 4px 4px 0;margin-bottom:14px">
+        <strong>Recomendación basada en datos reales (GSC + GA4 + One Search):</strong> la pérdida verificable Mayo 2026 es <strong>~10.500 sesiones orgánicas/mes</strong> (8% AIO + 43% otras causas CTR + 49% canibalización SEA). El target +25% no es viable post-AIO Overview. Spain cerrará 2026 entorno a <strong>~940K sesiones</strong> (escenario realista, ≈ flat vs 937K 2025). <strong>Acción de mayor ROI: pausar SEA en las 107 kws con pos SEO ≤3</strong> — recuperaría ~5.105 clics/mes al orgánico y ahorraría 13.027 €/mes (~156K €/año), elevando el cierre a ~970K (+3,5% vs 2025).
+      </div>
+
+      <div style="font-size:10px;font-weight:700;color:var(--u-navy);margin-bottom:8px;text-transform:uppercase;letter-spacing:.6px">Evolución mes a mes 2026 · datos reales Ene-May + proyección realista Jun-Dic (−10% YoY)</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <thead>
+            <tr style="background:#F2F4F8;border-bottom:2px solid var(--u-navy)">
+              <th style="padding:7px 10px;text-align:left;font-weight:700;color:var(--u-navy)">Mes</th>
+              <th style="padding:7px 10px;text-align:right;font-weight:700;color:var(--u-cyan-dark)">Forecast +25%</th>
+              <th style="padding:7px 10px;text-align:right;font-weight:700;color:var(--u-navy)">Real / Estimado</th>
+              <th style="padding:7px 10px;text-align:right;font-weight:700;color:var(--u-red)">Gap</th>
+              <th style="padding:7px 10px;text-align:right;font-weight:700;color:var(--u-red)">%</th>
+              <th style="padding:7px 10px;text-align:center;font-weight:700;color:var(--u-gray)">Tipo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #E5E7EB;background:#EFF9F1"><td style="padding:5px 10px;font-weight:600">Enero</td><td style="padding:5px 10px;text-align:right">82.091</td><td style="padding:5px 10px;text-align:right;font-weight:700;color:#1a7a38">102.077</td><td style="padding:5px 10px;text-align:right;color:#1a7a38;font-weight:600">+19.986</td><td style="padding:5px 10px;text-align:right;color:#1a7a38;font-weight:700">+24,3%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-green-light);color:#1a7a38">REAL</span></td></tr>
+            <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600">Febrero</td><td style="padding:5px 10px;text-align:right">97.482</td><td style="padding:5px 10px;text-align:right;font-weight:700">91.239</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−6.243</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−6,4%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-green-light);color:#1a7a38">REAL</span></td></tr>
+            <tr style="border-bottom:1px solid #E5E7EB;background:#FDF2F4"><td style="padding:5px 10px;font-weight:600">Marzo</td><td style="padding:5px 10px;text-align:right">272.415</td><td style="padding:5px 10px;text-align:right;font-weight:700">88.494</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−183.921</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−67,5%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-green-light);color:#1a7a38">REAL</span></td></tr>
+            <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600">Abril</td><td style="padding:5px 10px;text-align:right">158.358</td><td style="padding:5px 10px;text-align:right;font-weight:700">80.962</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−77.396</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−48,9%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-green-light);color:#1a7a38">REAL</span></td></tr>
+            <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600">Mayo</td><td style="padding:5px 10px;text-align:right">174.943</td><td style="padding:5px 10px;text-align:right;font-weight:700">85.825</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−89.118</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−50,9%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-green-light);color:#1a7a38">REAL</span></td></tr>
+            <tr style="border-bottom:1px solid #E5E7EB;border-top:2px solid #DDD"><td style="padding:5px 10px;font-weight:600;color:var(--u-gray)">Junio</td><td style="padding:5px 10px;text-align:right;color:var(--u-gray)">124.674</td><td style="padding:5px 10px;text-align:right;font-weight:700;color:#b87000">~62.716</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−61.958</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−49,7%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-orange-light);color:#b87000">EST</span></td></tr>
+            <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600;color:var(--u-gray)">Julio</td><td style="padding:5px 10px;text-align:right;color:var(--u-gray)">77.499</td><td style="padding:5px 10px;text-align:right;font-weight:700;color:#b87000">~38.082</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−39.417</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−50,9%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-orange-light);color:#b87000">EST</span></td></tr>
+            <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600;color:var(--u-gray)">Agosto</td><td style="padding:5px 10px;text-align:right;color:var(--u-gray)">63.114</td><td style="padding:5px 10px;text-align:right;font-weight:700;color:#b87000">~33.643</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−29.471</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−46,7%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-orange-light);color:#b87000">EST</span></td></tr>
+            <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600;color:var(--u-gray)">Septiembre</td><td style="padding:5px 10px;text-align:right;color:var(--u-gray)">152.885</td><td style="padding:5px 10px;text-align:right;font-weight:700;color:#b87000">~77.821</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−75.064</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−49,1%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-orange-light);color:#b87000">EST</span></td></tr>
+            <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600;color:var(--u-gray)">Octubre</td><td style="padding:5px 10px;text-align:right;color:var(--u-gray)">168.761</td><td style="padding:5px 10px;text-align:right;font-weight:700;color:#b87000">~89.532</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−79.229</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−46,9%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-orange-light);color:#b87000">EST</span></td></tr>
+            <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600;color:var(--u-gray)">Noviembre</td><td style="padding:5px 10px;text-align:right;color:var(--u-gray)">150.000</td><td style="padding:5px 10px;text-align:right;font-weight:700;color:#b87000">~114.790</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−35.210</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−23,5%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-orange-light);color:#b87000">EST</span></td></tr>
+            <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:5px 10px;font-weight:600;color:var(--u-gray)">Diciembre</td><td style="padding:5px 10px;text-align:right;color:var(--u-gray)">150.000</td><td style="padding:5px 10px;text-align:right;font-weight:700;color:#b87000">~74.335</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:600">−75.665</td><td style="padding:5px 10px;text-align:right;color:var(--u-red);font-weight:700">−50,4%</td><td style="padding:5px 10px;text-align:center"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--u-orange-light);color:#b87000">EST</span></td></tr>
+            <tr style="background:var(--u-navy);color:#fff;font-weight:700"><td style="padding:8px 10px">TOTAL 2026</td><td style="padding:8px 10px;text-align:right">1.672.222</td><td style="padding:8px 10px;text-align:right">~939.516</td><td style="padding:8px 10px;text-align:right;color:#FFC1CB">−732.706</td><td style="padding:8px 10px;text-align:right;color:#FFC1CB">−43,8%</td><td style="padding:8px 10px;text-align:center">Mixto</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><div>Fuentes: <strong>GSC España · GA4 · Semrush AIO · Google Ads One Search</strong> · Mayo 2026 vs Mayo 2025</div><div>Slide 12 / 12</div></div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -1997,7 +2016,8 @@ function show(n,btn){
   btn.classList.add('active');
   if(n===1)  buildSpainDaily();
   if(n===11) { buildReinversionChart(); }
-  if(n===2)  { buildIA(); renderIA(); buildAIOLoss(); }
+  if(n===2)  { buildIA(); renderIA(); }
+  if(n===12) { buildAIOLoss(); }
   if(n===3)  buildClicks();
   if(n===4)  buildCats();
   if(n===9) buildNoticiasDaily();
@@ -3074,6 +3094,7 @@ async function exportPDF(){
     { id:'s9',     label:'Noticias',            num:9,  splitBefore:'s9-p2', splitLabel:'Noticias — Discover & Google News' },
     { id:'s10',    label:'Enlaces Externos',    num:10, limitBacklinks: true },
     { id:'s11',    label:'One Search',          num:11 },
+    { id:'s12',    label:'Forecast 2026',       num:12 },
   ];
   const slideIds   = exportItems.map(x => x.id);
   const slideNames = exportItems.map(x => x.label);
@@ -3104,11 +3125,13 @@ async function exportPDF(){
     const n = parseInt(sid.replace('s',''));
     if(n===1)  { buildSpainDaily(); }
     if(n===11) { buildReinversionChart(); }
-    if(n===2)  { buildIA(); renderIA(); buildAIOLoss(); }
+    if(n===2)  { buildIA(); renderIA(); }
+  if(n===12) { buildAIOLoss(); }
     if(n===3)  { buildClicks(); }
     if(n===4)  { buildCats(); }
     if(n===9)  { buildNoticiasDaily(); }
     if(n===10) { buildBacklinks(); }
+    if(n===12) { buildAIOLoss(); }
 
     // Wait for charts to render — extra time for IA chart
     await new Promise(r => setTimeout(r, n===2 ? 900 : 600));
