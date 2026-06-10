@@ -873,6 +873,49 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
       </div>
     </div>
 
+    <!-- ═══════════════════════════════════════════════════════
+         WIDGET: Estimación de pérdida de tráfico por IA Overview
+         ═══════════════════════════════════════════════════════ -->
+    <div style="background:#fff;border:1px solid var(--u-border);border-radius:8px;margin-bottom:16px;overflow:hidden">
+      <div style="background:linear-gradient(135deg,#8B1538 0%,#B91C3C 100%);padding:12px 18px;display:flex;align-items:center;gap:10px">
+        <div style="font-size:18px">📉</div>
+        <div style="font-family:'Baikal',sans-serif;font-weight:700;font-size:13px;letter-spacing:.5px;color:#fff;text-transform:uppercase">Estimación de pérdida de tráfico por IA Overview</div>
+        <div style="margin-left:auto;font-size:10px;color:rgba(255,255,255,.7)">Cruce GSC España × Semrush AIO</div>
+      </div>
+      <div style="padding:18px;display:grid;grid-template-columns:1fr 1.1fr;gap:24px">
+        <!-- LEFT: KPIs + metodología + top kws -->
+        <div>
+          <div style="display:flex;gap:24px;margin-bottom:14px">
+            <div>
+              <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:32px;font-weight:800;color:var(--u-red);line-height:1">≈ 1.233</div>
+              <div style="font-size:9.5px;color:var(--u-gray);text-transform:uppercase;letter-spacing:.5px;margin-top:4px">Clics perdidos · Mayo 2026 (verificado)</div>
+            </div>
+            <div style="border-left:1px solid var(--u-border);padding-left:24px">
+              <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:32px;font-weight:800;color:var(--u-navy);line-height:1">≈ 8.500</div>
+              <div style="font-size:9.5px;color:var(--u-gray);text-transform:uppercase;letter-spacing:.5px;margin-top:4px">Acumulado proyectado · Mar 25 → May 26</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:#555;line-height:1.55;padding:10px 12px;background:var(--u-gray-light);border-radius:4px;margin-bottom:12px">
+            <strong>Metodología:</strong> de las 772 kws AIO únicas (Semrush Mayo 26), <strong>197</strong> matchean con GSC España con datos en ambos años. La CTR cae de <strong>4,06% → 2,19%</strong> YoY (−1,87 pp) sobre 65.933 impresiones. <strong>Pérdida</strong> = CTR<sub>may25</sub> × Impr<sub>may26</sub> − Clics<sub>may26</sub>. Histórico proyectado escalando por número de kws AIO de cada mes (iaChart).
+          </div>
+          <div style="font-size:10px;font-weight:700;color:var(--u-navy);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px">Top keywords más impactadas</div>
+          <div style="font-size:11px;line-height:1.75">
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--u-border);padding:3px 0"><span style="color:#333">derechos de los niños</span><span style="font-weight:700;color:var(--u-red)">−81 clics</span></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--u-border);padding:3px 0"><span style="color:#333">derechos de la infancia</span><span style="font-weight:700;color:var(--u-red)">−75 clics</span></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--u-border);padding:3px 0"><span style="color:#333">países más pobres del mundo</span><span style="font-weight:700;color:var(--u-red)">−55 clics</span></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--u-border);padding:3px 0"><span style="color:#333">testamentos y herencias</span><span style="font-weight:700;color:var(--u-red)">−34 clics</span></div>
+            <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:#333">pobreza infantil españa</span><span style="font-weight:700;color:var(--u-red)">−30 clics</span></div>
+          </div>
+        </div>
+        <!-- RIGHT: monthly bar chart -->
+        <div>
+          <div style="font-size:10px;font-weight:700;color:var(--u-navy);margin-bottom:8px;text-transform:uppercase;letter-spacing:.6px">Pérdida estimada por mes (clics)</div>
+          <div style="height:220px;position:relative"><canvas id="aioLossChart"></canvas></div>
+          <div style="margin-top:8px;font-size:10px;color:var(--u-gray);line-height:1.5">May 26 es el dato verificado (CTR cruzado con GSC). Meses anteriores son proyección lineal usando el ratio pérdida/kw AIO de Mayo 26 aplicado al número de kws AIO histórico (iaChart).</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Distribución por categoría + Top 5 -->
     <div style="display:grid;grid-template-columns:220px 1fr;gap:16px;margin-bottom:16px">
       <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;padding:16px">
@@ -1842,7 +1885,7 @@ function show(n,btn){
   btn.classList.add('active');
   if(n===1)  buildSpainDaily();
   if(n===11) { buildReinversionChart(); }
-  if(n===2)  { buildIA(); renderIA(); }
+  if(n===2)  { buildIA(); renderIA(); buildAIOLoss(); }
   if(n===3)  buildClicks();
   if(n===4)  buildCats();
   if(n===9) buildNoticiasDaily();
@@ -2013,6 +2056,31 @@ function buildIA(){
   new Chart(document.getElementById('iaChart'),{
     type:'bar',data:{labels,datasets:[{data:vals,backgroundColor:colors,borderRadius:3}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.parsed.y+' keywords'}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:10}}}}}
+  });
+}
+
+// ── Estimación pérdida de tráfico por IA Overview ──
+// Pérdida verificada Mayo 26 = 1.233 clics (cruce GSC España × Semrush AIO).
+// Histórico proyectado escalando linealmente con nº kws AIO de cada mes.
+let aioLossBuilt=false;
+function buildAIOLoss(){
+  if(aioLossBuilt) return; aioLossBuilt=true;
+  const labels=['Mar 25','Abr 25','May 25','Jun 25','Jul 25','Ago 25','Sep 25','Oct 25','Nov 25','Dic 25','Ene 26','Feb 26','Mar 26','Abr 26','May 26'];
+  const iaKws=[28,337,438,686,619,641,656,664,606,666,740,736,728,1078,1311];
+  const realMayLoss=1233; // verificado
+  const ratio=realMayLoss/1311;
+  const loss=iaKws.map((k,i)=>i===14?realMayLoss:Math.round(k*ratio));
+  const colors=loss.map((v,i)=>i===14?'#B91C3C':'rgba(185,28,60,.45)');
+  const el=document.getElementById('aioLossChart');
+  if(!el) return;
+  new Chart(el,{
+    type:'bar',data:{labels,datasets:[{data:loss,backgroundColor:colors,borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{
+        label:c=>' −'+c.parsed.y.toLocaleString('es-ES')+' clics'+(c.dataIndex===14?' (verificado)':' (proyectado)')
+      }}},
+      scales:{x:{grid:{display:false},ticks:{font:{size:9}}},
+              y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:9},callback:v=>v>=1000?(v/1000).toFixed(1)+'K':v}}}}
   });
 }
 
@@ -2900,7 +2968,7 @@ async function exportPDF(){
     const n = parseInt(sid.replace('s',''));
     if(n===1)  { buildSpainDaily(); }
     if(n===11) { buildReinversionChart(); }
-    if(n===2)  { buildIA(); renderIA(); }
+    if(n===2)  { buildIA(); renderIA(); buildAIOLoss(); }
     if(n===3)  { buildClicks(); }
     if(n===4)  { buildCats(); }
     if(n===9)  { buildNoticiasDaily(); }
