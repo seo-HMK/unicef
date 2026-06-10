@@ -2180,6 +2180,34 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
       </div>
     </div>
 
+    <!-- GRÁFICA COMPARATIVA - 4 escenarios mes a mes Jun-Dic -->
+    <div style="background:#fff;border:1px solid var(--u-cyan);border-left:4px solid var(--u-cyan);border-radius:6px;padding:14px 18px;margin-bottom:18px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <div style="font-size:14px">📈</div>
+        <div style="font-size:11px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.7px">Proyección Jun-Dic 2026 · 4 escenarios mes a mes</div>
+        <div style="margin-left:auto;font-size:10px;color:var(--u-gray)">Sesiones GA4 España · estimación basada en GSC + Ahrefs + One Search</div>
+      </div>
+      <div style="font-size:10.5px;color:#555;margin-bottom:10px;line-height:1.5">Comparativa visual de las 4 trayectorias posibles según qué palancas SEO activemos. Ene-May son datos reales GA4; Jun-Dic son proyecciones partiendo de la base orgánica <strong>+12% YoY</strong>.</div>
+      <div style="position:relative;height:340px;background:#FBFCFE;border-radius:4px;padding:10px"><canvas id="scenariosChart"></canvas></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-top:12px;font-size:10px">
+        <div style="padding:8px 10px;background:#F2F4F8;border-left:3px solid #6B7280;border-radius:0 4px 4px 0">
+          <strong style="color:#374151">A · Base orgánica</strong><br><span style="color:#555">Sin pausa Paid · sin contenidos nuevos. Sólo defensa orgánica +12% YoY.<br><strong style="color:#1a7a38">Cierre: 1.060K (+12,9%)</strong></span>
+        </div>
+        <div style="padding:8px 10px;background:#F5F0FF;border-left:3px solid #6D28D9;border-radius:0 4px 4px 0">
+          <strong style="color:#6D28D9">B · + Pausa Paid</strong><br><span style="color:#555">Pausa SEA en 107 kws pos ≤3 desde Julio. +5.105 clics/mes.<br><strong style="color:#6D28D9">Cierre: 1.090K (+16,2%)</strong></span>
+        </div>
+        <div style="padding:8px 10px;background:#FFF8E1;border-left:3px solid #D97706;border-radius:0 4px 4px 0">
+          <strong style="color:#D97706">C · + Contenidos</strong><br><span style="color:#555">Sin pausa Paid · 64 piezas publicadas (34 Jun + 30 escalonadas). +85,5K clics.<br><strong style="color:#D97706">Cierre: 1.145K (+22,0%)</strong></span>
+        </div>
+        <div style="padding:8px 10px;background:#E6F9F2;border-left:3px solid #1a7a38;border-radius:0 4px 4px 0">
+          <strong style="color:#1a7a38">D · Plan completo ★</strong><br><span style="color:#555">Pausa SEA + 64 contenidos. Suma ambas palancas.<br><strong style="color:#1a7a38">Cierre: 1.176K (+25,3%)</strong> — recupera forecast +25%</span>
+        </div>
+      </div>
+      <div style="font-size:10px;color:#555;margin-top:10px;padding:8px 12px;background:#F0F8FE;border-left:3px solid var(--u-cyan);border-radius:0 4px 4px 0;line-height:1.55">
+        <strong>Lectura:</strong> el escenario <strong>C (contenidos sin pausa Paid)</strong> ya supera +20% YoY · el escenario <strong>D (plan completo)</strong> alcanza el forecast +25% original pese al impacto AIO Overview. La diferencia entre A y D son <strong>~116K sesiones extra Jun-Dic</strong> — totalmente accionable con palancas SEO controlables.
+      </div>
+    </div>
+
     <!-- ESTIMACION REALISTA CIERRE 2026 - 4 escenarios actualizados -->
     <div style="background:#fff;border:1px solid var(--u-navy);border-left:4px solid var(--u-navy);border-radius:6px;padding:14px 18px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
@@ -2268,7 +2296,7 @@ function show(n,btn){
   if(n===1)  buildSpainDaily();
   if(n===11) { buildReinversionChart(); }
   if(n===2)  { buildIA(); renderIA(); }
-  if(n===12) { buildAIOLoss(); }
+  if(n===12) { buildAIOLoss(); buildScenariosChart(); }
   if(n===3)  buildClicks();
   if(n===4)  buildCats();
   if(n===9) buildNoticiasDaily();
@@ -2493,6 +2521,75 @@ function buildAIOLoss(){
       }}},
       scales:{x:{grid:{display:false},ticks:{font:{size:10}}},
               y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:10},callback:v=>v>=1000?(v/1000).toFixed(0)+'K':v}}}}
+  });
+}
+
+// ── Chart: 4 escenarios Jun-Dic 2026 ──
+let scenariosBuilt=false;
+function buildScenariosChart(){
+  if(scenariosBuilt) return; scenariosBuilt=true;
+  const el=document.getElementById('scenariosChart');
+  if(!el) return;
+  const labels=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const real    =[102077, 91239, 88494, 80962, 85825, null, null, null, null, null, null, null];
+  // Base +12% YoY Jun-Dic
+  const baseA   =[null,null,null,null,null, 78047, 47391, 41867, 96844, 111418, 142850, 92505];
+  // + Pausa Paid (desde Jul: +5.105/mes)
+  const scenB   =[null,null,null,null,null, 78047, 52496, 46972, 101949, 116523, 147955, 97610];
+  // + Contenidos (uplift: Jun 2.980, Jul 6.164, Ago 9.553, Sep 13.145, Oct 16.941, Nov 17.961, Dic 18.777)
+  const scenC   =[null,null,null,null,null, 81027, 53555, 51420, 109989, 128359, 160811, 111282];
+  // Plan completo: pausa Paid + contenidos
+  const scenD   =[null,null,null,null,null, 81027, 58660, 56525, 115094, 133464, 165916, 116387];
+
+  // Conectar último real con primer mes proyectado (May 85.825 → Jun)
+  const connect = arr => arr.map((v,i)=> (i===5 && v!=null) ? v : v);
+  // To draw line from May real to Jun projected we prepend May value at i=5? In Chart.js line skips null. So we put real value also at i=5 for each projection series? Better: include May (85825) in baseA/scenB/scenC/scenD so lines start from May.
+  const withMay = arr => { const a=arr.slice(); a[4]=85825; return a; };
+
+  new Chart(el,{
+    type:'line',
+    data:{labels,datasets:[
+      {label:'Real GA4 (Ene-May)',data:real,
+        borderColor:'#003F7D',backgroundColor:'rgba(0,63,125,.08)',
+        borderWidth:3,pointRadius:5,pointBackgroundColor:'#003F7D',
+        tension:.25,fill:false,order:5,spanGaps:false},
+      {label:'A · Base orgánica (+12% YoY)',data:withMay(baseA),
+        borderColor:'#6B7280',backgroundColor:'rgba(107,114,128,.05)',
+        borderWidth:2,borderDash:[6,4],pointRadius:3,pointBackgroundColor:'#6B7280',
+        tension:.25,fill:false,order:4},
+      {label:'B · + Pausa Paid',data:withMay(scenB),
+        borderColor:'#6D28D9',backgroundColor:'rgba(109,40,217,.05)',
+        borderWidth:2,pointRadius:3,pointBackgroundColor:'#6D28D9',
+        tension:.25,fill:false,order:3},
+      {label:'C · + Contenidos (sin pausa)',data:withMay(scenC),
+        borderColor:'#D97706',backgroundColor:'rgba(217,119,6,.05)',
+        borderWidth:2,pointRadius:3,pointBackgroundColor:'#D97706',
+        tension:.25,fill:false,order:2},
+      {label:'D · Plan completo (pausa + contenidos)',data:withMay(scenD),
+        borderColor:'#1a7a38',backgroundColor:'rgba(26,122,56,.10)',
+        borderWidth:3,pointRadius:4,pointBackgroundColor:'#1a7a38',
+        tension:.25,fill:true,order:1}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:true,position:'top',align:'center',
+          labels:{font:{size:10},boxWidth:12,padding:8,usePointStyle:true}},
+        tooltip:{callbacks:{
+          title:c=>c[0].label+' 2026',
+          label:c=>{
+            const v=c.parsed.y;
+            if(v==null) return null;
+            return c.dataset.label+': '+v.toLocaleString('es-ES')+' ses';
+          }
+        }}
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{font:{size:10}}},
+        y:{grid:{color:'rgba(0,0,0,.05)'},
+           ticks:{font:{size:10},callback:v=>v>=1000?(v/1000).toFixed(0)+'K':v},
+           title:{display:true,text:'Sesiones GA4 / mes',font:{size:10,weight:'600'},color:'#666'}}
+      }}
   });
 }
 
@@ -3382,12 +3479,12 @@ async function exportPDF(){
     if(n===1)  { buildSpainDaily(); }
     if(n===11) { buildReinversionChart(); }
     if(n===2)  { buildIA(); renderIA(); }
-  if(n===12) { buildAIOLoss(); }
+  if(n===12) { buildAIOLoss(); buildScenariosChart(); }
     if(n===3)  { buildClicks(); }
     if(n===4)  { buildCats(); }
     if(n===9)  { buildNoticiasDaily(); }
     if(n===10) { buildBacklinks(); }
-    if(n===12) { buildAIOLoss(); }
+    if(n===12) { buildAIOLoss(); buildScenariosChart(); }
 
     // Wait for charts to render — extra time for IA chart
     await new Promise(r => setTimeout(r, n===2 ? 900 : 600));
@@ -3745,6 +3842,7 @@ async function exportForecastPDF(){
   el.classList.add('active');
 
   if(window.buildAIOLoss) { buildAIOLoss(); }
+  if(window.buildScenariosChart) { buildScenariosChart(); }
   await new Promise(r => setTimeout(r, 900));
 
   // Forzar resize chart
