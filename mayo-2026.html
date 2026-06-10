@@ -1841,15 +1841,21 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
     <div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative">
       <div>
         <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.85);margin-bottom:8px;display:flex;align-items:center;gap:6px"><span style="width:14px;height:2px;background:#fff;display:inline-block;border-radius:1px"></span>12 — Forecast 2026</div>
-        <h1 style="font-family:'Baikal',sans-serif;font-weight:500;font-size:26px;font-weight:700;line-height:1.15;color:#fff;letter-spacing:-.1px;max-width:660px">Pérdida de tráfico orgánico estimada:<br>AIO + colapso CTR + canibalización Paid</h1>
+        <h1 style="font-family:'Baikal',sans-serif;font-weight:500;font-size:26px;font-weight:700;line-height:1.15;color:#fff;letter-spacing:-.1px;max-width:660px">Forecast 2026: análisis del canal orgánico<br>y recalibración de objetivos post-AIO</h1>
       </div>
-      <div style="font-size:11px;color:rgba(255,255,255,.75);text-align:right;line-height:1.6;background:rgba(255,255,255,.1);padding:10px 14px;border-radius:4px;border-left:3px solid #fff;flex-shrink:0">Forecast +25% SEO vs<br>Real GA4 España 2026<br><strong style="color:#fff">Datos GSC + GA4 + One Search</strong></div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0">
+        <div style="font-size:11px;color:rgba(255,255,255,.75);text-align:right;line-height:1.6;background:rgba(255,255,255,.1);padding:10px 14px;border-radius:4px;border-left:3px solid #fff">Forecast +25% SEO vs<br>Real GA4 España 2026<br><strong style="color:#fff">Datos GSC + GA4 + One Search + Ahrefs</strong></div>
+        <button id="forecast-export-btn" onclick="exportForecastPDF()" style="background:#fff;color:#B91C3C;border:none;padding:8px 14px;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Baikal','Roboto',sans-serif;display:flex;align-items:center;gap:6px;letter-spacing:.3px;box-shadow:0 2px 4px rgba(0,0,0,.15)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Descargar Forecast PDF
+        </button>
+      </div>
     </div>
   </div>
 
   <div class="section-pad">
     <!-- DESCOMPOSICION PERDIDA ORGANICA MAYO 2026 -->
-    <div class="section-heading">Descomposición de la pérdida en el canal orgánico — Mayo 2026</div>
+    <div class="section-heading">Descomposición del impacto en el canal orgánico — Mayo 2026</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;border:1px solid var(--u-border);border-radius:8px;overflow:hidden;background:#fff;margin-bottom:18px">
       <div style="padding:14px 16px;border-right:1px solid var(--u-border);border-top:3px solid var(--u-red)">
         <div style="font-size:9px;font-weight:700;color:var(--u-red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">AIO directo</div>
@@ -1867,9 +1873,9 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
         <div style="font-size:10px;color:var(--u-gray);margin-top:3px"><strong>48,8%</strong> · 107 kws pos SEO ≤3 · recuperable</div>
       </div>
       <div style="padding:14px 16px;border-top:3px solid var(--u-navy);background:#F0F4F8">
-        <div style="font-size:9px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">TOTAL pérdida orgánica</div>
+        <div style="font-size:9px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Impacto total identificable</div>
         <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:26px;font-weight:800;color:var(--u-navy);line-height:1">−10.462 clics</div>
-        <div style="font-size:10px;color:var(--u-gray);margin-top:3px"><strong>Mayo 2026</strong> · ≈ 10.500 sesiones/mes</div>
+        <div style="font-size:10px;color:var(--u-gray);margin-top:3px"><strong>Mayo 2026</strong> · de los cuales ~49% (SEA) es recuperable</div>
       </div>
     </div>
 
@@ -1886,10 +1892,10 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
         <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:30px;font-weight:800;color:var(--u-navy);line-height:1">448.597</div>
         <div style="font-size:10px;color:var(--u-gray);margin-top:3px">Ene-May 2026 · +14,2% vs Ene-May 25</div>
       </div>
-      <div style="padding:14px 18px;background:#FDF2F4">
-        <div style="font-size:9.5px;color:var(--u-red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">Gap acumulado vs forecast</div>
-        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:30px;font-weight:800;color:var(--u-red);line-height:1">−336.692</div>
-        <div style="font-size:10px;color:var(--u-red);margin-top:3px;font-weight:600">−42,9% bajo forecast · 5 meses</div>
+      <div style="padding:14px 18px;background:#FFF8E1">
+        <div style="font-size:9.5px;color:#b87000;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">Diferencia vs forecast inicial</div>
+        <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:30px;font-weight:800;color:#b87000;line-height:1">−336.692</div>
+        <div style="font-size:10px;color:#b87000;margin-top:3px;font-weight:600">−42,9% · forecast era pre-AIO Overview</div>
       </div>
     </div>
 
@@ -1903,7 +1909,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
         </div>
       </div>
       <div style="height:260px;position:relative"><canvas id="aioLossChart"></canvas></div>
-      <div style="margin-top:8px;font-size:10.5px;color:var(--u-gray);line-height:1.5"><strong>Lectura:</strong> Enero 26 superó forecast (+24%); a partir de febrero el real cae por debajo del objetivo (−67% en marzo, −49% abril, −51% mayo). Causas: AIO + colapso CTR general + canibalización SEA en brand kws.</div>
+      <div style="margin-top:8px;font-size:10.5px;color:var(--u-gray);line-height:1.5"><strong>Lectura:</strong> Enero 26 superó forecast +24%; a partir de febrero el tráfico real queda por debajo del objetivo +25% original. El forecast se planteó antes del despliegue masivo de IA Overview en SERP — comparado con Spain 2025 real, los primeros 4 meses están en positivo (Ene +114%, Feb +64%, Abr +8%) y solo Mar y May caen YoY.</div>
     </div>
 
     <!-- 2 paneles: Verificacion AIO + Canibalizacion SEA -->
@@ -2066,7 +2072,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
     <div style="background:#fff;border:1px solid var(--u-navy);border-left:4px solid var(--u-navy);border-radius:6px;padding:14px 18px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <div style="font-size:14px">🎯</div>
-        <div style="font-size:11px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.7px">Estimación realista cierre 2026 — 4 escenarios con palancas SEO</div>
+        <div style="font-size:11px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.7px">Proyección cierre 2026 — 4 escenarios según palancas SEO activadas</div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:12px">
         <div style="background:#FFF8E1;border:1px solid var(--u-orange);border-radius:6px;padding:11px 13px">
@@ -2104,8 +2110,8 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
           <thead>
             <tr style="background:#F2F4F8;border-bottom:2px solid var(--u-navy)">
               <th style="padding:6px 8px;text-align:left;font-weight:700;color:var(--u-navy)">Mes</th>
-              <th style="padding:6px 8px;text-align:right;font-weight:700;color:var(--u-gray)">Real 2025</th>
-              <th style="padding:6px 8px;text-align:right;font-weight:700;color:var(--u-navy)">Real/Est 2026</th>
+              <th style="padding:6px 8px;text-align:right;font-weight:700;color:var(--u-gray)">Sesiones 2025</th>
+              <th style="padding:6px 8px;text-align:right;font-weight:700;color:var(--u-navy)">Sesiones 2026</th>
               <th style="padding:6px 8px;text-align:right;font-weight:700;color:var(--u-navy)">Δ vs 2025</th>
               <th style="padding:6px 8px;text-align:right;font-weight:700;color:var(--u-navy)">%</th>
               <th style="padding:6px 8px;text-align:right;font-weight:700;color:var(--u-cyan-dark)">Forecast +25%</th>
@@ -3587,6 +3593,135 @@ async function exportPDF(){
   btn.disabled = false;
 }
 
+// ── EXPORT PDF SOLO FORECAST (s12) ──
+async function exportForecastPDF(){
+  const btn = document.getElementById('forecast-export-btn');
+  const origHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.textContent = 'Generando Forecast PDF…';
+
+  // Aplicar overrides CSS PDF
+  const pdfStyle = document.createElement('style');
+  pdfStyle.id = 'pdf-export-overrides-forecast';
+  pdfStyle.textContent = `
+    body.pdf-exporting { width: 1400px !important; min-width: 1400px !important; }
+    body.pdf-exporting .slide.active { width: 1400px !important; min-width: 1400px !important; max-width: 1400px !important; }
+    body.pdf-exporting .two-col { grid-template-columns: minmax(0,1fr) minmax(0,1fr) !important; }
+    body.pdf-exporting .chart-wrap { width: 100% !important; max-width: 100% !important; overflow: visible !important; }
+    body.pdf-exporting .section-pad { box-sizing: border-box !important; }
+  `;
+  document.head.appendChild(pdfStyle);
+  document.body.classList.add('pdf-exporting');
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ orientation:'landscape', unit:'mm', format:'a4' });
+  const PW = 297, PH = 210;
+
+  // Save current state
+  const activeSlide = document.querySelector('.slide.active');
+  const activeBtn = document.querySelector('.nav-tab.active');
+  const nav = document.querySelector('nav');
+  nav.style.display = 'none';
+
+  const el = document.getElementById('s12');
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+
+  if(window.buildAIOLoss) { buildAIOLoss(); }
+  await new Promise(r => setTimeout(r, 900));
+
+  // Forzar resize chart
+  if (typeof Chart !== 'undefined' && Chart.instances) {
+    Object.values(Chart.instances).forEach(ci => {
+      try { if (ci && ci.canvas && el.contains(ci.canvas)) { ci.resize(); ci.update('none'); } } catch(e) {}
+    });
+  }
+  await new Promise(r => setTimeout(r, 350));
+
+  // Expandir slide a 1400px y scrollables
+  const origStyle = el.getAttribute('style') || '';
+  el.style.cssText = origStyle + ';width:1400px!important;max-height:none!important;overflow:visible!important;position:relative!important;';
+
+  const scrollables = Array.from(el.querySelectorAll('[style*="overflow"]')).filter(s => !s.dataset.pdfLimited && !s.closest('[data-pdf-limited]'));
+  const scrollBackups = [];
+  scrollables.forEach(s => {
+    scrollBackups.push({ el: s, orig: s.style.cssText });
+    s.style.maxHeight = 'none';
+    s.style.overflow = 'visible';
+    s.style.height = 'auto';
+  });
+
+  await new Promise(r => setTimeout(r, 200));
+
+  // Pre-convertir logos
+  const logoImgs = el.querySelectorAll('img[alt="UNICEF"]');
+  const logoBackups = [];
+  for (const img of logoImgs) {
+    try {
+      await new Promise(res => { if (img.complete) res(); else img.onload = res; });
+      const cv = document.createElement('canvas');
+      cv.width = img.naturalWidth || img.offsetWidth || 200;
+      cv.height = img.naturalHeight || img.offsetHeight || 50;
+      cv.style.cssText = `width:${img.offsetWidth}px;height:${img.offsetHeight}px;display:${img.style.display||'block'}`;
+      const ctx = cv.getContext('2d');
+      ctx.drawImage(img, 0, 0, cv.width, cv.height);
+      img.parentNode.insertBefore(cv, img);
+      img.style.display = 'none';
+      logoBackups.push({ img, cv });
+    } catch(e) {}
+  }
+
+  // Pre-convertir canvases Chart.js
+  const canvasEls = el.querySelectorAll('canvas');
+  const canvasBackups = [];
+  canvasEls.forEach(cv => {
+    try {
+      const dataURL = cv.toDataURL('image/png');
+      const img = document.createElement('img');
+      img.src = dataURL;
+      img.style.cssText = `width:${cv.offsetWidth}px;height:${cv.offsetHeight}px;display:block`;
+      cv.parentNode.insertBefore(img, cv);
+      cv.style.display = 'none';
+      canvasBackups.push({ cv, img });
+    } catch(e) {}
+  });
+
+  const captured = await html2canvas(el, {
+    scale: 1.5, useCORS: true, allowTaint: true,
+    backgroundColor: '#F8FAFD', scrollX: 0, scrollY: 0,
+    width: 1400, windowWidth: 1400, logging: false
+  });
+
+  // Restaurar estado
+  el.setAttribute('style', origStyle);
+  scrollables.forEach((s, k) => { s.style.cssText = scrollBackups[k].orig; });
+  logoBackups.forEach(({ img, cv }) => { img.style.display = ''; cv.parentNode.removeChild(cv); });
+  canvasBackups.forEach(({ cv, img }) => { cv.style.display = ''; img.parentNode.removeChild(img); });
+
+  const iW = captured.width, iH = captured.height;
+  const ppm = 3.7795, fMm = 6, uW = PW, uH = PH - fMm;
+  const sc = Math.min(uW / (iW / ppm), uH / (iH / ppm));
+  const fW = (iW / ppm) * sc, fH = (iH / ppm) * sc;
+
+  pdf.setFillColor(248, 250, 253);
+  pdf.rect(0, 0, PW, PH, 'F');
+  pdf.addImage(captured.toDataURL('image/jpeg', 0.93), 'JPEG', (PW-fW)/2, (uH-fH)/2, fW, fH);
+  pdf.setFontSize(7); pdf.setTextColor(150,150,150);
+  pdf.text('Forecast 2026 · UNICEF SEO · ' + SEED_MONTH.label, PW/2, PH - 2, {align:'center'});
+
+  pdf.save(`UNICEF_Forecast_${SEED_MONTH.label.replace(/\s/g,'_')}.pdf`);
+
+  // Cleanup
+  nav.style.display = '';
+  document.body.classList.remove('pdf-exporting');
+  const cleanup = document.getElementById('pdf-export-overrides-forecast');
+  if (cleanup) cleanup.remove();
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  if (activeSlide) activeSlide.classList.add('active');
+
+  btn.innerHTML = origHtml;
+  btn.disabled = false;
+}
 
 </script>
 </body>
