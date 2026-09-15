@@ -6,6 +6,23 @@
   <meta name="googlebot" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SEO Dashboard UNICEF España · Junio 2026</title>
+<style id="print-css">
+@media print{
+  @page{size:340mm 240mm;margin:6mm}
+  html,body{background:#fff !important}
+  nav,#month-nav,#export-btn{display:none !important}
+  .slide{display:block !important;min-height:0 !important;page-break-after:always;break-after:page;box-shadow:none !important}
+  .slide:last-of-type{page-break-after:auto;break-after:auto}
+  .tbl-wrap{overflow:visible !important;max-height:none !important}
+  .card,.ia-card,.llm-card,.sum-card,.kpi-cell,.kpi-card-sm,.insight,.chart-wrap{break-inside:avoid;page-break-inside:avoid}
+  table{break-inside:auto}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  thead{display:table-header-group}
+  .chart-wrap,canvas{max-width:100% !important}
+  a{text-decoration:none !important;color:inherit !important}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+}
+</style>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700;900&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 /* ── Baikal Typeface ── */
@@ -3003,6 +3020,7 @@ const IA_KWS=[{"kw":"sostenibilidad","pos":1,"sv":12100,"tr":420,"kd":60,"cat":"
 
 let iaSort={k:'tr',d:true};
 
+const IA_MAX=25;
 function renderIA(){
   const q=(document.getElementById('ia-q')||{}).value?.toLowerCase()||'';
   const cat=(document.getElementById('ia-cat')||{}).value||'';
@@ -3020,7 +3038,7 @@ function renderIA(){
   const totalSV=rows.reduce((s,r)=>s+r.sv,0);
   const totalTr=rows.reduce((s,r)=>s+r.tr,0);
   const info=document.getElementById('ia-info');
-  if(info) info.textContent=rows.length+' keywords · '+totalSV.toLocaleString('es-ES')+' vol. total · '+totalTr.toLocaleString('es-ES')+' tráfico estimado';
+  if(info) info.textContent=(rows.length>IA_MAX ? 'Top '+IA_MAX+' de '+rows.length+' keywords' : rows.length+' keywords')+' · '+totalSV.toLocaleString('es-ES')+' vol. total · '+totalTr.toLocaleString('es-ES')+' tráfico estimado';
   const tbody=document.getElementById('ia-tbody');
   if(!tbody) return;
   const CAT_COLOR={
@@ -3029,7 +3047,7 @@ function renderIA(){
     'Colabora':'#F5A623','Otras':'var(--u-gray)'
   };
   const kdColor=kd=>kd<20?'var(--u-green)':kd<40?'var(--u-orange)':'var(--u-red)';
-  tbody.innerHTML=rows.map(r=>`
+  tbody.innerHTML=rows.slice(0,IA_MAX).map(r=>`
     <tr>
       <td style="font-weight:500">${r.kw}</td>
       <td style="text-align:right;color:var(--u-green);font-weight:700">${r.pos}</td>
@@ -3955,6 +3973,61 @@ async function exportForecastPDF(){
   btn.disabled = false;
 }
 
+</script>
+<style id="pp-css">
+.pp-head{display:none}
+@media print{
+  .pp-page{page-break-after:always;break-after:page}
+  .pp-page:last-child{page-break-after:auto;break-after:auto}
+  .pp-head{display:flex!important;align-items:center;gap:12px;background:#003F7D;color:#fff;padding:7px 40px;font-family:'Baikal','Roboto',sans-serif;font-size:11px;border-bottom:2px solid #1CABE2;margin-bottom:10px}
+  .pp-head .pp-sec{font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.8px}
+  .pp-head .pp-mes{margin-left:auto;opacity:.75}
+  .pp-head .pp-brand{opacity:.6;border-right:1px solid rgba(255,255,255,.3);padding-right:12px}
+  .slide>div:first-of-type{padding-top:16px!important;padding-bottom:18px!important}
+  .slide h1{font-size:21px!important;line-height:1.2!important}
+  .section-pad{padding-top:14px!important;padding-bottom:14px!important}
+}
+</style>
+<script id="pp-js">
+(function(){
+  var SECTIONS={s1:'KPIs Generales',s11:'One Search',s2:'Visibilidad IA',s3:'Clics & Sesiones',s4:'Tráfico Categorías',s5:'Blog',s6:'Resumen Ejecutivo',s7:'Next Steps',s8:'Días Mundiales',s9:'Noticias',s10:'Enlaces Externos'};
+  var PAGE_H=861, HEAD_H=44, done=false;
+  function mes(){ try{ return SEED_MONTH.label; }catch(e){ return ''; } }
+  function head(name){
+    var d=document.createElement('div'); d.className='pp-head';
+    d.innerHTML='<span class="pp-brand">UNICEF · SEO · Havas Market</span><span class="pp-sec">'+name+'</span><span class="pp-mes">'+mes()+'</span>';
+    return d;
+  }
+  window.ppPaginate=function(){
+    if(done) return; done=true;
+    var slides=[].slice.call(document.querySelectorAll('.slide'));
+    slides.forEach(function(s){ s.style.display='block'; s.style.minHeight='0'; });
+    var wrap=document.createElement('div'); wrap.id='pp-wrap';
+    slides.forEach(function(s){
+      var name=SECTIONS[s.id]||''; var kids=[].slice.call(s.children);
+      var page=null, used=0;
+      function np(){ page=document.createElement('div'); page.className='pp-page'; page.appendChild(head(name)); wrap.appendChild(page); used=HEAD_H; }
+      np();
+      kids.forEach(function(k){
+        var h=k.getBoundingClientRect().height, avail=PAGE_H-HEAD_H;
+        if(h>avail){
+          k.style.zoom=Math.max(0.5, avail/h);
+          if(used>HEAD_H) np();
+          page.appendChild(k); used=PAGE_H; return;
+        }
+        if(used+h>PAGE_H){
+          var rest=PAGE_H-used, z=rest/h;
+          if(z>=0.82){ k.style.zoom=z; page.appendChild(k); used=PAGE_H; return; }
+          np();
+        }
+        page.appendChild(k); used+=h;
+      });
+    });
+    document.body.appendChild(wrap);
+    slides.forEach(function(s){ s.style.display='none'; });
+  };
+  window.addEventListener('beforeprint', function(){ try{ ppPaginate(); }catch(e){} });
+})();
 </script>
 </body>
 </html>
