@@ -3537,6 +3537,8 @@ async function exportForecastPDF(){
     if(done) return; done=true;
     var slides=[].slice.call(document.querySelectorAll('.slide'));
     slides.forEach(function(s){ s.style.display='block'; s.style.minHeight='0'; });
+    // en impresion .tbl-wrap se expande (overflow visible, sin max-height): hay que medirlo asi
+    [].slice.call(document.querySelectorAll('.tbl-wrap')).forEach(function(w){ w.style.overflow='visible'; w.style.maxHeight='none'; });
     try{ if(window.Chart){ Chart.defaults.animation=false; Chart.defaults.animations=false; } }catch(e){}
     ['buildSistrix','buildSpainDaily','renderPaises','buildReinversionChart','renderOS','renderStop','buildIA','renderIA','buildClicks','buildCats','renderDias','buildNoticiasDaily','buildBacklinks'].forEach(function(fn){
       try{ if(typeof window[fn]==='function') window[fn](); }catch(e){}
@@ -3598,22 +3600,35 @@ async function exportForecastPDF(){
       });
     });
     document.body.appendChild(wrap);
-    // las paginas que aun asi queden sueltas se centran en vertical
+    var MAXH=775;
     [].slice.call(wrap.children).forEach(function(p){
       var b=p.querySelector('.pp-body'); if(!b) return;
-      var h=p.getBoundingClientRect().height;
-      if(h<LIMIT*0.72){
-        b.style.minHeight=(LIMIT-HEAD_H-40)+'px';
+      var h=p.getBoundingClientRect().height, gz=1;
+      // 1. si sobra sitio, se agranda el contenido hasta llenar la pagina
+      if(MAXH-h>30){
+        var z=Math.min(1.15,(MAXH-8)/h);
+        if(z>1.02){ gz=z; b.style.zoom=gz; h=p.getBoundingClientRect().height; }
+      }
+      // 2. lo que siga sobrando se reparte entre los bloques, o se centra si es uno solo.
+      //    OJO: el zoom tambien escala el min-height, por eso se divide entre gz.
+      if(MAXH-h>45){
+        var n=b.children.length, hueco=(MAXH-h)/gz;
+        b.style.minHeight=((MAXH-HEAD_H-12)/gz)+'px';
         b.style.display='flex';
         b.style.flexDirection='column';
-        b.style.justifyContent='center';
-        b.style.gap='16px';
+        // se agrupa y se centra, con una separacion acotada: repartir todo el hueco
+        // entre dos bloques abria un agujero enorme en medio de la pagina
+        b.style.justifyContent='flex-start';
+        if(n>1){ b.style.gap=Math.min(30,Math.max(12,hueco/(n-1)))+'px'; }
       }
     });
-    var MAXH=800;
     [].slice.call(wrap.children).forEach(function(p){
       var h=p.getBoundingClientRect().height;
       if(h>MAXH){ p.style.zoom=MAXH/h; }
+    });
+    // el escalado y el reparto vacian el lienzo de los graficos: hay que repintarlos
+    [].slice.call(document.querySelectorAll('canvas')).forEach(function(cv){
+      try{ var ch=(window.Chart&&Chart.getChart)?Chart.getChart(cv):null; if(ch){ ch.update('none'); } }catch(e){}
     });
     document.documentElement.classList.add('pp-on');
     slides.forEach(function(s){ s.style.display='none'; });

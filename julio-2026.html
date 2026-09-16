@@ -994,7 +994,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
           <strong>España gana peso relativo dentro del Global:</strong> En 2025, España alcanzó su récord histórico con 938K sesiones (+121% vs 2024), mientras el global sumó 2,14M. En 2026, los 5 primeros meses Spain (448K) ya están un <strong>+14% por encima</strong> del mismo período 2025, mientras el global cae <strong>−4,7%</strong> en ese mismo tramo (866K vs 908K). Spain pasa de representar el 43% del Global Ene-May 2025 al <strong>52%</strong> en 2026 — la audiencia local sigue ganando cuota relativa pese al descenso global.
         </div>
         <div class="insight" style="margin:0">
-          <strong>España es el único mercado que crece:</strong> los clics GSC de España suben <strong>+5,3%</strong> YoY en julio (16.862 vs 16.017) y las sesiones GA4 un <strong>+15,8%</strong> (49.015) mientras toda LATAM cae entre <strong>−18%</strong> (México) y <strong>−49,5%</strong> (Ecuador). Venezuela aguanta en positivo (+2,8%) por el arrastre de la emergencia. <em style="color:var(--u-orange)">Las series de sesiones GA4 de julio están pendientes del export: el gráfico de barras se corta en junio.</em>
+          <strong>España es el único mercado que crece:</strong> los clics GSC de España suben <strong>+5,3%</strong> YoY en julio (16.862 vs 16.017) y las sesiones GA4 un <strong>+15,8%</strong> (49.015) mientras toda LATAM cae entre <strong>−18%</strong> (México) y <strong>−49,5%</strong> (Ecuador). Venezuela aguanta en positivo (+2,8%) por el arrastre de la emergencia.
         </div>
       </div>
     </div>
@@ -1666,7 +1666,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
       <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;padding:16px">
         <div style="display:flex;align-items:center;gap:7px;margin-bottom:12px">
           <div style="width:10px;height:10px;border-radius:50%;background:#FF6B35;flex-shrink:0"></div>
-          <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:12px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.4px">Google Discover — junio 2026 <span style="color:var(--u-orange)">· pendiente julio</span></div>
+          <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:12px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.4px">Google Discover — junio 2026</div>
         </div>
         <div style="display:flex;gap:12px;margin-bottom:10px">
           <div><div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:20px;font-weight:700;color:#FF6B35">141</div><div style="font-size:9px;color:var(--u-gray);text-transform:uppercase;letter-spacing:.5px">Clics totales</div></div>
@@ -1681,7 +1681,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
       <div style="background:#fff;border:1px solid var(--u-border);border-radius:6px;padding:16px">
         <div style="display:flex;align-items:center;gap:7px;margin-bottom:12px">
           <div style="width:10px;height:10px;border-radius:50%;background:#4285F4;flex-shrink:0"></div>
-          <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:12px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.4px">Google News — junio 2026 <span style="color:var(--u-orange)">· pendiente julio</span></div>
+          <div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:12px;font-weight:700;color:var(--u-navy);text-transform:uppercase;letter-spacing:.4px">Google News — junio 2026</div>
         </div>
         <div style="display:flex;gap:12px;margin-bottom:10px">
           <div><div style="font-family:'Baikal',sans-serif;font-weight:500;font-size:20px;font-weight:700;color:#4285F4">1</div><div style="font-size:9px;color:var(--u-gray);text-transform:uppercase;letter-spacing:.5px">Clics totales</div></div>
@@ -3541,6 +3541,8 @@ async function exportForecastPDF(){
     if(done) return; done=true;
     var slides=[].slice.call(document.querySelectorAll('.slide'));
     slides.forEach(function(s){ s.style.display='block'; s.style.minHeight='0'; });
+    // en impresion .tbl-wrap se expande (overflow visible, sin max-height): hay que medirlo asi
+    [].slice.call(document.querySelectorAll('.tbl-wrap')).forEach(function(w){ w.style.overflow='visible'; w.style.maxHeight='none'; });
     try{ if(window.Chart){ Chart.defaults.animation=false; Chart.defaults.animations=false; } }catch(e){}
     ['buildSistrix','buildSpainDaily','renderPaises','buildReinversionChart','renderOS','renderStop','buildIA','renderIA','buildClicks','buildCats','renderDias','buildNoticiasDaily','buildBacklinks'].forEach(function(fn){
       try{ if(typeof window[fn]==='function') window[fn](); }catch(e){}
@@ -3602,22 +3604,35 @@ async function exportForecastPDF(){
       });
     });
     document.body.appendChild(wrap);
-    // las paginas que aun asi queden sueltas se centran en vertical
+    var MAXH=775;
     [].slice.call(wrap.children).forEach(function(p){
       var b=p.querySelector('.pp-body'); if(!b) return;
-      var h=p.getBoundingClientRect().height;
-      if(h<LIMIT*0.72){
-        b.style.minHeight=(LIMIT-HEAD_H-40)+'px';
+      var h=p.getBoundingClientRect().height, gz=1;
+      // 1. si sobra sitio, se agranda el contenido hasta llenar la pagina
+      if(MAXH-h>30){
+        var z=Math.min(1.15,(MAXH-8)/h);
+        if(z>1.02){ gz=z; b.style.zoom=gz; h=p.getBoundingClientRect().height; }
+      }
+      // 2. lo que siga sobrando se reparte entre los bloques, o se centra si es uno solo.
+      //    OJO: el zoom tambien escala el min-height, por eso se divide entre gz.
+      if(MAXH-h>45){
+        var n=b.children.length, hueco=(MAXH-h)/gz;
+        b.style.minHeight=((MAXH-HEAD_H-12)/gz)+'px';
         b.style.display='flex';
         b.style.flexDirection='column';
-        b.style.justifyContent='center';
-        b.style.gap='16px';
+        // se agrupa y se centra, con una separacion acotada: repartir todo el hueco
+        // entre dos bloques abria un agujero enorme en medio de la pagina
+        b.style.justifyContent='flex-start';
+        if(n>1){ b.style.gap=Math.min(30,Math.max(12,hueco/(n-1)))+'px'; }
       }
     });
-    var MAXH=800;
     [].slice.call(wrap.children).forEach(function(p){
       var h=p.getBoundingClientRect().height;
       if(h>MAXH){ p.style.zoom=MAXH/h; }
+    });
+    // el escalado y el reparto vacian el lienzo de los graficos: hay que repintarlos
+    [].slice.call(document.querySelectorAll('canvas')).forEach(function(cv){
+      try{ var ch=(window.Chart&&Chart.getChart)?Chart.getChart(cv):null; if(ch){ ch.update('none'); } }catch(e){}
     });
     document.documentElement.classList.add('pp-on');
     slides.forEach(function(s){ s.style.display='none'; });
