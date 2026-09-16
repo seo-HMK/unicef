@@ -3521,6 +3521,8 @@ async function exportForecastPDF(){
 <style id="pp-css">
 .pp-head{display:none}
 @media print{
+  .pp-on .slide{display:none!important}
+  .pp-on .slide-footer{display:none!important}
   .pp-page{page-break-after:always;break-after:page}
   .pp-page:last-child{page-break-after:auto;break-after:auto}
   .pp-head{display:flex!important;align-items:center;gap:12px;background:#003F7D;color:#fff;padding:7px 40px;font-family:'Baikal','Roboto',sans-serif;font-size:11px;border-bottom:2px solid #1CABE2;margin-bottom:10px}
@@ -3535,7 +3537,7 @@ async function exportForecastPDF(){
 <script id="pp-js">
 (function(){
   var SECTIONS={s1:'KPIs Generales',s11:'One Search',s2:'Visibilidad IA',s3:'Clics & Sesiones',s4:'Tráfico Categorías',s5:'Blog',s6:'Resumen Ejecutivo',s7:'Next Steps',s8:'Días Mundiales',s9:'Noticias',s10:'Enlaces Externos'};
-  var PAGE_H=861, HEAD_H=44, done=false;
+  var PAGE_H=861, HEAD_H=44, RESERVE=38, done=false;
   function mes(){ try{ return SEED_MONTH.label; }catch(e){ return ''; } }
   function head(name){
     var d=document.createElement('div'); d.className='pp-head';
@@ -3546,28 +3548,40 @@ async function exportForecastPDF(){
     if(done) return; done=true;
     var slides=[].slice.call(document.querySelectorAll('.slide'));
     slides.forEach(function(s){ s.style.display='block'; s.style.minHeight='0'; });
+    var LIMIT=PAGE_H-RESERVE;
+    var plan=slides.map(function(s){
+      return {el:s, name:SECTIONS[s.id]||'', kids:[].slice.call(s.children).map(function(k){
+        return {el:k, h:k.getBoundingClientRect().height, foot:k.className && k.className.indexOf('slide-footer')>=0};
+      })};
+    });
     var wrap=document.createElement('div'); wrap.id='pp-wrap';
-    slides.forEach(function(s){
-      var name=SECTIONS[s.id]||''; var kids=[].slice.call(s.children);
+    plan.forEach(function(sl){
       var page=null, used=0;
-      function np(){ page=document.createElement('div'); page.className='pp-page'; page.appendChild(head(name)); wrap.appendChild(page); used=HEAD_H; }
+      function np(){ page=document.createElement('div'); page.className='pp-page'; page.appendChild(head(sl.name)); wrap.appendChild(page); used=HEAD_H; }
       np();
-      kids.forEach(function(k){
-        var h=k.getBoundingClientRect().height, avail=PAGE_H-HEAD_H;
-        if(h>avail){
-          k.style.zoom=Math.max(0.5, avail/h);
-          if(used>HEAD_H) np();
-          page.appendChild(k); used=PAGE_H; return;
+      sl.kids.forEach(function(k){
+        if(k.foot) return;
+        if(k.h<2){ page.appendChild(k.el); return; }
+        var rest=LIMIT-used;
+        if(k.h<=rest){ page.appendChild(k.el); used+=k.h; return; }
+        var z=rest/k.h;
+        if(z>=0.85 || ((used-HEAD_H)<=260 && z>=0.55)){
+          k.el.style.zoom=z; page.appendChild(k.el); used=LIMIT; return;
         }
-        if(used+h>PAGE_H){
-          var rest=PAGE_H-used, z=rest/h;
-          if(z>=0.82){ k.style.zoom=z; page.appendChild(k); used=PAGE_H; return; }
-          np();
-        }
-        page.appendChild(k); used+=h;
+        np();
+        var avail=LIMIT-HEAD_H;
+        if(k.h>avail){ k.el.style.zoom=Math.max(0.5, avail/k.h); used=LIMIT; }
+        else { used=HEAD_H+k.h; }
+        page.appendChild(k.el);
       });
     });
     document.body.appendChild(wrap);
+    var MAXH=820;
+    [].slice.call(wrap.children).forEach(function(p){
+      var h=p.getBoundingClientRect().height;
+      if(h>MAXH){ p.style.zoom=MAXH/h; }
+    });
+    document.documentElement.classList.add('pp-on');
     slides.forEach(function(s){ s.style.display='none'; });
   };
   window.addEventListener('beforeprint', function(){ try{ ppPaginate(); }catch(e){} });
