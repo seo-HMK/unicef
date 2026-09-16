@@ -3244,25 +3244,44 @@ async function exportPDF(){
     var plan=slides.map(function(s){ return {el:s, name:SECTIONS[s.id]||'', kids:units(s,0)}; });
     var wrap=document.createElement('div'); wrap.id='pp-wrap';
     plan.forEach(function(sl){
-      var page=null, used=0;
-      function np(){ page=document.createElement('div'); page.className='pp-page'; page.appendChild(head(sl.name)); wrap.appendChild(page); used=HEAD_H; }
+      var page=null, body=null, used=0;
+      function np(){
+        page=document.createElement('div'); page.className='pp-page';
+        page.appendChild(head(sl.name));
+        body=document.createElement('div'); body.className='pp-body';
+        page.appendChild(body);
+        wrap.appendChild(page); used=HEAD_H;
+      }
       np();
       sl.kids.forEach(function(k){
-        if(k.h<2){ page.appendChild(k.el); return; }
+        if(k.h<2){ body.appendChild(k.el); return; }
         var rest=LIMIT-used;
-        if(k.h<=rest){ page.appendChild(k.el); used+=k.h; return; }
+        if(k.h<=rest){ body.appendChild(k.el); used+=k.h; return; }
         var z=rest/k.h;
-        if(z>=0.85 || ((used-HEAD_H)<=260 && z>=0.6)){
-          k.el.style.zoom=z; page.appendChild(k.el); used=LIMIT; return;
-        }
+        // cuanto mas vacia esta la pagina, mas se admite encoger el bloque para que entre
+        var lleno=(used-HEAD_H)/FULL;
+        var zmin=Math.min(0.88, 0.58+0.32*lleno);
+        if(z>=zmin){ k.el.style.zoom=z; body.appendChild(k.el); used=LIMIT; return; }
         np();
         if(k.h>FULL){ k.el.style.zoom=Math.max(0.62, FULL/k.h); used=LIMIT; }
         else { used=HEAD_H+k.h; }
-        page.appendChild(k.el);
+        body.appendChild(k.el);
       });
     });
     document.body.appendChild(wrap);
-    var MAXH=820;
+    // las paginas que aun asi queden sueltas se centran en vertical
+    [].slice.call(wrap.children).forEach(function(p){
+      var b=p.querySelector('.pp-body'); if(!b) return;
+      var h=p.getBoundingClientRect().height;
+      if(h<LIMIT*0.72){
+        b.style.minHeight=(LIMIT-HEAD_H-40)+'px';
+        b.style.display='flex';
+        b.style.flexDirection='column';
+        b.style.justifyContent='center';
+        b.style.gap='16px';
+      }
+    });
+    var MAXH=800;
     [].slice.call(wrap.children).forEach(function(p){
       var h=p.getBoundingClientRect().height;
       if(h>MAXH){ p.style.zoom=MAXH/h; }
