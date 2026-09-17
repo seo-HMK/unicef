@@ -3601,11 +3601,50 @@ async function exportForecastPDF(){
     });
     document.body.appendChild(wrap);
     var MAXH=775;
+    // Si la ultima pagina de una seccion lleva muy poco (una fila de KPIs suelta,
+    // un parrafo), se devuelve a la pagina anterior encogiendo lo justo. Antes
+    // quedaba una pagina con el 85% en blanco.
+    (function(){
+      function sec(p){ var s=p.querySelector('.pp-sec'); return s?s.textContent:''; }
+      var pgs=[].slice.call(wrap.children);
+      for(var i=pgs.length-1;i>0;i--){
+        var p=pgs[i], q=pgs[i-1];
+        if(sec(p)!==sec(q)) continue;
+        var b=p.querySelector('.pp-body'), a=q.querySelector('.pp-body');
+        if(!b||!a) continue;
+        if(b.getBoundingClientRect().height>FULL*0.56) continue;
+        var kids=[].slice.call(b.children);
+        if(!kids.length){ wrap.removeChild(p); continue; }
+        kids.forEach(function(k){ a.appendChild(k); });
+        var h=a.getBoundingClientRect().height, z=FULL/h;
+        if(h>FULL && z<0.62){ kids.forEach(function(k){ b.appendChild(k); }); continue; }
+        if(h>FULL){ a.style.zoom=z; }
+        wrap.removeChild(p);
+      }
+      // Caso simetrico: una PRIMERA pagina de seccion que queda floja se junta
+      // con la siguiente de la misma seccion, encogiendo el conjunto.
+      var pgs2=[].slice.call(wrap.children);
+      for(var k2=0;k2<pgs2.length-1;k2++){
+        var p2=pgs2[k2], q2=pgs2[k2+1];
+        if(sec(p2)!==sec(q2)) continue;
+        var b2=p2.querySelector('.pp-body'), a2=q2.querySelector('.pp-body');
+        if(!b2||!a2) continue;
+        if(b2.getBoundingClientRect().height>FULL*0.58) continue;
+        var kk=[].slice.call(b2.children);
+        if(!kk.length){ wrap.removeChild(p2); continue; }
+        var ref=a2.firstChild;
+        kk.forEach(function(x){ a2.insertBefore(x,ref); });
+        var h2=a2.getBoundingClientRect().height, z2=FULL/h2;
+        if(h2>FULL && z2<0.68){ kk.forEach(function(x){ b2.appendChild(x); }); continue; }
+        if(h2>FULL){ a2.style.zoom=z2; }
+        wrap.removeChild(p2);
+      }
+    })();
     [].slice.call(wrap.children).forEach(function(p){
       var b=p.querySelector('.pp-body'); if(!b) return;
       var h=p.getBoundingClientRect().height, gz=1;
       // 1. si sobra sitio, se agranda el contenido hasta llenar la pagina
-      if(MAXH-h>30){
+      if(MAXH-h>30 && !b.style.zoom){
         var z=Math.min(1.15,(MAXH-8)/h);
         if(z>1.02){ gz=z; b.style.zoom=gz; h=p.getBoundingClientRect().height; }
       }
