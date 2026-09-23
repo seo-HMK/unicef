@@ -3605,15 +3605,12 @@ async function exportForecastPDF(){
       sl.kids.forEach(function(k){
         if(k.h<2){ body.appendChild(k.el); return; }
         var rest=LIMIT-used;
-        if(k.h<=rest){ body.appendChild(k.el); used+=k.h; return; }
-        var z=rest/k.h;
-        // cuanto mas vacia esta la pagina, mas se admite encoger el bloque para que entre
-        var lleno=(used-HEAD_H)/FULL;
-        var zmin=Math.min(0.88, 0.58+0.32*lleno);
-        if(z>=zmin){ k.el.style.zoom=z; body.appendChild(k.el); used=LIMIT; return; }
+        if(k.h<=rest+34){ body.appendChild(k.el); used+=k.h; return; }
+        // TODO se imprime a escala 1:1. Si un bloque no cabe en el hueco que
+        // queda, pasa entero a la pagina siguiente; nunca se encoge, porque
+        // entonces unas hojas salen mas pequenas que otras.
         np();
-        if(k.h>FULL){ k.el.style.zoom=Math.max(0.62, FULL/k.h); used=LIMIT; }
-        else { used=HEAD_H+k.h; }
+        used = (k.h>FULL) ? LIMIT : HEAD_H+k.h;
         body.appendChild(k.el);
       });
     });
@@ -3624,19 +3621,19 @@ async function exportForecastPDF(){
     // quedaba una pagina con el 85% en blanco.
     (function(){
       function sec(p){ var s=p.querySelector('.pp-sec'); return s?s.textContent:''; }
+      for(var pasada=0; pasada<4; pasada++){
       var pgs=[].slice.call(wrap.children);
       for(var i=pgs.length-1;i>0;i--){
         var p=pgs[i], q=pgs[i-1];
         if(sec(p)!==sec(q)) continue;
         var b=p.querySelector('.pp-body'), a=q.querySelector('.pp-body');
         if(!b||!a) continue;
-        if(b.getBoundingClientRect().height>FULL*0.56) continue;
+        if(b.getBoundingClientRect().height>FULL*0.80) continue;
         var kids=[].slice.call(b.children);
         if(!kids.length){ wrap.removeChild(p); continue; }
         kids.forEach(function(k){ a.appendChild(k); });
-        var h=a.getBoundingClientRect().height, z=FULL/h;
-        if(h>FULL && z<0.62){ kids.forEach(function(k){ b.appendChild(k); }); continue; }
-        if(h>FULL){ a.style.zoom=z; }
+        var h=a.getBoundingClientRect().height;
+        if(h>FULL){ kids.forEach(function(k){ b.appendChild(k); }); continue; }
         wrap.removeChild(p);
       }
       // Caso simetrico: una PRIMERA pagina de seccion que queda floja se junta
@@ -3647,41 +3644,29 @@ async function exportForecastPDF(){
         if(sec(p2)!==sec(q2)) continue;
         var b2=p2.querySelector('.pp-body'), a2=q2.querySelector('.pp-body');
         if(!b2||!a2) continue;
-        if(b2.getBoundingClientRect().height>FULL*0.58) continue;
+        if(b2.getBoundingClientRect().height>FULL*0.80) continue;
         var kk=[].slice.call(b2.children);
         if(!kk.length){ wrap.removeChild(p2); continue; }
         var ref=a2.firstChild;
         kk.forEach(function(x){ a2.insertBefore(x,ref); });
-        var h2=a2.getBoundingClientRect().height, z2=FULL/h2;
-        if(h2>FULL && z2<0.68){ kk.forEach(function(x){ b2.appendChild(x); }); continue; }
-        if(h2>FULL){ a2.style.zoom=z2; }
+        var h2=a2.getBoundingClientRect().height;
+        if(h2>FULL){ kk.forEach(function(x){ b2.appendChild(x); }); continue; }
         wrap.removeChild(p2);
       }
+      }
     })();
+    // El hueco que sobre se reparte SOLO como separacion entre bloques. No se
+    // agranda ni se encoge nada: la escala tiene que ser identica en todas las hojas.
     [].slice.call(wrap.children).forEach(function(p){
       var b=p.querySelector('.pp-body'); if(!b) return;
-      var h=p.getBoundingClientRect().height, gz=1;
-      // 1. si sobra sitio, se agranda el contenido hasta llenar la pagina
-      if(MAXH-h>30 && !b.style.zoom){
-        var z=Math.min(1.15,(MAXH-8)/h);
-        if(z>1.02){ gz=z; b.style.zoom=gz; h=p.getBoundingClientRect().height; }
-      }
-      // 2. lo que siga sobrando se reparte entre los bloques, o se centra si es uno solo.
-      //    OJO: el zoom tambien escala el min-height, por eso se divide entre gz.
-      if(MAXH-h>45){
-        var n=b.children.length, hueco=(MAXH-h)/gz;
-        b.style.minHeight=((MAXH-HEAD_H-12)/gz)+'px';
+      var h=p.getBoundingClientRect().height;
+      var hueco=MAXH-h, n=b.children.length;
+      if(hueco>45 && n>1){
         b.style.display='flex';
         b.style.flexDirection='column';
-        // se agrupa y se centra, con una separacion acotada: repartir todo el hueco
-        // entre dos bloques abria un agujero enorme en medio de la pagina
         b.style.justifyContent='flex-start';
-        if(n>1){ b.style.gap=Math.min(30,Math.max(12,hueco/(n-1)))+'px'; }
+        b.style.gap=Math.min(28,Math.max(10,hueco/(n-1)))+'px';
       }
-    });
-    [].slice.call(wrap.children).forEach(function(p){
-      var h=p.getBoundingClientRect().height;
-      if(h>MAXH){ p.style.zoom=MAXH/h; }
     });
     // el escalado y el reparto vacian el lienzo de los graficos: hay que repintarlos
     [].slice.call(document.querySelectorAll('canvas')).forEach(function(cv){
