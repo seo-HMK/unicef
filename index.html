@@ -1591,26 +1591,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
                 <td style="text-align:center"><span style="font-size:10px;padding:2px 7px;border-radius:3px;font-weight:600;background:var(--u-green-light);color:var(--u-green)">🩺 Salud</span></td>
                 <td style="text-align:right;font-size:11px;color:var(--u-gray)">—</td>
               </tr>
-              <tr>
-                <td style="max-width:320px">
-                  <div style="font-size:12px;font-weight:600;color:var(--u-navy)">Leo Messi y Lamine Yamal, unidos por UNICEF</div>
-                  <div style="font-size:10px;margin-top:2px"><a href="https://www.unicef.es/noticia/leo-messi-y-lamine-yamal-unidos-por-unicef" target="_blank" style="color:var(--u-cyan-dark);text-decoration:none;word-break:break-all">/noticia/leo-messi-y-lamine-yamal-unidos-por-unicef</a></div>
-                </td>
-                <td style="text-align:right;font-family:'Baikal',sans-serif;font-weight:500;font-size:14px;font-weight:700;color:var(--u-navy)">8</td>
-                <td style="text-align:right;font-size:11px;font-weight:700;color:var(--u-green)">+167%</td>
-                <td style="text-align:center"><span style="font-size:10px;padding:2px 7px;border-radius:3px;font-weight:600;background:var(--u-gray-light);color:var(--u-gray)">🏢 Institucional</span></td>
-                <td style="text-align:right;font-size:11px;color:var(--u-gray)">—</td>
-              </tr>
-              <tr>
-                <td style="max-width:320px">
-                  <div style="font-size:12px;font-weight:600;color:var(--u-navy)">Uno de cada 10 niños y adolescentes en el mundo sufre obesidad</div>
-                  <div style="font-size:10px;margin-top:2px"><a href="https://www.unicef.es/noticia/1-de-cada-10-ninos-adolescentes-sufre-obesidad" target="_blank" style="color:var(--u-cyan-dark);text-decoration:none;word-break:break-all">/noticia/1-de-cada-10-ninos-adolescentes-sufre-obesidad</a></div>
-                </td>
-                <td style="text-align:right;font-family:'Baikal',sans-serif;font-weight:500;font-size:14px;font-weight:700;color:var(--u-navy)">10</td>
-                <td style="text-align:right;font-size:11px;font-weight:700;color:var(--u-green)">Nueva</td>
-                <td style="text-align:center"><span style="font-size:10px;padding:2px 7px;border-radius:3px;font-weight:600;background:var(--u-green-light);color:var(--u-green)">🩺 Salud</span></td>
-                <td style="text-align:right;font-size:11px;color:var(--u-gray)">—</td>
-              </tr>
+              
             </tbody>
           </table>
         </div>
@@ -2473,7 +2454,7 @@ const IA_KWS=[{"kw":"sostenibilidad","pos":1,"sv":12100,"tr":420,"kd":63,"cat":"
 
 let iaSort={k:'tr',d:true};
 
-const IA_MAX=25;
+const IA_MAX=15;
 function renderIA(){
   const q=(document.getElementById('ia-q')||{}).value?.toLowerCase()||'';
   const cat=(document.getElementById('ia-cat')||{}).value||'';
@@ -3275,7 +3256,7 @@ async function exportPDF(){
       sl.kids.forEach(function(k){
         if(k.h<2){ body.appendChild(k.el); return; }
         var rest=LIMIT-used;
-        if(k.h<=rest+34){ body.appendChild(k.el); used+=k.h; return; }
+        if(k.h<=rest+8){ body.appendChild(k.el); used+=k.h; return; }
         // TODO se imprime a escala 1:1. Si un bloque no cabe en el hueco que
         // queda, pasa entero a la pagina siguiente; nunca se encoge, porque
         // entonces unas hojas salen mas pequenas que otras.

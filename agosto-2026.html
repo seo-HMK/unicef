@@ -2569,7 +2569,7 @@ const IA_KWS=[{"kw":"sostenibilidad","pos":1,"sv":12100,"tr":420,"kd":60,"cat":"
 
 let iaSort={k:'tr',d:true};
 
-const IA_MAX=25;
+const IA_MAX=15;
 function renderIA(){
   const q=(document.getElementById('ia-q')||{}).value?.toLowerCase()||'';
   const cat=(document.getElementById('ia-cat')||{}).value||'';
@@ -3605,7 +3605,7 @@ async function exportForecastPDF(){
       sl.kids.forEach(function(k){
         if(k.h<2){ body.appendChild(k.el); return; }
         var rest=LIMIT-used;
-        if(k.h<=rest+34){ body.appendChild(k.el); used+=k.h; return; }
+        if(k.h<=rest+8){ body.appendChild(k.el); used+=k.h; return; }
         // TODO se imprime a escala 1:1. Si un bloque no cabe en el hueco que
         // queda, pasa entero a la pagina siguiente; nunca se encoge, porque
         // entonces unas hojas salen mas pequenas que otras.
