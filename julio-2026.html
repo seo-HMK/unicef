@@ -3004,395 +3004,73 @@ function filterBacklinks(){
 // ── EXPORT PDF ──
 async function exportPDF(){
   const btn = document.getElementById('export-btn');
-  btn.textContent = 'Generando PDF…';
-  btn.disabled = true;
-
-  // Hoja de estilos temporal aplicada DURANTE el export PDF.
-  // Fuerza body/slide a 1400px y las grids a su definición original.
-  // Necesaria porque html2canvas 1.4.1 no honra correctamente windowWidth
-  // y algunas slides (catChart, newsDaily, top3Chart/linkTypeChart) salen
-  // cortadas por la derecha si el body sigue en ancho viewport (~1200px).
-  const pdfStyle = document.createElement('style');
-  pdfStyle.id = 'pdf-export-overrides';
-  pdfStyle.textContent = `
-    body.pdf-exporting { width: 1400px !important; min-width: 1400px !important; }
-    body.pdf-exporting .slide.active { width: 1400px !important; min-width: 1400px !important; max-width: 1400px !important; }
-    body.pdf-exporting .two-col { grid-template-columns: minmax(0,1fr) minmax(0,1fr) !important; }
-    body.pdf-exporting .chart-wrap { width: 100% !important; max-width: 100% !important; overflow: visible !important; }
-    body.pdf-exporting .section-pad { box-sizing: border-box !important; }
-  `;
-  document.head.appendChild(pdfStyle);
-  document.body.classList.add('pdf-exporting');
-
-  const { jsPDF } = window.jspdf;
-  // Each entry: [elementId, label, slideNumber, options]
-  const exportItems = [
-    { id:'s1',     label:'KPIs Generales',     num:1,  splitBefore:'s1-sist',  splitLabel:'KPIs Generales — Visibilidad SISTRIX' },
-    { id:'s2',     label:'Visibilidad IA',      num:2  },
-    { id:'s3',     label:'Clics & Sesiones',    num:3  },
-    { id:'s4',     label:'Tráfico Categorías',  num:4  },
-    { id:'s5',     label:'Blog',                num:5  },
-    { id:'s6',     label:'Resumen Ejecutivo',   num:6  },
-    { id:'s7',     label:'Next Steps',          num:7,  splitBefore:'s7-p2', splitLabel:'Next Steps — Causas & Desgravación' },
-    { id:'s8',     label:'Días Mundiales',      num:8  },
-    { id:'s9',     label:'Noticias',            num:9,  splitBefore:'s9-p2', splitLabel:'Noticias — Discover & Google News' },
-    { id:'s10',    label:'Enlaces Externos',    num:10, limitBacklinks: true },
-    { id:'s11',    label:'One Search',          num:11 },
-  ];
-  const slideIds   = exportItems.map(x => x.id);
-  const slideNames = exportItems.map(x => x.label);
-
-  // Save current active slide
-  const activeSlide = document.querySelector('.slide.active');
-  const activeBtn   = document.querySelector('.nav-tab.active');
-  const activeId    = activeSlide ? activeSlide.id : 's1';
-
-  // PDF setup: A4 landscape (297 x 210mm) at 2x scale
-  const pdf = new jsPDF({ orientation:'landscape', unit:'mm', format:'a4' });
-  const PW = 297, PH = 210; // A4 landscape mm
+  const txt = btn ? btn.textContent : '';
+  if(btn){ btn.textContent = 'Generando PDF…'; btn.disabled = true; }
 
   const nav = document.querySelector('nav');
-  nav.style.display = 'none';
+  const navVis = nav ? nav.style.display : '';
+  const raiz = document.documentElement;
 
-  let first = true;
-  for(let i = 0; i < slideIds.length; i++){
-    const sid = slideIds[i];
-    const el  = document.getElementById(sid);
-    if(!el) continue;
+  try{
+    // Se usa exactamente la misma maquetacion que al imprimir: paginas de igual
+    // ancho y alto. Asi TODAS las hojas del PDF salen a la misma escala.
+    ppPaginate();
+    raiz.classList.add('pp-on');
+    if(nav) nav.style.display = 'none';
+    if(btn) btn.style.display = 'none';
 
-    // Show this slide
-    document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'));
-    el.classList.add('active');
+    const wrap = document.getElementById('pp-wrap');
+    const paginas = [].slice.call(wrap.children);
 
-    // Trigger chart build for this slide
-    const n = parseInt(sid.replace('s',''));
-    if(n===1)  { buildSpainDaily(); }
-    if(n===11) { buildReinversionChart(); }
-    if(n===2)  { buildIA(); renderIA(); }
-    if(n===3)  { buildClicks(); }
-    if(n===4)  { buildCats(); }
-    if(n===9)  { buildNoticiasDaily(); }
-    if(n===10) { buildBacklinks(); }
+    const { jsPDF } = window.jspdf;
+    // Mismo tamano de hoja que la impresion: 340 x 240 mm apaisado
+    const PW = 340, PH = 240, M = 6;
+    const pdf = new jsPDF({ orientation:'landscape', unit:'mm', format:[PW,PH] });
+    const anchoUtil = PW - 2*M, altoUtil = PH - 2*M;
 
-    // Wait for charts to render — extra time for IA chart
-    await new Promise(r => setTimeout(r, n===2 ? 900 : 600));
+    // UNA sola escala para todo el documento. Se calcula con la pagina mas alta
+    // para que ninguna se salga, y se aplica igual a todas: asi no hay saltos de
+    // tamano al pasar de hoja, que era lo que obligaba a reajustar el zoom.
+    let anchoPx = 0, altoMaxPx = 0;
+    paginas.forEach(function(p){
+      const r = p.getBoundingClientRect();
+      if(r.width  > anchoPx)   anchoPx   = r.width;
+      if(r.height > altoMaxPx) altoMaxPx = r.height;
+    });
+    const escala = Math.min(anchoUtil / anchoPx, altoUtil / altoMaxPx);   // mm por pixel
 
-    // ── CAPTURE: smart per-slide export ──
-    const cfg = exportItems[i];
-
-    // ── Helper: capture one DOM element and add it to the PDF ──
-    async function captureAndAdd(captureEl, pageLabel) {
-      // Save & expand slide
-      const origStyle = captureEl.getAttribute('style') || '';
-      captureEl.style.cssText = origStyle + ';width:1400px!important;max-height:none!important;overflow:visible!important;position:relative!important;';
-
-      // Expand internal scrollable containers — skip ones marked as pdfLimited
-      const scrollables = Array.from(captureEl.querySelectorAll('[style*="overflow"]')).filter(s => !s.dataset.pdfLimited && !s.closest('[data-pdf-limited]'));
-      const scrollBackups = [];
-      scrollables.forEach(s => {
-        scrollBackups.push({ el: s, orig: s.style.cssText });
-        s.style.maxHeight = 'none';
-        s.style.overflow  = 'visible';
-        s.style.height    = 'auto';
+    for(let i = 0; i < paginas.length; i++){
+      if(btn) btn.textContent = 'Generando PDF… ' + (i+1) + '/' + paginas.length;
+      const el = paginas[i];
+      const r  = el.getBoundingClientRect();
+      const lienzo = await html2canvas(el, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        logging: false,
+        width:  Math.ceil(r.width),
+        height: Math.ceil(r.height)
       });
-
-      await new Promise(r => setTimeout(r, 200));
-
-      // Force Chart.js instances inside this slide to resize to the new 1400px layout
-      // before we pre-convert canvases. Sin esto, el canvas mantiene la rejilla de
-      // píxeles del viewport original y al estirar el <img> al ancho nuevo se ve
-      // cortado o pixelado en la derecha.
-      if (typeof Chart !== 'undefined' && Chart.instances) {
-        Object.values(Chart.instances).forEach(ci => {
-          try {
-            if (ci && ci.canvas && captureEl.contains(ci.canvas)) {
-              ci.resize();
-              ci.update('none');
-            }
-          } catch(e) {}
-        });
-      }
-      await new Promise(r => setTimeout(r, 350));
-
-      // Pre-convert logo <img> tags to canvas so html2canvas captures them correctly
-      const logoImgs = captureEl.querySelectorAll('img[alt="UNICEF"]');
-      const logoBackups = [];
-      for (const img of logoImgs) {
-        try {
-          await new Promise(res => {
-            if (img.complete) res(); else img.onload = res;
-          });
-          const cv = document.createElement('canvas');
-          cv.width  = img.naturalWidth  || img.offsetWidth  || 200;
-          cv.height = img.naturalHeight || img.offsetHeight || 50;
-          cv.style.cssText = `width:${img.offsetWidth}px;height:${img.offsetHeight}px;display:${img.style.display||'block'}`;
-          const ctx = cv.getContext('2d');
-          ctx.drawImage(img, 0, 0, cv.width, cv.height);
-          img.parentNode.insertBefore(cv, img);
-          img.style.display = 'none';
-          logoBackups.push({ img, cv });
-        } catch(e) {}
-      }
-
-      // Pre-convert Chart.js canvases
-      const canvasEls = captureEl.querySelectorAll('canvas');
-      const canvasBackups = [];
-      canvasEls.forEach(cv => {
-        try {
-          const dataURL = cv.toDataURL('image/png');
-          const img = document.createElement('img');
-          img.src = dataURL;
-          img.style.cssText = `width:${cv.offsetWidth}px;height:${cv.offsetHeight}px;display:block`;
-          cv.parentNode.insertBefore(img, cv);
-          cv.style.display = 'none';
-          canvasBackups.push({ cv, img });
-        } catch(e) {}
-      });
-
-      const captured = await html2canvas(captureEl, {
-        scale: 1.5, useCORS: true, allowTaint: true,
-        backgroundColor: '#F8FAFD', scrollX: 0, scrollY: 0,
-        width: 1400, windowWidth: 1400, logging: false
-      });
-
-      captureEl.setAttribute('style', origStyle);
-      scrollables.forEach((s, k) => { s.style.cssText = scrollBackups[k].orig; });
-      logoBackups.forEach(({ img, cv }) => { img.style.display = ''; cv.parentNode.removeChild(cv); });
-      canvasBackups.forEach(({ cv, img }) => { cv.style.display = ''; img.parentNode.removeChild(img); });
-      // Resize charts back to viewport width
-      if (typeof Chart !== 'undefined' && Chart.instances) {
-        Object.values(Chart.instances).forEach(ci => {
-          try { if (ci && ci.canvas && captureEl.contains(ci.canvas)) ci.resize(); } catch(e) {}
-        });
-      }
-
-      const iW = captured.width, iH = captured.height;
-      const ppm = 3.7795, fMm = 6, uW = PW, uH = PH - fMm;
-      const sc  = Math.min(uW / (iW / ppm), uH / (iH / ppm));
-      const fW  = (iW / ppm) * sc, fH = (iH / ppm) * sc;
-      const oX  = (PW - fW) / 2, oY = (uH - fH) / 2;
-
-      if (!first) pdf.addPage();
-      first = false;
-      pdf.setFillColor(248, 250, 253);
-      pdf.rect(0, 0, PW, PH, 'F');
-      pdf.addImage(captured.toDataURL('image/jpeg', 0.93), 'JPEG', oX, oY, fW, fH);
-      pdf.setFontSize(7); pdf.setTextColor(150,150,150);
-      pdf.text(`${pageLabel}  ·  ${cfg.num} / ${exportItems.length}`, PW/2, PH - 2, {align:'center'});
+      const w = r.width  * escala;
+      const h = r.height * escala;
+      if(i > 0) pdf.addPage([PW,PH], 'landscape');
+      pdf.addImage(lienzo.toDataURL('image/jpeg', 0.92), 'JPEG', (PW - w)/2, M, w, h);
     }
 
-    // ── Helper: build a ghost page with slide header + a specific section ──
-    async function captureSection(slideEl, sectionEl, pageLabel) {
-      // Step 0: expand the parent slide to 1400px so Chart.js instances inside
-      // re-render to the wider layout BEFORE we capture their pixel grid.
-      // Sin esto, los charts del Sistrix / Discover-News / Backlinks salen
-      // con la rejilla de píxeles del viewport (~1200px) y al pegarlos en
-      // el ghost de 1400px se ven cortados o desalineados.
-      const origSlideStyle = slideEl.getAttribute('style') || '';
-      slideEl.style.cssText = origSlideStyle + ';width:1400px!important;max-width:1400px!important;overflow:visible!important;';
-      await new Promise(r => setTimeout(r, 100));
-      if (typeof Chart !== 'undefined' && Chart.instances) {
-        Object.values(Chart.instances).forEach(ci => {
-          try {
-            if (ci && ci.canvas && sectionEl.contains(ci.canvas)) {
-              ci.resize();
-              ci.update('none');
-            }
-          } catch(e) {}
-        });
-      }
-      await new Promise(r => setTimeout(r, 350));
-
-      // Step 1: pre-convert ALL canvases in the ORIGINAL section to <img>
-      // before cloning — cloneNode copies blank canvases, not their pixels
-      const origCanvases = sectionEl.querySelectorAll('canvas');
-      const origBackups = [];
-      origCanvases.forEach(cv => {
-        try {
-          const dataURL = cv.toDataURL('image/png');
-          const img = document.createElement('img');
-          img.src = dataURL;
-          img.style.cssText = `width:${cv.offsetWidth || 600}px;height:${cv.offsetHeight || 300}px;display:block;`;
-          cv.parentNode.insertBefore(img, cv);
-          cv.style.display = 'none';
-          origBackups.push({ cv, img });
-        } catch(e) {}
-      });
-
-      // Step 2: build ghost with header + section clone (now contains <img> not blank canvas)
-      const headerEl = slideEl.querySelector('[style*="linear-gradient"]') || slideEl.firstElementChild;
-      const ghost = document.createElement('div');
-      ghost.style.cssText = 'position:fixed;top:0;left:0;width:1400px;background:#F8FAFD;z-index:99999;overflow:visible;';
-      const hClone = headerEl.cloneNode(true);
-      hClone.style.cssText = (hClone.getAttribute('style')||'') + ';margin-bottom:0';
-      ghost.appendChild(hClone);
-      const sClone = sectionEl.cloneNode(true);
-      sClone.style.cssText = (sClone.getAttribute('style')||'') + ';max-height:none;overflow:visible;';
-      ghost.appendChild(sClone);
-      document.body.appendChild(ghost);
-
-      await new Promise(r => setTimeout(r, 200));
-
-      // Pre-convert logo <img> in ghost to canvas
-      const logoImgsG = ghost.querySelectorAll('img[alt="UNICEF"]');
-      const logoBackupsG = [];
-      for (const img of logoImgsG) {
-        try {
-          await new Promise(res => { if (img.complete) res(); else img.onload = res; });
-          const cv = document.createElement('canvas');
-          cv.width  = img.naturalWidth  || img.offsetWidth  || 200;
-          cv.height = img.naturalHeight || img.offsetHeight || 50;
-          cv.style.cssText = `width:${img.offsetWidth}px;height:${img.offsetHeight}px;display:${img.style.display||'block'}`;
-          const ctx = cv.getContext('2d');
-          ctx.drawImage(img, 0, 0, cv.width, cv.height);
-          img.parentNode.insertBefore(cv, img);
-          img.style.display = 'none';
-          logoBackupsG.push({ img, cv });
-        } catch(e) {}
-      }
-
-      const captured = await html2canvas(ghost, {
-        scale: 1.5, useCORS: true, allowTaint: true,
-        backgroundColor: '#F8FAFD', scrollX: 0, scrollY: 0,
-        width: 1400, windowWidth: 1400, logging: false
-      });
-
-      document.body.removeChild(ghost);
-
-      // Step 3: restore original canvases and logos
-      origBackups.forEach(({ cv, img }) => {
-        cv.style.display = '';
-        img.parentNode.removeChild(img);
-      });
-
-      // Step 4: restore parent slide style and re-resize charts back to viewport width
-      slideEl.setAttribute('style', origSlideStyle);
-      await new Promise(r => setTimeout(r, 50));
-      if (typeof Chart !== 'undefined' && Chart.instances) {
-        Object.values(Chart.instances).forEach(ci => {
-          try {
-            if (ci && ci.canvas && sectionEl.contains(ci.canvas)) ci.resize();
-          } catch(e) {}
-        });
-      }
-
-      const iW = captured.width, iH = captured.height;
-      const ppm = 3.7795, fMm = 6, uW = PW, uH = PH - fMm;
-      const sc  = Math.min(uW / (iW / ppm), uH / (iH / ppm));
-      const fW  = (iW / ppm) * sc, fH = (iH / ppm) * sc;
-
-      if (!first) pdf.addPage();
-      first = false;
-      pdf.setFillColor(248, 250, 253);
-      pdf.rect(0, 0, PW, PH, 'F');
-      pdf.addImage(captured.toDataURL('image/jpeg', 0.93), 'JPEG', (PW-fW)/2, (uH-fH)/2, fW, fH);
-      pdf.setFontSize(7); pdf.setTextColor(150,150,150);
-      pdf.text(`${pageLabel}  ·  ${cfg.num} / ${exportItems.length}`, PW/2, PH - 2, {align:'center'});
-    }
-
-    // ── S2 Visibilidad IA: limit keywords table to visible rows ──
-    if (cfg.id === 's2') {
-      const iaWrap = el.querySelector('.tbl-wrap[style*="max-height"]');
-      if (iaWrap) { iaWrap.dataset.pdfLimited = '1'; iaWrap.style.cssText += ';max-height:260px!important;overflow:hidden!important;'; }
-      await captureAndAdd(el, cfg.label);
-      if (iaWrap) { delete iaWrap.dataset.pdfLimited; iaWrap.style.maxHeight = '320px'; iaWrap.style.overflow = 'auto'; }
-
-    // ── S10 Backlinks: show only first 10 rows of blTableBody ──
-    } else if (cfg.id === 's10') {
-      const blTbody = el.querySelector('#blTableBody') || el.querySelector('tbody');
-      const hiddenRows = [];
-      let blWrap = null;
-      if (blTbody) {
-        // Mark tbody and its scrollable parent wrapper as pdfLimited
-        blTbody.dataset.pdfLimited = '1';
-        blWrap = blTbody.closest('.tbl-wrap') || blTbody.parentElement;
-        if (blWrap) blWrap.dataset.pdfLimited = '1';
-        const rows = blTbody.querySelectorAll('tr');
-        rows.forEach((r, idx) => {
-          if (idx >= 10) { r.style.display = 'none'; hiddenRows.push(r); }
-        });
-      }
-      await captureAndAdd(el, cfg.label);
-      if (blTbody) {
-        delete blTbody.dataset.pdfLimited;
-        if (blWrap) delete blWrap.dataset.pdfLimited;
-        hiddenRows.forEach(r => { r.style.display = ''; });
-      }
-
-    // ── S1 / S7: hide split section for page 1, then show only split section for page 2 ──
-    } else if (cfg.splitBefore) {
-      const splitEl = document.getElementById(cfg.splitBefore);
-      if (splitEl) {
-        // Ensure SISTRIX chart is rendered before capturing (it lives in s1-sist)
-        if (cfg.id === 's1' && window.buildSistrix) {
-          buildSistrix();
-          await new Promise(r => setTimeout(r, 900));
-          // Clear hovered state on Sistrix chart (crosshair vertical line + highlighted active points)
-          // so they don't quedar fijos en el PNG capturado para el PDF.
-          if (typeof sistChart !== 'undefined' && sistChart) {
-            sistChart._crosshairIdx = null;
-            sistChart.setActiveElements([]);
-            sistChart.update('none');
-          }
-          const stip = document.getElementById('sist-tooltip');
-          if (stip) stip.style.display = 'none';
-          await new Promise(r => setTimeout(r, 150));
-        }
-        // Page 1: hide the split section entirely
-        splitEl.style.display = 'none';
-        await captureAndAdd(el, cfg.label);
-        splitEl.style.display = '';
-        // Page 2: header + split section — canvases pre-converted in captureSection
-        await captureSection(el, splitEl, cfg.splitLabel);
-      } else {
-        await captureAndAdd(el, cfg.label);
-      }
-
-    // ── Default: one slide = one page ──
-    } else {
-      await captureAndAdd(el, cfg.label);
-    }
-    btn.textContent = `Generando… ${i+1}/${slideIds.length}`;
+    const mes = (typeof SEED_MONTH !== 'undefined' && SEED_MONTH.label) ? SEED_MONTH.label.replace(' ','_') : 'informe';
+    pdf.save('UNICEF Informe_' + mes + '.pdf');
+  }catch(e){
+    alert('No se ha podido generar el PDF: ' + e.message);
+  }finally{
+    raiz.classList.remove('pp-on');
+    const wrap = document.getElementById('pp-wrap');
+    if(wrap) wrap.remove();
+    document.querySelectorAll('.slide').forEach(function(s){ s.style.display=''; });
+    const act = document.querySelector('.slide.active');
+    if(act) act.style.display='block';
+    if(nav) nav.style.display = navVis;
+    if(btn){ btn.style.display=''; btn.textContent = txt || 'Descargar PDF'; btn.disabled = false; }
   }
-
-  nav.style.display = '';
-
-  // Restore original slide
-  document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-  const origSlide = document.getElementById(activeId);
-  if(origSlide) origSlide.classList.add('active');
-  if(activeBtn) activeBtn.classList.add('active');
-
-  pdf.save(`UNICEF_SEO_Dashboard_${SEED_MONTH.label.replace(/\s/g,'_')}.pdf`);
-
-  // Limpiar la hoja de estilos temporal y la clase pdf-exporting
-  document.body.classList.remove('pdf-exporting');
-  const pdfStyleEl = document.getElementById('pdf-export-overrides');
-  if (pdfStyleEl) pdfStyleEl.remove();
-
-  // Auto-download IA Overview Excel alongside the PDF
-  btn.textContent = 'Generando Excel IA…';
-  await new Promise(r => setTimeout(r, 400));
-  downloadIAXLSX();
-
-  // Auto-download One Search "Parar en Paid" keywords alongside the PDF + IA Excel.
-  // Limpiamos los filtros DOM antes para garantizar export completo aunque la
-  // usuaria tenga un filtro activo en la pestaña One Search.
-  btn.textContent = 'Generando Excel Parar en Paid…';
-  await new Promise(r => setTimeout(r, 400));
-  const stopQ = document.getElementById('stop-q');
-  const stopType = document.getElementById('stop-type');
-  const stopQOrig = stopQ ? stopQ.value : null;
-  const stopTypeOrig = stopType ? stopType.value : null;
-  if (stopQ) stopQ.value = '';
-  if (stopType) stopType.value = '';
-  downloadXLSX();
-  if (stopQ && stopQOrig !== null) stopQ.value = stopQOrig;
-  if (stopType && stopTypeOrig !== null) stopType.value = stopTypeOrig;
-
-  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Exportar PDF';
-  btn.disabled = false;
 }
 
 // ── EXPORT PDF SOLO FORECAST (s12) ──
@@ -3529,18 +3207,21 @@ async function exportForecastPDF(){
 </script>
 <style id="pp-css">
 .pp-head{display:none}
+/* Estas reglas valen tanto al imprimir como al descargar el PDF desde el boton:
+   en los dos casos se marca <html class="pp-on">. Antes solo estaban dentro de
+   @media print y por eso la descarga no usaba esta maquetacion. */
+.pp-on .slide{display:none!important}
+.pp-on .slide-footer{display:none!important}
+.pp-on .pp-head{display:flex!important;align-items:center;gap:12px;background:#003F7D;color:#fff;padding:7px 40px;font-family:'Baikal','Roboto',sans-serif;font-size:11px;border-bottom:2px solid #1CABE2;margin-bottom:10px}
+.pp-on .pp-head .pp-sec{font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.8px}
+.pp-on .pp-head .pp-mes{margin-left:auto;opacity:.75}
+.pp-on .pp-head .pp-brand{opacity:.6;border-right:1px solid rgba(255,255,255,.3);padding-right:12px}
+.pp-on .slide>div:first-of-type{padding-top:16px!important;padding-bottom:18px!important}
+.pp-on .slide h1{font-size:21px!important;line-height:1.2!important}
+.pp-on .section-pad{padding-top:14px!important;padding-bottom:14px!important}
 @media print{
-  .pp-on .slide{display:none!important}
-  .pp-on .slide-footer{display:none!important}
   .pp-page{page-break-after:always;break-after:page}
   .pp-page:last-child{page-break-after:auto;break-after:auto}
-  .pp-head{display:flex!important;align-items:center;gap:12px;background:#003F7D;color:#fff;padding:7px 40px;font-family:'Baikal','Roboto',sans-serif;font-size:11px;border-bottom:2px solid #1CABE2;margin-bottom:10px}
-  .pp-head .pp-sec{font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.8px}
-  .pp-head .pp-mes{margin-left:auto;opacity:.75}
-  .pp-head .pp-brand{opacity:.6;border-right:1px solid rgba(255,255,255,.3);padding-right:12px}
-  .slide>div:first-of-type{padding-top:16px!important;padding-bottom:18px!important}
-  .slide h1{font-size:21px!important;line-height:1.2!important}
-  .section-pad{padding-top:14px!important;padding-bottom:14px!important}
 }
 </style>
 <script id="pp-js">
