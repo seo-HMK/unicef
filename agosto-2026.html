@@ -3060,7 +3060,7 @@ async function exportPDF(){
   }catch(e){
     alert('No se ha podido generar el PDF: ' + e.message);
   }finally{
-    raiz.classList.remove('pp-on');
+    raiz.classList.remove('pp-on'); raiz.classList.remove('pp-done');
     const wrap = document.getElementById('pp-wrap');
     if(wrap) wrap.remove();
     document.querySelectorAll('.slide').forEach(function(s){ s.style.display=''; });
@@ -3208,13 +3208,13 @@ async function exportForecastPDF(){
 /* Estas reglas valen tanto al imprimir como al descargar el PDF desde el boton:
    en los dos casos se marca <html class="pp-on">. Antes solo estaban dentro de
    @media print y por eso la descarga no usaba esta maquetacion. */
-.pp-on .slide{display:none!important}
+.pp-done .slide{display:none!important}
 .pp-on .slide-footer{display:none!important}
 .pp-on .pp-head{display:flex!important;align-items:center;gap:12px;background:#003F7D;color:#fff;padding:7px 40px;font-family:'Baikal','Roboto',sans-serif;font-size:11px;border-bottom:2px solid #1CABE2;margin-bottom:10px}
 .pp-on .pp-head .pp-sec{font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.8px}
 .pp-on .pp-head .pp-mes{margin-left:auto;opacity:.75}
 .pp-on .pp-head .pp-brand{opacity:.6;border-right:1px solid rgba(255,255,255,.3);padding-right:12px}
-.pp-on .slide>div:first-of-type{padding-top:16px!important;padding-bottom:18px!important}
+.pp-on .pp-titulo{padding-top:16px!important;padding-bottom:18px!important}
 .pp-on .slide h1{font-size:21px!important;line-height:1.2!important}
 .pp-on .section-pad{padding-top:14px!important;padding-bottom:14px!important}
 @media print{
@@ -3236,11 +3236,49 @@ async function exportForecastPDF(){
     if(done) return; done=true;
     var slides=[].slice.call(document.querySelectorAll('.slide'));
     slides.forEach(function(s){ s.style.display='block'; s.style.minHeight='0'; });
-    // en impresion .tbl-wrap se expande (overflow visible, sin max-height): hay que medirlo asi
-    [].slice.call(document.querySelectorAll('.tbl-wrap')).forEach(function(w){ w.style.overflow='visible'; w.style.maxHeight='none'; });
+    // Los estilos de impresion se activan ANTES de medir. Si se miden los bloques
+    // con la tipografia de pantalla y luego se imprimen con otra, las cuentas no
+    // salen y siempre hay alguna hoja que se pasa. El bloque de titulo de cada
+    // diapositiva se marca con una clase porque al moverlo deja de ser el primer
+    // hijo de .slide y perderia su margen.
+    slides.forEach(function(s){
+      var d=s.querySelector(':scope>div'); if(d) d.classList.add('pp-titulo');
+    });
+    document.documentElement.classList.add('pp-on');
+    // En impresion las cajas con scroll propio se abren (overflow visible, sin
+    // max-height): hay que medirlas asi. Si no, salen en el papel con la barra
+    // de desplazamiento pintada y la ultima fila cortada por la mitad. Abiertas
+    // se limitan a 20 filas, con una nota, para que un listado de 300 backlinks
+    // no se coma catorce hojas del informe.
+    [].slice.call(document.querySelectorAll('.tbl-wrap,[style*="overflow-y:auto"]')).forEach(function(w){
+      // se marca con una clase: al tocar el estilo el atributo deja de decir
+      // overflow-y:auto y el selector ya no volveria a encontrarla
+      w.classList.add('pp-scroll');
+      w.style.overflow='visible'; w.style.overflowX='visible'; w.style.overflowY='visible'; w.style.maxHeight='none';
+    });
     try{ if(window.Chart){ Chart.defaults.animation=false; Chart.defaults.animations=false; } }catch(e){}
     ['buildSistrix','buildSpainDaily','renderPaises','buildReinversionChart','renderOS','renderStop','buildIA','renderIA','buildClicks','buildCats','renderDias','buildNoticiasDaily','buildBacklinks'].forEach(function(fn){
       try{ if(typeof window[fn]==='function') window[fn](); }catch(e){}
+    });
+    // El recorte de filas va DESPUES de los constructores: antes las tablas
+    // estan vacias y no hay nada que contar.
+    [].slice.call(document.querySelectorAll('.pp-scroll')).forEach(function(w){
+      var tb=w.querySelector('tbody');
+      if(!tb || tb.rows.length<=20) return;
+      // Se recorta por ALTO, no por numero de filas: hay filas de una linea y
+      // filas de tres. Se quitan desde el final hasta que la tabla cabe en una
+      // hoja, dejando sitio para el titulo, los filtros y la nota.
+      var HUECO=779-190;
+      var vis=tb.rows.length, sobran=0;
+      while(vis>6 && w.getBoundingClientRect().height>HUECO){
+        tb.rows[vis-1].style.display='none'; vis--; sobran++;
+      }
+      if(!sobran) return;
+      var tr=document.createElement('tr'); var td=document.createElement('td');
+      td.colSpan=12;
+      td.style.cssText='padding:9px 10px;font-size:11px;color:var(--u-gray);font-style:italic;border-top:1px solid var(--u-border)';
+      td.textContent='… y '+sobran+' filas más. El listado completo, con sus filtros y su descarga a Excel, está en el panel interactivo.';
+      tr.appendChild(td); tb.appendChild(tr);
     });
     void document.body.offsetHeight;
     [].slice.call(document.querySelectorAll('canvas')).forEach(function(cv){
@@ -3258,15 +3296,40 @@ async function exportForecastPDF(){
     });
     var LIMIT=PAGE_H-RESERVE;
     var FULL=LIMIT-HEAD_H;
-    function splittable(el){
-      return !!(el.children && el.children.length>0);
+    function splittable(el,h){
+      // Solo se parte un bloque si NO cabe en una pagina entera. Partir bloques
+      // que si caben rompe las tarjetas: separa el grafico de su leyenda y deja
+      // el contenido suelto, sin su recuadro. Probado y descartado el 24/09/2026.
+      //
+      // Y nunca se entra dentro de una tabla ni de una tarjeta: si se saca el
+      // <thead> de su tabla, las cabeceras de columna caen sueltas al final de
+      // la hoja como una linea de texto pegado ("PaginaVisitas desde Google...").
+      var tag=el.tagName;
+      if(tag==='TABLE'||tag==='THEAD'||tag==='TBODY'||tag==='TFOOT'||tag==='TR'||tag==='UL'||tag==='OL') return false;
+      if(/tbl-wrap|chart-wrap|card|insight/.test(String(el.className||''))) return false;
+      return !!(el.children && el.children.length>0 && h>FULL);
     }
     function units(el,depth){
       var out=[];
       [].slice.call(el.children).forEach(function(c){
         if(c.className && String(c.className).indexOf('slide-footer')>=0) return;
         var h=c.getBoundingClientRect().height;
-        if(h>FULL && depth<3 && splittable(c)){ out=out.concat(units(c,depth+1)); }
+        if(depth<4 && splittable(c,h)){
+          // Al sacar los hijos de su contenedor se quedan sin el margen lateral
+          // de este y el contenido se va al borde del papel. Se les pasa como
+          // margen propio antes de medirlos.
+          var st=window.getComputedStyle(c);
+          var pl=parseFloat(st.paddingLeft)||0, pr=parseFloat(st.paddingRight)||0;
+          if(pl||pr){
+            [].slice.call(c.children).forEach(function(g){
+              if(!g.style) return;
+              var gs=window.getComputedStyle(g);
+              g.style.marginLeft =((parseFloat(gs.marginLeft) ||0)+pl)+'px';
+              g.style.marginRight=((parseFloat(gs.marginRight)||0)+pr)+'px';
+            });
+          }
+          out=out.concat(units(c,depth+1));
+        }
         else { out.push({el:c,h:h}); }
       });
       return out;
@@ -3283,17 +3346,48 @@ async function exportForecastPDF(){
         wrap.appendChild(page); used=HEAD_H;
       }
       np();
-      sl.kids.forEach(function(k){
-        if(k.h<2){ body.appendChild(k.el); return; }
-        var rest=LIMIT-used;
-        if(k.h<=rest+8){ body.appendChild(k.el); used+=k.h; return; }
-        // TODO se imprime a escala 1:1. Si un bloque no cabe en el hueco que
-        // queda, pasa entero a la pagina siguiente; nunca se encoge, porque
-        // entonces unas hojas salen mas pequenas que otras.
-        np();
-        used = (k.h>FULL) ? LIMIT : HEAD_H+k.h;
-        body.appendChild(k.el);
-      });
+      // 1. Se agrupan encabezado + contenido para que nunca se separen al mover.
+      var items=[];
+      function esTit(k){
+        if(k.h<2) return true;                                    // separadores
+        if(/section-heading|card-title/.test(String(k.el.className||''))) return true;
+        return k.h<46;                                            // filtros, pies de tabla
+      }
+      for(var q=0;q<sl.kids.length;q++){
+        var k=sl.kids[q];
+        if(k.h<2){ items.push({els:[k.el],h:0}); continue; }
+        // Un titulo arrastra consigo TODO lo que encabeza (barra de filtros,
+        // pie, y por fin el bloque con cuerpo). Si solo se ata al siguiente, el
+        // titulo se queda en una hoja y su tabla aparece en la otra.
+        var els=[k.el], hh=k.h;
+        while(esTit(sl.kids[q]) && sl.kids[q+1]){
+          q++;
+          els.push(sl.kids[q].el); hh+=sl.kids[q].h;
+        }
+        items.push({els:els, h:hh});
+      }
+      // 2. Se rellena cada pagina por ajuste: si el siguiente bloque no cabe en
+      //    el hueco, se busca uno posterior de la MISMA seccion que si quepa.
+      //    Nada se encoge; solo cambia el orden dentro de su propia seccion.
+      var pend=items.slice();
+      var vueltas=0;
+      while(pend.length && vueltas<4000){
+        vueltas++;
+        var rest=LIMIT-used, idx=-1;
+        for(var q2=0;q2<pend.length && q2<10;q2++){
+          if(pend[q2].h<=rest){ idx=q2; break; }
+        }
+        if(idx<0){
+          if(used>HEAD_H){ np(); continue; }
+          var g=pend.shift();
+          g.els.forEach(function(e){ body.appendChild(e); });
+          used=LIMIT;
+          continue;
+        }
+        var it=pend.splice(idx,1)[0];
+        it.els.forEach(function(e){ body.appendChild(e); });
+        used+=it.h;
+      }
     });
     document.body.appendChild(wrap);
     var MAXH=775;
@@ -3336,25 +3430,74 @@ async function exportForecastPDF(){
       }
       }
     })();
-    // El hueco que sobre se reparte SOLO como separacion entre bloques. No se
-    // agranda ni se encoge nada: la escala tiene que ser identica en todas las hojas.
-    [].slice.call(wrap.children).forEach(function(p){
-      var b=p.querySelector('.pp-body'); if(!b) return;
-      var h=p.getBoundingClientRect().height;
-      var hueco=MAXH-h, n=b.children.length;
-      if(hueco>45 && n>1){
-        b.style.display='flex';
-        b.style.flexDirection='column';
-        b.style.justifyContent='flex-start';
-        b.style.gap=Math.min(28,Math.max(10,hueco/(n-1)))+'px';
+    // A partir de aqui manda la maquetacion de impresion: se activa pp-on y se
+    // ocultan las diapositivas ANTES de comprobar nada, porque esos estilos
+    // cambian los altos. Medir antes era la causa de que una hoja por informe
+    // se pasara de la caja y desbordara a una pagina suelta sin cabecera.
+    document.documentElement.classList.add('pp-done');
+    slides.forEach(function(s){ s.style.display='none'; });
+
+    function repartir(){
+      // El hueco que sobre se reparte SOLO como separacion entre bloques. No se
+      // agranda ni se encoge nada: la escala tiene que ser identica en todas las hojas.
+      [].slice.call(wrap.children).forEach(function(p){
+        var b=p.querySelector('.pp-body'); if(!b) return;
+        b.style.gap='0px';
+        var h=p.getBoundingClientRect().height;
+        var hueco=MAXH-h, n=b.children.length;
+        if(hueco>45 && n>1){
+          b.style.display='flex';
+          b.style.flexDirection='column';
+          b.style.justifyContent='flex-start';
+          b.style.gap=Math.min(28,Math.max(10,hueco/(n-1)))+'px';
+        }
+      });
+    }
+
+    // Comprobacion final con el alto ya definitivo: si una pagina se pasa de la
+    // caja imprimible, sus ultimos bloques bajan a una pagina propia, con su
+    // cabecera. Asi el PDF tiene exactamente las mismas hojas que el montaje.
+    (function(){
+      function sec2(p){ var s=p.querySelector('.pp-sec'); return s?s.textContent:''; }
+      [].slice.call(wrap.children).forEach(function(p){
+        var b=p.querySelector('.pp-body'); if(b) b.style.gap='0px';
+      });
+      for(var vuelta=0; vuelta<8; vuelta++){
+        var hubo=false, pgs=[].slice.call(wrap.children);
+        for(var i=0;i<pgs.length;i++){
+          var p=pgs[i];
+          if(p.getBoundingClientRect().height<=PAGE_H) continue;
+          var b=p.querySelector('.pp-body');
+          if(!b || b.children.length<2) continue;   // un solo bloque: no hay nada que bajar
+          var nueva=document.createElement('div'); nueva.className='pp-page';
+          nueva.appendChild(head(sec2(p)));
+          var nb=document.createElement('div'); nb.className='pp-body';
+          nueva.appendChild(nb);
+          wrap.insertBefore(nueva, p.nextSibling);
+          function esTit(e){
+            if(!e) return false;
+            if(/section-heading|card-title/.test(String(e.className||''))) return true;
+            return e.getBoundingClientRect().height<46;
+          }
+          while(b.children.length>1 && p.getBoundingClientRect().height>PAGE_H){
+            nb.insertBefore(b.lastElementChild, nb.firstChild);
+            // el encabezado baja pegado a lo que titula, nunca se queda arriba solo
+            if(b.children.length>1 && esTit(b.lastElementChild)){
+              nb.insertBefore(b.lastElementChild, nb.firstChild);
+            }
+          }
+          hubo=true;
+        }
+        if(!hubo) break;
       }
-    });
+    })();
+
+    repartir();
+
     // el escalado y el reparto vacian el lienzo de los graficos: hay que repintarlos
     [].slice.call(document.querySelectorAll('canvas')).forEach(function(cv){
       try{ var ch=(window.Chart&&Chart.getChart)?Chart.getChart(cv):null; if(ch){ ch.update('none'); } }catch(e){}
     });
-    document.documentElement.classList.add('pp-on');
-    slides.forEach(function(s){ s.style.display='none'; });
   };
   window.addEventListener('beforeprint', function(){ try{ ppPaginate(); }catch(e){} });
 })();
