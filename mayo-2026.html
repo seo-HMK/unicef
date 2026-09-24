@@ -303,7 +303,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
     <button onclick="addMonthModal()" title="Añadir mes" style="background:var(--u-cyan);border:none;color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:4px;cursor:pointer;font-family:'Baikal','Roboto',sans-serif;letter-spacing:.3px">+ Mes</button>
     <button onclick="editMonthModal()" title="Editar mes actual" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.75);font-size:11px;padding:4px 8px;border-radius:4px;cursor:pointer;font-family:'Baikal',sans-serif">✎</button>
   </div>
-  <button onclick="exportPDF()" id="export-btn" style="margin-left:auto;background:var(--u-navy);color:#fff;border:none;padding:0 18px;height:36px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:'Baikal',sans-serif;letter-spacing:.4px;transition:background .2s;flex-shrink:0" onmouseover="this.style.background='#005899'" onmouseout="this.style.background='var(--u-navy)'">
+  <button onclick="exportPDF()" id="export-btn" style="margin-left:auto;background:var(--u-navy);color:#fff;border:none;padding:0 18px;height:36px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:'Baikal',sans-serif;letter-spacing:.4px;transition:background .2s;flex-shrink:0" onmouseover="this.style.background='#005899'" onmouseout="this.style.background='#003F7D'">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
     Exportar PDF
   </button>
@@ -1894,10 +1894,10 @@ function showOSTab(id, btn){
   document.querySelectorAll('.os-panel').forEach(p=>p.style.display='none');
   document.getElementById('osp-'+id).style.display='block';
   document.querySelectorAll('.os-tab').forEach(b=>{
-    b.style.color='var(--u-gray)';
+    b.style.color='#6B7A8D';
     b.style.borderBottom='3px solid transparent';
   });
-  btn.style.color='var(--u-navy)';
+  btn.style.color='#003F7D';
   btn.style.borderBottom='3px solid var(--u-cyan)';
   if(id==='parar') renderStop();
   if(id==='todas') renderOS();
@@ -2031,10 +2031,10 @@ function renderOS(){
       <td style="text-align:right;${k.coste>100?'font-weight:700;color:var(--u-red)':''}">${fmtE(k.coste)}</td>
       <td style="text-align:right">${k.impressions.toLocaleString('es-ES')}</td>
       <td style="text-align:right">${k.clicsSEO.toLocaleString('es-ES')}</td>
-      <td style="text-align:right;color:${k.stop?'var(--u-green)':'var(--u-orange)'};font-weight:600">${k.rankingSEO.toFixed(2)}</td>
+      <td style="text-align:right;color:${k.stop?'#2CA74A':'#F5A623'};font-weight:600">${k.rankingSEO.toFixed(2)}</td>
       <td style="text-align:right">${k.ctr.toFixed(2)}%</td>
       <td><span class="${k.brand?'badge-brand':'badge-nb'}">${k.brand?'Brand':'NB'}</span></td>
-      <td style="text-align:center"><span style="background:${k.stop?'var(--u-red-light)':'var(--u-green-light)'};color:${k.stop?'var(--u-red)':'var(--u-green)'};font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px">${k.stop?'Pausar':'Mantener'}</span></td>
+      <td style="text-align:center"><span style="background:${k.stop?'#FDEBEC':'#EBF7EF'};color:${k.stop?'#D92B3A':'#2CA74A'};font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px">${k.stop?'Pausar':'Mantener'}</span></td>
     </tr>`).join('');
 }
 
@@ -2594,19 +2594,19 @@ function renderIA(){
   const tbody=document.getElementById('ia-tbody');
   if(!tbody) return;
   const CAT_COLOR={
-    'Blog':'var(--u-cyan)','Causas':'var(--u-red)','Noticias':'var(--u-orange)',
-    'Educa':'var(--u-green)','Testamento':'var(--u-navy)','Quienes somos':'var(--u-purple)',
-    'Colabora':'#F5A623','Otras':'var(--u-gray)'
+    'Blog':'#1CABE2','Causas':'#D92B3A','Noticias':'#F5A623',
+    'Educa':'#2CA74A','Testamento':'#003F7D','Quienes somos':'#6B4FBB',
+    'Colabora':'#F5A623','Otras':'#6B7A8D'
   };
-  const kdColor=kd=>kd<20?'var(--u-green)':kd<40?'var(--u-orange)':'var(--u-red)';
+  const kdColor=kd=>kd<20?'#2CA74A':kd<40?'#F5A623':'#D92B3A';
   tbody.innerHTML=rows.slice(0,IA_MAX).map(r=>`
     <tr>
       <td style="font-weight:500">${r.kw}</td>
       <td style="text-align:right;color:var(--u-green);font-weight:700">${r.pos}</td>
       <td style="text-align:right">${r.sv.toLocaleString('es-ES')}</td>
-      <td style="text-align:right;font-weight:${r.tr>50?'700':'400'};color:${r.tr>100?'var(--u-cyan)':r.tr>50?'var(--u-navy)':'inherit'}">${r.tr}</td>
+      <td style="text-align:right;font-weight:${r.tr>50?'700':'400'};color:${r.tr>100?'#1CABE2':r.tr>50?'#003F7D':'inherit'}">${r.tr}</td>
       <td style="text-align:right;color:${kdColor(r.kd)};font-weight:600">${r.kd}</td>
-      <td><span style="background:${CAT_COLOR[r.cat]||'var(--u-gray)'};color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;white-space:nowrap">${r.cat}</span></td>
+      <td><span style="background:${CAT_COLOR[r.cat]||'#6B7A8D'};color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;white-space:nowrap">${r.cat}</span></td>
       <td style="font-size:10px"><a href="https://www.unicef.es${r.url}" target="_blank" style="color:var(--u-cyan-dark);text-decoration:none;word-break:break-all">${r.url}</a></td>
     </tr>`).join('');
 }
@@ -2816,7 +2816,7 @@ function renderPaises(){
   tbody.innerHTML=PAISES_APR.map((p,i)=>{
     const isEs=p.p==='España';
     const pct     = p.pct     != null ? p.pct     : 0;
-    const clColor = pct>=0 ? 'var(--u-green)' : 'var(--u-red)';
+    const clColor = pct>=0 ? '#2CA74A' : '#D92B3A';
     return `<tr style="border-bottom:1px solid var(--u-border)${isEs?';background:var(--u-cyan-light)':''}">
       <td style="padding:4px 8px;color:var(--u-gray);font-size:10px">${i+1}</td>
       <td style="padding:4px 8px"><span style="font-size:13px;margin-right:4px">${p.f}</span><span style="font-size:11px${isEs?';font-weight:700':''}">${p.p}</span></td>
@@ -2907,7 +2907,7 @@ function buildBacklinks(){
   new Chart(document.getElementById('refDomainsChart'),{
     type:'line',
     data:{labels:BL_MONTHS,datasets:[{label:'Dominios de referencia',data:BL_REF,
-      borderColor:'var(--u-navy)',backgroundColor:'rgba(0,63,125,.08)',fill:true,tension:.35,pointRadius:2,pointHoverRadius:5}]},
+      borderColor:'#003F7D',backgroundColor:'rgba(0,63,125,.08)',fill:true,tension:.35,pointRadius:2,pointHoverRadius:5}]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y.toLocaleString('es-ES')+' dominios'}}},
       scales:{x:{grid:{display:false},ticks:{font:{size:9},maxTicksLimit:13}},
@@ -2918,7 +2918,7 @@ function buildBacklinks(){
   new Chart(document.getElementById('top3Chart'),{
     type:'line',
     data:{labels:BL_MONTHS13,datasets:[{label:'Top 1-3',data:BL_POS13,
-      borderColor:'var(--u-cyan)',backgroundColor:'rgba(28,171,226,.08)',fill:true,tension:.35,pointRadius:2,pointHoverRadius:5}]},
+      borderColor:'#1CABE2',backgroundColor:'rgba(28,171,226,.08)',fill:true,tension:.35,pointRadius:2,pointHoverRadius:5}]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y.toLocaleString('es-ES')+' posiciones'}}},
       scales:{x:{grid:{display:false},ticks:{font:{size:9},maxTicksLimit:13}},
@@ -2930,7 +2930,7 @@ function buildBacklinks(){
     type:'doughnut',
     data:{labels:['DR 70+ (alta)','DR 30–69 (media)','DR <30 (baja)'],
       datasets:[{data:[2611,11324,15022],
-        backgroundColor:['var(--u-navy)','var(--u-cyan)','rgba(0,63,125,.2)'],borderWidth:2,borderColor:'#fff'}]},
+        backgroundColor:['#003F7D','#1CABE2','rgba(0,63,125,.2)'],borderWidth:2,borderColor:'#fff'}]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:12}},
         tooltip:{callbacks:{label:c=>c.label+': '+c.parsed.toLocaleString('es-ES')}}}}
@@ -2945,7 +2945,7 @@ function buildBacklinks(){
     type:'bar',
     data:{labels:['Texto','Imagen','Otro','Dofollow','Nofollow'],
       datasets:[{data:[textC,imgC,othC,folC,nfC],
-        backgroundColor:['var(--u-navy)','var(--u-cyan)','rgba(0,63,125,.3)','var(--u-green)','var(--u-orange)'],
+        backgroundColor:['#003F7D','#1CABE2','rgba(0,63,125,.3)','#2CA74A','#F5A623'],
         borderRadius:4}]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y.toLocaleString('es-ES')+' enlaces'}}},
@@ -2980,13 +2980,13 @@ function filterBacklinks(){
 
   tbody.innerHTML = filtered.map(function(d,i){
     var drVal  = parseInt(d.dr) || 0;
-    var drColor= drVal>=70 ? 'var(--u-green)' : drVal>=30 ? 'var(--u-cyan-dark)' : 'var(--u-gray)';
+    var drColor= drVal>=70 ? '#2CA74A' : drVal>=30 ? '#0489C3' : '#6B7A8D';
     var nfBadge= d.nofollow ? '<span style="font-size:8px;padding:1px 5px;border-radius:2px;background:rgba(0,0,0,.08);color:var(--u-gray);margin-left:3px">nf</span>' : '';
     var slug   = d.target.length > 50 ? d.target.substring(0,50)+'…' : d.target;
     var dom    = d.domain.replace('www.','');
     var anchor = d.anchor || '<span style="color:var(--u-gray);font-style:italic">(imagen)</span>';
     var refShort = d.refUrl.length > 55 ? d.refUrl.substring(0,55)+'…' : d.refUrl;
-    var bg     = i%2===0 ? '#fff' : 'var(--u-gray-light)';
+    var bg     = i%2===0 ? '#fff' : '#EEF3F8';
     var href   = d.target.indexOf('http')===0 ? d.target : 'https://www.unicef.es'+d.target;
     return '<tr style="border-bottom:1px solid var(--u-border);background:'+bg+'">'
       +'<td style="padding:6px 10px;color:var(--u-gray);white-space:nowrap">'+d.date+'</td>'
@@ -3234,7 +3234,11 @@ async function exportForecastPDF(){
   window.ppPaginate=function(){
     if(done) return; done=true;
     var slides=[].slice.call(document.querySelectorAll('.slide'));
-    slides.forEach(function(s){ s.style.display='block'; s.style.minHeight='0'; });
+    // Ancho fijo, el del papel. Sin esto la maquetacion depende del tamano de
+    // la ventana: el mismo informe salia en 33 hojas a 1239 px y en 31 a 1420,
+    // asi que el PDF del boton no coincidia con el de imprimir.
+    var ANCHO_PAPEL=1194;
+    slides.forEach(function(s){ s.style.display='block'; s.style.minHeight='0'; s.style.width=ANCHO_PAPEL+'px'; });
     // Los estilos de impresion se activan ANTES de medir. Si se miden los bloques
     // con la tipografia de pantalla y luego se imprimen con otra, las cuentas no
     // salen y siempre hay alguna hoja que se pasa. El bloque de titulo de cada
@@ -3334,7 +3338,7 @@ async function exportForecastPDF(){
       return out;
     }
     var plan=slides.map(function(s){ return {el:s, name:SECTIONS[s.id]||'', kids:units(s,0)}; });
-    var wrap=document.createElement('div'); wrap.id='pp-wrap';
+    var wrap=document.createElement('div'); wrap.id='pp-wrap'; wrap.style.width=ANCHO_PAPEL+'px';
     plan.forEach(function(sl){
       var page=null, body=null, used=0;
       function np(){
@@ -3441,14 +3445,36 @@ async function exportForecastPDF(){
       // agranda ni se encoge nada: la escala tiene que ser identica en todas las hojas.
       [].slice.call(wrap.children).forEach(function(p){
         var b=p.querySelector('.pp-body'); if(!b) return;
-        b.style.gap='0px';
+        b.style.gap='0px'; b.style.height=''; b.style.justifyContent='';
         var h=p.getBoundingClientRect().height;
+        var hCab=h-b.getBoundingClientRect().height;   // cabecera azul + su margen
         var hueco=MAXH-h, n=b.children.length;
-        if(hueco>45 && n>1){
+        if(hueco<=45) return;
+        if(n>1){
           b.style.display='flex';
           b.style.flexDirection='column';
           b.style.justifyContent='flex-start';
           b.style.gap=Math.min(28,Math.max(10,hueco/(n-1)))+'px';
+          h=p.getBoundingClientRect().height;
+        }
+        // Si la hoja se queda corta, el contenido se centra en vertical en vez
+        // de dejarlo pegado arriba con el agujero debajo (lo pidio la clienta:
+        // "trata de centrarlos para que no queden tan vacias").
+        // Unica excepcion: cuando arriba va el banner de seccion Y ademas hay
+        // mas bloques debajo. Ese banner es de ancho completo y tiene que
+        // quedarse pegado a la cabecera; flotando en medio parece un error.
+        // Una hoja que solo lleva el banner si se centra: es la portadilla de
+        // la seccion y asi se ve intencionada. Nada se escala en ningun caso.
+        var heroArriba = b.firstElementChild &&
+                         /pp-titulo/.test(String(b.firstElementChild.className||''));
+        if(h < MAXH*0.88 && !(heroArriba && n>1)){
+          var alto=MAXH-hCab;
+          if(b.getBoundingClientRect().height < alto){
+            b.style.display='flex';
+            b.style.flexDirection='column';
+            b.style.height=alto+'px';
+            b.style.justifyContent='center';
+          }
         }
       });
     }
@@ -3486,6 +3512,62 @@ async function exportForecastPDF(){
             }
           }
           hubo=true;
+        }
+        if(!hubo) break;
+      }
+    })();
+
+    // Reparto fino entre hojas contiguas de la MISMA seccion: si una va llena y
+    // la siguiente floja, el ultimo bloque de la llena baja a la floja mientras
+    // eso acerque las dos alturas. No se parte nada ni se cambia el orden de
+    // lectura: solo se mueve la frontera entre hojas. Es lo que evita el
+    // 98% / 17% que salia al llenar cada hoja hasta el borde y dejar la
+    // siguiente con las sobras.
+    (function(){
+      function sec2(p){ var s=p.querySelector('.pp-sec'); return s?s.textContent:''; }
+      function esTit(e){
+        if(!e) return false;
+        if(/section-heading|card-title/.test(String(e.className||''))) return true;
+        return e.getBoundingClientRect().height<46;
+      }
+      for(var vuelta=0; vuelta<12; vuelta++){
+        var hubo=false, pgs=[].slice.call(wrap.children);
+        for(var i=0;i<pgs.length-1;i++){
+          var p=pgs[i], q=pgs[i+1];
+          if(sec2(p)!==sec2(q)) continue;
+          var b=p.querySelector('.pp-body'), nb=q.querySelector('.pp-body');
+          if(!b||!nb) continue;
+          var hp=p.getBoundingClientRect().height, hq=q.getBoundingClientRect().height;
+          var mov=[];
+          if(hp>hq){
+            // la de arriba va mas llena: baja su ultimo bloque
+            while(b.children.length>1){
+              mov.unshift(b.lastElementChild);
+              nb.insertBefore(mov[0], nb.firstChild);
+              // el encabezado baja pegado a lo que titula, nunca se queda arriba solo
+              if(b.children.length>1 && esTit(b.lastElementChild)) continue;
+              break;
+            }
+          } else if(hq>hp){
+            // la de abajo va mas llena: sube su primer bloque. Tambien respeta
+            // el orden de lectura, porque va al final de la hoja anterior.
+            while(nb.children.length>1){
+              mov.push(nb.firstElementChild);
+              b.appendChild(mov[mov.length-1]);
+              // si lo que ha subido es un titulo, sube tambien lo que titula
+              if(nb.children.length>1 && esTit(mov[mov.length-1])) continue;
+              break;
+            }
+          }
+          if(!mov.length) continue;
+          var hp2=p.getBoundingClientRect().height, hq2=q.getBoundingClientRect().height;
+          var mal = hp2>PAGE_H || hq2>PAGE_H
+                 || Math.abs(hp2-hq2)>=Math.abs(hp-hq)
+                 || esTit(b.lastElementChild);
+          if(mal){
+            if(hp>hq){ mov.forEach(function(e){ b.appendChild(e); }); }
+            else { for(var z=mov.length-1;z>=0;z--){ nb.insertBefore(mov[z], nb.firstChild); } }
+          } else { hubo=true; }
         }
         if(!hubo) break;
       }
