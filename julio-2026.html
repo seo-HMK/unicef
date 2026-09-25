@@ -3063,9 +3063,9 @@ async function exportPDF(){
     alert('No se ha podido generar el PDF: ' + e.message);
   }finally{
     raiz.classList.remove('pp-on'); raiz.classList.remove('pp-done');
-    const wrap = document.getElementById('pp-wrap');
-    if(wrap) wrap.remove();
-    document.querySelectorAll('.slide').forEach(function(s){ s.style.display=''; });
+    // NO se borra el montaje: se devuelve cada bloque a su diapositiva, que es
+    // de donde salio. Borrarlo dejaba el panel vacio y rompia la 2a descarga.
+    if(window.ppRestaurar) ppRestaurar();
     const act = document.querySelector('.slide.active');
     if(act) act.style.display='block';
     if(nav) nav.style.display = navVis;
@@ -3228,6 +3228,93 @@ async function exportForecastPDF(){
 (function(){
   var SECTIONS={s1:'KPIs Generales',s11:'One Search',s2:'Visibilidad IA',s3:'Clics & Sesiones',s4:'Tráfico Categorías',s5:'Blog',s6:'Resumen Ejecutivo',s7:'Next Steps',s8:'Días Mundiales',s9:'Noticias',s10:'Enlaces Externos'};
   var PAGE_H=861, HEAD_H=44, RESERVE=38, done=false;
+
+  // --- Foto del documento antes de paginar --------------------------------
+  // Paginar MUEVE los bloques fuera de sus diapositivas. Antes, al terminar la
+  // descarga se borraba el montaje entero (#pp-wrap) y con el se iba TODO el
+  // contenido del panel: las diapositivas quedaban vacias y una segunda
+  // descarga fallaba. Con esta foto cada bloque vuelve exactamente a su sitio,
+  // con su estilo y sus clases, y se puede descargar (o imprimir) las veces
+  // que haga falta.
+  var foto=[], previo=[], graficos=[], notas=[], animOrig=null, corrida=0;
+  // Todas las corridas tienen que partir del MISMO estado de los graficos. La
+  // primera descarga construye los que aun no existian y los deja con otro
+  // tamano, y la segunda salia con una hoja menos. Esto los devuelve siempre a
+  // su estado natural, que se apunta la primera vez que se ve cada uno.
+  function normalizarGraficos(forzar){
+    try{
+      [].slice.call(document.querySelectorAll('canvas')).forEach(function(cv){
+        var ch=(window.Chart&&Chart.getChart)?Chart.getChart(cv):null;
+        if(!ch) return;
+        if(ch.__ppOrig===undefined){
+          ch.__ppOrig={resp:ch.options.responsive, mar:ch.options.maintainAspectRatio};
+        }
+        ch.options.responsive=ch.__ppOrig.resp;
+        ch.options.maintainAspectRatio=ch.__ppOrig.mar;
+        cv.style.width=''; cv.style.height='';
+        ch.resize(); ch.update('none');
+        if(!forzar) return;
+        // La primera vez se apunta el tamano natural del grafico; a partir de
+        // ahi se le impone ese mismo. Los constructores solo crean cada grafico
+        // UNA vez (comprobado: si se destruyen, no se rehacen), asi que sin
+        // esto la segunda descarga medía distinto y salia con una hoja menos.
+        if(ch.__ppTam===undefined){
+          var r=cv.getBoundingClientRect();
+          if(r.width>10 && r.height>10) ch.__ppTam={w:Math.round(r.width), h:Math.round(r.height)};
+        } else {
+          cv.style.width=ch.__ppTam.w+'px'; cv.style.height=ch.__ppTam.h+'px';
+          ch.options.responsive=false; ch.options.maintainAspectRatio=false;
+          ch.resize(ch.__ppTam.w, ch.__ppTam.h); ch.update('none');
+        }
+      });
+    }catch(e){}
+  }
+  function apuntar(el){
+    if(el) previo.push({el:el, estilo:el.getAttribute('style'), clase:el.getAttribute('class')});
+  }
+  // Un contenedor solo se puede REORDENAR si todos sus hijos son elementos.
+  // Si mezcla texto con etiquetas (un <h1> con <br> y <span> entre frases),
+  // devolver los elementos al final deja el texto donde estaba y se pierde un
+  // salto de linea: el titular encogia 30 px cada vez que se descargaba.
+  function soloElementos(el){
+    for(var n=el.firstChild; n; n=n.nextSibling){
+      if(n.nodeType===3 && n.nodeValue && n.nodeValue.trim()!=='') return false;
+    }
+    return true;
+  }
+  function tomarFoto(el, prof){
+    if(prof>6) return;
+    var mover=soloElementos(el);
+    [].slice.call(el.children).forEach(function(c){
+      foto.push({el:c, padre:el, mover:mover, estilo:c.getAttribute('style'), clase:c.getAttribute('class')});
+      tomarFoto(c, prof+1);
+    });
+  }
+  window.ppTamFoto=function(){ return foto.length; };
+  window.ppRestaurar=function(){
+    if(!done) return;
+    // la fila de "y N filas mas" se anade al paginar: no estaba en la foto
+    notas.forEach(function(tr){ if(tr.parentNode) tr.parentNode.removeChild(tr); });
+    // la foto va en orden de documento, asi que devolver cada hijo a su padre
+    // reconstruye el arbol tal cual estaba
+    foto.forEach(function(f){
+      if(f.estilo===null) f.el.removeAttribute('style'); else f.el.setAttribute('style', f.estilo);
+      if(f.clase===null)  f.el.removeAttribute('class'); else f.el.setAttribute('class',  f.clase);
+      if(f.mover) f.padre.appendChild(f.el);
+    });
+    // y lo apuntado antes de los constructores, que manda sobre la foto
+    previo.forEach(function(f){
+      if(f.estilo===null) f.el.removeAttribute('style'); else f.el.setAttribute('style', f.estilo);
+      if(f.clase===null)  f.el.removeAttribute('class'); else f.el.setAttribute('class',  f.clase);
+    });
+    var w=document.getElementById('pp-wrap');
+    if(w && w.parentNode) w.parentNode.removeChild(w);
+    var r=document.documentElement;
+    r.classList.remove('pp-on'); r.classList.remove('pp-done');
+    normalizarGraficos();
+    try{ if(window.Chart && animOrig!==null){ Chart.defaults.animation=animOrig; } }catch(e){}
+    foto=[]; previo=[]; graficos=[]; notas=[]; done=false;
+  };
   function mes(){ try{ return SEED_MONTH.label; }catch(e){ return ''; } }
   function head(name){
     var d=document.createElement('div'); d.className='pp-head';
@@ -3237,6 +3324,14 @@ async function exportForecastPDF(){
   window.ppPaginate=function(){
     if(done) return; done=true;
     var slides=[].slice.call(document.querySelectorAll('.slide'));
+    corrida++; foto=[]; previo=[]; graficos=[]; notas=[];
+    try{ animOrig = window.Chart ? Chart.defaults.animation : null; }catch(e){ animOrig=null; }
+    // Lo que se toca ANTES de que corran los constructores se apunta aparte:
+    // la foto del arbol se toma despues, porque los constructores rehacen las
+    // tablas y los graficos, y lo fotografiado antes serian nodos huerfanos.
+    // Era la causa de que, tras una descarga, la tabla de backlinks se quedara
+    // recortada y los lienzos con el tamano fijado.
+    slides.forEach(apuntar);
     // Ancho fijo, el del papel. Sin esto la maquetacion depende del tamano de
     // la ventana: el mismo informe salia en 33 hojas a 1239 px y en 31 a 1420,
     // asi que el PDF del boton no coincidia con el de imprimir.
@@ -3248,7 +3343,7 @@ async function exportForecastPDF(){
     // diapositiva se marca con una clase porque al moverlo deja de ser el primer
     // hijo de .slide y perderia su margen.
     slides.forEach(function(s){
-      var d=s.querySelector(':scope>div'); if(d) d.classList.add('pp-titulo');
+      var d=s.querySelector(':scope>div'); if(d){ apuntar(d); d.classList.add('pp-titulo'); }
     });
     document.documentElement.classList.add('pp-on');
     // En impresion las cajas con scroll propio se abren (overflow visible, sin
@@ -3259,6 +3354,7 @@ async function exportForecastPDF(){
     [].slice.call(document.querySelectorAll('.tbl-wrap,[style*="overflow-y:auto"]')).forEach(function(w){
       // se marca con una clase: al tocar el estilo el atributo deja de decir
       // overflow-y:auto y el selector ya no volveria a encontrarla
+      apuntar(w);
       w.classList.add('pp-scroll');
       w.style.overflow='visible'; w.style.overflowX='visible'; w.style.overflowY='visible'; w.style.maxHeight='none';
     });
@@ -3266,6 +3362,9 @@ async function exportForecastPDF(){
     ['buildSistrix','buildSpainDaily','renderPaises','buildReinversionChart','renderOS','renderStop','buildIA','renderIA','buildClicks','buildCats','renderDias','buildNoticiasDaily','buildBacklinks'].forEach(function(fn){
       try{ if(typeof window[fn]==='function') window[fn](); }catch(e){}
     });
+    normalizarGraficos(true);
+    // AHORA se fotografia el arbol: las tablas y los lienzos ya son los buenos
+    slides.forEach(function(s){ tomarFoto(s, 0); });
     // El recorte de filas va DESPUES de los constructores: antes las tablas
     // estan vacias y no hay nada que contar.
     [].slice.call(document.querySelectorAll('.pp-scroll')).forEach(function(w){
@@ -3284,7 +3383,7 @@ async function exportForecastPDF(){
       td.colSpan=12;
       td.style.cssText='padding:9px 10px;font-size:11px;color:var(--u-gray);font-style:italic;border-top:1px solid var(--u-border)';
       td.textContent='… y '+sobran+' filas más. El listado completo, con sus filtros y su descarga a Excel, está en el panel interactivo.';
-      tr.appendChild(td); tb.appendChild(tr);
+      tr.appendChild(td); tb.appendChild(tr); notas.push(tr);
     });
     void document.body.offsetHeight;
     // Cada lienzo se ajusta al hueco que tiene. Hay que poder repetirlo: si
@@ -3713,6 +3812,7 @@ async function exportForecastPDF(){
     });
   };
   window.addEventListener('beforeprint', function(){ try{ ppPaginate(); }catch(e){} });
+  window.addEventListener('afterprint',  function(){ try{ ppRestaurar(); }catch(e){} });
 })();
 </script>
 </body>
