@@ -3287,19 +3287,26 @@ async function exportForecastPDF(){
       tr.appendChild(td); tb.appendChild(tr);
     });
     void document.body.offsetHeight;
-    [].slice.call(document.querySelectorAll('canvas')).forEach(function(cv){
-      try{
-        var ch=(window.Chart&&Chart.getChart)?Chart.getChart(cv):null; if(!ch) return;
-        var r=cv.getBoundingClientRect(), pr=cv.parentElement?cv.parentElement.getBoundingClientRect():r;
-        var w=Math.round(r.width), h=Math.round(r.height);
-        if(pr.width>10&&pr.height>10&&(pr.width>w||pr.height>h)){ w=Math.round(pr.width); h=Math.round(pr.height); }
-        if(w>10&&h>10){
-          ch.options.responsive=false; ch.options.maintainAspectRatio=false;
-          cv.style.width=w+'px'; cv.style.height=h+'px';
-          ch.resize(w,h);
-        }
-      }catch(e){}
-    });
+    // Cada lienzo se ajusta al hueco que tiene. Hay que poder repetirlo: si
+    // despues se abre una caja de dos columnas, el grafico pasa de media
+    // pagina a pagina entera y si no se reajusta se queda pequeno con medio
+    // papel en blanco al lado.
+    function ajustarLienzos(){
+      [].slice.call(document.querySelectorAll('canvas')).forEach(function(cv){
+        try{
+          var ch=(window.Chart&&Chart.getChart)?Chart.getChart(cv):null; if(!ch) return;
+          var r=cv.getBoundingClientRect(), pr=cv.parentElement?cv.parentElement.getBoundingClientRect():r;
+          var w=Math.round(r.width), h=Math.round(r.height);
+          if(pr.width>10&&pr.height>10&&(pr.width>w||pr.height>h)){ w=Math.round(pr.width); h=Math.round(pr.height); }
+          if(w>10&&h>10){
+            ch.options.responsive=false; ch.options.maintainAspectRatio=false;
+            cv.style.width=w+'px'; cv.style.height=h+'px';
+            ch.resize(w,h);
+          }
+        }catch(e){}
+      });
+    }
+    ajustarLienzos();
     var LIMIT=PAGE_H-RESERVE;
     var FULL=LIMIT-HEAD_H;
     function splittable(el,h){
@@ -3520,6 +3527,61 @@ async function exportForecastPDF(){
       }
     })();
 
+    // Una portadilla de seccion (el banner y poco mas) se queda medio vacia
+    // cuando lo unico que viene detras es una caja de dos columnas que no cabe
+    // con ella. En ese caso se abre la caja: sus dos mitades pasan a ocupar
+    // todo el ancho y la que quepa sube a la portadilla. Es lo unico que llena
+    // esas hojas de verdad, porque no hay ningun otro bloque en la seccion.
+    // Si al abrirla no cabe nada arriba, la caja se rehace tal cual estaba.
+    (function(){
+      function sec2(p){ var s=p.querySelector('.pp-sec'); return s?s.textContent:''; }
+      var pgs=[].slice.call(wrap.children);
+      for(var i=0;i<pgs.length-1;i++){
+        var p=pgs[i], q=pgs[i+1];
+        if(sec2(p)!==sec2(q)) continue;
+        if(p.getBoundingClientRect().height > PAGE_H*0.62) continue;   // no esta vacia
+        var b=p.querySelector('.pp-body'), nb=q.querySelector('.pp-body');
+        if(!b || !nb || nb.children.length!==1) continue;
+        var caja=nb.firstElementChild;
+        if(!/two-col/.test(String(caja.className||'')) || caja.children.length!==2) continue;
+        var col1=caja.children[0], col2=caja.children[1];
+
+        // las mitades heredan el margen lateral de la caja: si no, al quedarse
+        // sueltas el contenido se va al borde del papel
+        var cs=window.getComputedStyle(caja);
+        var ml=parseFloat(cs.marginLeft)||0, mr=parseFloat(cs.marginRight)||0;
+        [col1,col2].forEach(function(c){
+          if(!c.style) return;
+          var gs=window.getComputedStyle(c);
+          c.style.marginLeft =((parseFloat(gs.marginLeft) ||0)+ml)+'px';
+          c.style.marginRight=((parseFloat(gs.marginRight)||0)+mr)+'px';
+        });
+        nb.insertBefore(col1, caja);
+        nb.insertBefore(col2, caja);
+        nb.removeChild(caja);
+
+        // se prueba primero la segunda mitad (suele ser el analisis, que al
+        // ensancharse se acorta mucho) y si no cabe, la primera
+        var subida=null;
+        b.appendChild(col2);
+        if(p.getBoundingClientRect().height<=PAGE_H){ subida=col2; }
+        else { nb.appendChild(col2); }
+        if(!subida){
+          b.appendChild(col1);
+          if(p.getBoundingClientRect().height<=PAGE_H){ subida=col1; }
+          else { nb.insertBefore(col1, nb.firstChild); }
+        }
+
+        if(!subida || q.getBoundingClientRect().height>PAGE_H){
+          if(subida) nb.appendChild(subida);
+          caja.appendChild(col1); caja.appendChild(col2);
+          nb.appendChild(caja);
+        }
+      }
+    })();
+
+    ajustarLienzos();
+
     // Reparto fino entre hojas contiguas de la MISMA seccion: si una va llena y
     // la siguiente floja, el ultimo bloque de la llena baja a la floja mientras
     // eso acerque las dos alturas. No se parte nada ni se cambia el orden de
@@ -3564,8 +3626,11 @@ async function exportForecastPDF(){
           }
           if(!mov.length) continue;
           var hp2=p.getBoundingClientRect().height, hq2=q.getBoundingClientRect().height;
+          // El movimiento tiene que mejorar DE VERDAD (40 px). Si solo iguala,
+          // lo unico que hace es cambiar de sitio el hueco, y una hoja vacia
+          // al empezar una seccion canta mucho mas que al terminarla.
           var mal = hp2>PAGE_H || hq2>PAGE_H
-                 || Math.abs(hp2-hq2)>=Math.abs(hp-hq)
+                 || Math.abs(hp2-hq2) > Math.abs(hp-hq)-40
                  || esTit(b.lastElementChild);
           if(mal){
             if(hp>hq){ mov.forEach(function(e){ b.appendChild(e); }); }
@@ -3573,6 +3638,70 @@ async function exportForecastPDF(){
           } else { hubo=true; }
         }
         if(!hubo) break;
+      }
+    })();
+
+    // La PRIMERA hoja de una seccion no puede quedarse medio vacia: una hoja
+    // floja nada mas abrir una seccion canta mucho mas que una floja al final,
+    // que se lee como el cierre. Asi que se le sube todo lo que quepa de la
+    // hoja siguiente, aunque eso deje la de abajo mas corta.
+    (function(){
+      function sec2(p){ var s=p.querySelector('.pp-sec'); return s?s.textContent:''; }
+      function esTit(e){
+        if(!e) return false;
+        if(/section-heading|card-title/.test(String(e.className||''))) return true;
+        return e.getBoundingClientRect().height<46;
+      }
+      var pgs=[].slice.call(wrap.children);
+      for(var i=0;i<pgs.length-1;i++){
+        var p=pgs[i];
+        if(i>0 && sec2(pgs[i-1])===sec2(p)) continue;          // no es la primera de su seccion
+        if(p.getBoundingClientRect().height > PAGE_H*0.62) continue;
+        var b=p.querySelector('.pp-body');
+        for(var j=i+1; j<pgs.length && sec2(pgs[j])===sec2(p); j++){
+          var nb=pgs[j].querySelector('.pp-body');
+          if(!b||!nb) break;
+          var subio=false;
+          while(nb.children.length>1){
+            var mov=[];
+            mov.push(nb.firstElementChild); b.appendChild(mov[0]);
+            // lo que sube va con su encabezado, o su encabezado con ello
+            while(nb.children.length>1 && esTit(mov[mov.length-1])){
+              mov.push(nb.firstElementChild); b.appendChild(mov[mov.length-1]);
+            }
+            if(p.getBoundingClientRect().height<=PAGE_H){ subio=true; continue; }
+            for(var z=mov.length-1;z>=0;z--){ nb.insertBefore(mov[z], nb.firstChild); }
+            break;
+          }
+          if(nb.children.length===0){ wrap.removeChild(pgs[j]); continue; }
+          break;   // solo se vacia de la hoja inmediatamente siguiente
+        }
+      }
+    })();
+
+    // Una hoja que se queda casi vacia EN MITAD de una seccion no se deja ahi.
+    // Si sus bloques caben en otra hoja posterior de la misma seccion, se
+    // mueven y la hoja desaparece. Cambia el orden de lectura dentro de la
+    // seccion, pero se ahorra una hoja practicamente en blanco.
+    (function(){
+      function sec2(p){ var s=p.querySelector('.pp-sec'); return s?s.textContent:''; }
+      var pgs=[].slice.call(wrap.children);
+      for(var i=0;i<pgs.length;i++){
+        var p=pgs[i];
+        if(p.getBoundingClientRect().height > PAGE_H*0.45) continue;
+        var b=p.querySelector('.pp-body');
+        if(!b || !b.children.length) continue;
+        for(var j=i+1; j<pgs.length && j<=i+3 && sec2(pgs[j])===sec2(p); j++){
+          var nb=pgs[j].querySelector('.pp-body');
+          if(!nb) continue;
+          var kids=[].slice.call(b.children);
+          kids.forEach(function(k){ nb.appendChild(k); });
+          if(pgs[j].getBoundingClientRect().height<=PAGE_H){
+            wrap.removeChild(p);
+            break;
+          }
+          kids.forEach(function(k){ b.appendChild(k); });   // no cabe: vuelve a su sitio
+        }
       }
     })();
 
