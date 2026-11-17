@@ -3381,6 +3381,9 @@ async function exportForecastPDF(){
       // tabla de categorias acababa encabezando el grafico de la hoja de despues.
       function esCab(k){
         if(/section-heading|card-title/.test(String(k.el.className||''))) return true;
+        // el primer hijo corto de un contenedor es su titulo (p.ej. "Por categoria")
+        var pa=k.el.parentElement;
+        if(pa && pa.firstElementChild===k.el && pa.children.length>1) return true;
         return !!(k.el.querySelector && k.el.querySelector('input,select,button'));
       }
       for(var q=0;q<sl.kids.length;q++){
