@@ -3245,7 +3245,7 @@ async function exportForecastPDF(){
   // descarga fallaba. Con esta foto cada bloque vuelve exactamente a su sitio,
   // con su estilo y sus clases, y se puede descargar (o imprimir) las veces
   // que haga falta.
-  var foto=[], previo=[], graficos=[], notas=[], animOrig=null, corrida=0;
+  var foto=[], previo=[], graficos=[], notas=[], partidas=[], animOrig=null, corrida=0;
   // Todas las corridas tienen que partir del MISMO estado de los graficos. La
   // primera descarga construye los que aun no existian y los deja con otro
   // tamano, y la segunda salia con una hoja menos. Esto los devuelve siempre a
@@ -3304,6 +3304,12 @@ async function exportForecastPDF(){
     if(!done) return;
     // la fila de "y N filas mas" se anade al paginar: no estaba en la foto
     notas.forEach(function(tr){ if(tr.parentNode) tr.parentNode.removeChild(tr); });
+    // lo que se partio para rellenar hojas (filas de tabla, tarjetas) vuelve a su sitio
+    for(var pi=partidas.length-1; pi>=0; pi--){
+      var pt=partidas[pi];
+      pt.hijos.forEach(function(h){ pt.padre.appendChild(h); });
+      if(pt.copia && pt.copia.parentNode) pt.copia.parentNode.removeChild(pt.copia);
+    }
     // la foto va en orden de documento, asi que devolver cada hijo a su padre
     // reconstruye el arbol tal cual estaba
     foto.forEach(function(f){
@@ -3322,7 +3328,7 @@ async function exportForecastPDF(){
     r.classList.remove('pp-on'); r.classList.remove('pp-done');
     normalizarGraficos();
     try{ if(window.Chart && animOrig!==null){ Chart.defaults.animation=animOrig; } }catch(e){}
-    foto=[]; previo=[]; graficos=[]; notas=[]; done=false;
+    foto=[]; previo=[]; graficos=[]; notas=[]; partidas=[]; done=false;
   };
   function mes(){ try{ return SEED_MONTH.label; }catch(e){ return ''; } }
   function head(name){
@@ -3588,7 +3594,7 @@ async function exportForecastPDF(){
           b.style.display='flex';
           b.style.flexDirection='column';
           b.style.justifyContent='flex-start';
-          b.style.gap=Math.min(28,Math.max(10,hueco/(n-1)))+'px';
+          b.style.gap=Math.min(28,hueco/(n-1))+'px';   // sin minimo: con muchos bloques el minimo desbordaba la hoja
           h=p.getBoundingClientRect().height;
         }
         // Si la hoja se queda corta, el contenido se centra en vertical en vez
@@ -3827,6 +3833,185 @@ async function exportForecastPDF(){
           kids.forEach(function(k){ b.appendChild(k); });   // no cabe: vuelve a su sitio
         }
       }
+    })();
+
+    // RELLENO (noviembre 2026). Una hoja floja se completa con el principio de la
+    // siguiente de su misma seccion, partiendo lo que haga falta pero SIN cambiar
+    // el orden de lectura: las tablas por filas (repitiendo la cabecera), las
+    // cajas de dos columnas en sus dos mitades, las cuadriculas de tarjetas por
+    // filas y los contenedores genericos en sus hijos. Antes un bloque que no
+    // cabia entero saltaba a la hoja siguiente y dejaba media hoja en blanco
+    // (banners solos, filas de KPIs solas, graficos sueltos).
+    (function(){
+      function sec2(p){ var s=p.querySelector('.pp-sec'); return s?s.textContent:''; }
+      function alto(p){ return p.getBoundingClientRect().height; }
+      function cls(e){ return String(e.className||''); }
+      function esTit(e){
+        if(!e) return false;
+        if(/section-heading|card-title/.test(cls(e))) return true;
+        return e.getBoundingClientRect().height<46 && !(e.querySelector && e.querySelector('canvas,table'));
+      }
+      function cols(el){
+        var cs=window.getComputedStyle(el); if(cs.display!=='grid') return 0;
+        return String(cs.gridTemplateColumns||'').split(' ').filter(function(x){ return x && x!=='0px'; }).length;
+      }
+      function pasarMargen(c){
+        var cs=window.getComputedStyle(c);
+        var pl=(parseFloat(cs.paddingLeft)||0)+(parseFloat(cs.marginLeft)||0);
+        var pr=(parseFloat(cs.paddingRight)||0)+(parseFloat(cs.marginRight)||0);
+        [].slice.call(c.children).forEach(function(g){
+          var gs=window.getComputedStyle(g);
+          g.style.marginLeft =((parseFloat(gs.marginLeft) ||0)+pl)+'px';
+          g.style.marginRight=((parseFloat(gs.marginRight)||0)+pr)+'px';
+        });
+      }
+      function abrir(el){
+        var pa=el.parentNode; pasarMargen(el);
+        while(el.firstElementChild){ pa.insertBefore(el.firstElementChild, el); }
+        pa.removeChild(el);
+      }
+      function tablaDe(el){
+        if(el.tagName==='TABLE') return el;
+        if(el.children.length===1 && el.firstElementChild.tagName==='TABLE') return el.firstElementChild;
+        return null;
+      }
+      function partirTabla(el,b,p){
+        var t=tablaDe(el); if(!t) return false;
+        var tb=t.tBodies[0]; if(!tb || tb.rows.length<6) return false;
+        // Una muestra ya recortada ("... y N filas mas") no se parte en dos hojas:
+        // se recorta un poco mas para que quepa entera donde empieza.
+        var nota=null; for(var z=0;z<notas.length;z++){ if(notas[z].parentNode===tb) nota=notas[z]; }
+        if(nota){
+          b.appendChild(el);
+          var vis=[].slice.call(tb.rows).filter(function(r){ return r!==nota && r.style.display!=='none'; });
+          var ocultas=[];
+          while(alto(p)>PAGE_H && vis.length>5){
+            var r=vis.pop(); previo.push({el:r, estilo:r.getAttribute('style'), clase:r.getAttribute('class')});
+            r.style.display='none'; ocultas.push(r);
+          }
+          if(alto(p)>PAGE_H){
+            ocultas.forEach(function(r){ r.style.display=''; });
+            nb.insertBefore(el, nb.firstChild); return false;
+          }
+          var m=/y (\d+) filas/.exec(nota.textContent||'');
+          if(m){ nota.firstChild.textContent=nota.firstChild.textContent.replace(m[0], 'y '+(parseInt(m[1],10)+ocultas.length)+' filas'); }
+          return true;
+        }
+        var copia=el.cloneNode(false), tc=(copia.tagName==='TABLE')?copia:null;
+        if(!tc){ tc=t.cloneNode(false); copia.appendChild(tc); }
+        if(t.tHead) tc.appendChild(t.tHead.cloneNode(true));
+        var tbc=tb.cloneNode(false); tc.appendChild(tbc);
+        b.appendChild(copia);
+        partidas.push({padre:tb, hijos:[].slice.call(tb.children), copia:copia});
+        var n=0;
+        while(tb.rows.length>6){
+          tbc.appendChild(tb.rows[0]);
+          if(alto(p)>PAGE_H){ tb.insertBefore(tbc.lastElementChild, tb.firstChild); break; }
+          n++;
+        }
+        if(n<3){
+          while(tbc.lastElementChild) tb.insertBefore(tbc.lastElementChild, tb.firstChild);
+          b.removeChild(copia); partidas.pop(); return false;
+        }
+        return true;
+      }
+      function partirRejilla(el,b,p){
+        var c=cols(el); if(c<2 || el.children.length<=c) return false;
+        var copia=el.cloneNode(false); b.appendChild(copia);
+        partidas.push({padre:el, hijos:[].slice.call(el.children), copia:copia});
+        var n=0;
+        while(el.children.length>c){
+          for(var k=0;k<c;k++) copia.appendChild(el.firstElementChild);
+          if(alto(p)>PAGE_H){ for(var k2=0;k2<c;k2++) el.insertBefore(copia.lastElementChild, el.firstChild); break; }
+          n++;
+        }
+        if(!n){ b.removeChild(copia); partidas.pop(); return false; }
+        return true;
+      }
+      function abrible(el){
+        if(!el.children || el.children.length<2) return false;
+        // un parrafo con negritas NO es un contenedor: abrirlo perdia el texto suelto
+        if(!soloElementos(el)) return false;
+        if(/^(P|SPAN|STRONG|EM|A|LI|TD|TH|H1|H2|H3|H4)$/.test(el.tagName)) return false;
+        if(tablaDe(el)) return false;
+        if(/tbl-wrap|chart-wrap|card|insight|kpi|ia-card|llm-card|sum-card|pp-titulo/.test(cls(el))) return false;
+        var c=cols(el);
+        if(c>=2 && !/two-col/.test(cls(el))) return false;   // una fila de KPIs no se deshace
+        for(var k=0;k<el.children.length;k++){ if(el.children[k].tagName==='CANVAS') return false; }
+        return true;
+      }
+      for(var vuelta=0; vuelta<3; vuelta++){
+        var pgs=[].slice.call(wrap.children);
+        for(var i=0;i<pgs.length-1;i++){
+          var p=pgs[i], q=pgs[i+1];
+          if(!p.parentNode || !q.parentNode || sec2(p)!==sec2(q)) continue;
+          var b=p.querySelector('.pp-body'), nb=q.querySelector('.pp-body');
+          if(!b || !nb) continue;
+          var guarda=0, movidos=[];
+          while(nb.firstElementChild && alto(p)<PAGE_H*0.92 && guarda++<60){
+            var el=nb.firstElementChild;
+            b.appendChild(el);
+            if(alto(p)<=PAGE_H){ movidos.push(el); continue; }
+            nb.insertBefore(el, nb.firstChild);
+            if(partirTabla(el,b,p) || partirRejilla(el,b,p)){ movidos=[]; break; }
+            if(abrible(el)){ abrir(el); continue; }
+            break;
+          }
+          // un titulo nunca se queda al pie de la hoja sin lo que titula
+          while(movidos.length && b.children.length>1){
+            var L=b.lastElementChild; if(movidos.indexOf(L)<0) break;
+            var prev=L.previousElementSibling;
+            var intro = prev && esTit(prev) && movidos.indexOf(prev)>=0 &&
+                        L.getBoundingClientRect().height<170 && !(L.querySelector && L.querySelector('canvas,table')) &&
+                        L.querySelectorAll('div').length<3;   // texto, no una fila de tarjetas
+            if(!(esTit(L) || intro)) break;
+            nb.insertBefore(L, nb.firstChild); movidos.pop();
+          }
+          if(!nb.children.length && q.parentNode){ wrap.removeChild(q); }
+        }
+      }
+      // COLAS: la ultima hoja de una seccion casi vacia recibe el ultimo bloque
+      // completo de la anterior (con su titulo), nunca un trozo de tabla partida.
+      var esCopia=function(e){ for(var z=0;z<partidas.length;z++){ if(partidas[z].copia===e) return true; } return false; };
+      var pgs3=[].slice.call(wrap.children);
+      for(var j=1;j<pgs3.length;j++){
+        var u=pgs3[j], a=pgs3[j-1];
+        if(sec2(u)!==sec2(a)) continue;
+        if(j+1<pgs3.length && sec2(pgs3[j+1])===sec2(u)) continue;   // no es la ultima
+        var bu=u.querySelector('.pp-body'), ba=a.querySelector('.pp-body');
+        if(!bu||!ba||ba.children.length<2) continue;
+        if(alto(u) > PAGE_H*0.45) continue;
+        var grupo=[ba.lastElementChild];
+        if(esCopia(grupo[0]) || esTit(grupo[0])) continue;
+        while(grupo[0].previousElementSibling && esTit(grupo[0].previousElementSibling) && ba.children.length>grupo.length+1){ grupo.unshift(grupo[0].previousElementSibling); }
+        for(var g=grupo.length-1; g>=0; g--){ bu.insertBefore(grupo[g], bu.firstChild); }
+        if(alto(u)>PAGE_H || ba.children.length<1){ grupo.forEach(function(e){ ba.appendChild(e); }); }
+      }
+      // DESBORDES: ninguna hoja puede pasarse de alto (si no, el navegador abre una
+      // hoja suelta sin cabecera). Lo que sobra baja a la siguiente de su seccion o
+      // a una nueva, siempre por delante y con su titulo.
+      for(var vv=0; vv<6; vv++){
+        var hubo=false, pgs4=[].slice.call(wrap.children);
+        for(var m=0;m<pgs4.length;m++){
+          var pg=pgs4[m], bb=pg.querySelector('.pp-body');
+          if(!bb || alto(pg)<=PAGE_H || bb.children.length<2) continue;
+          var sig=pg.nextElementSibling, nbb=null;
+          if(sig && sec2(sig)===sec2(pg)) nbb=sig.querySelector('.pp-body');
+          if(!nbb){
+            var nueva=document.createElement('div'); nueva.className='pp-page';
+            nueva.appendChild(head(sec2(pg)));
+            nbb=document.createElement('div'); nbb.className='pp-body'; nueva.appendChild(nbb);
+            wrap.insertBefore(nueva, pg.nextSibling);
+          }
+          while(bb.children.length>1 && alto(pg)>PAGE_H){
+            nbb.insertBefore(bb.lastElementChild, nbb.firstChild);
+            if(bb.children.length>1 && esTit(bb.lastElementChild)) nbb.insertBefore(bb.lastElementChild, nbb.firstChild);
+          }
+          hubo=true;
+        }
+        if(!hubo) break;
+      }
+      ajustarLienzos();
     })();
 
     repartir();
