@@ -3122,6 +3122,13 @@ async function exportForecastPDF(){
 .pp-on .pp-titulo{padding-top:16px!important;padding-bottom:18px!important}
 .pp-on .slide h1{font-size:21px!important;line-height:1.2!important}
 .pp-on .section-pad{padding-top:14px!important;padding-bottom:14px!important}
+/* El montaje tiene un ancho fijo (ANCHO_PAPEL) y quedaba pegado a la izquierda,
+   con el doble de margen a la derecha; la franja de UNICEF era mas ancha. */
+.pp-on #pp-wrap{margin-left:auto!important;margin-right:auto!important}
+.pp-on .unicef-band{width:1194px;box-sizing:border-box;margin-left:auto;margin-right:auto}
+/* Una tabla que se queda suelta al paginar hereda el margen de su seccion
+   pero conserva width:100%, y se salia por la derecha. */
+.pp-on .pp-body>table{width:calc(100% - 80px)!important;margin-left:40px!important;margin-right:40px!important}
 @media print{
   .pp-page{page-break-after:always;break-after:page}
   .pp-page:last-child{page-break-after:auto;break-after:auto}
@@ -3368,9 +3375,21 @@ async function exportForecastPDF(){
         if(/section-heading|card-title/.test(String(k.el.className||''))) return true;
         return k.h<46;                                            // filtros, pies de tabla
       }
+      // Un bloque corto que NO es un titulo ni una barra de filtros es una nota
+      // de lo que tiene encima (el pie de una tabla, la fuente de un grafico) y
+      // va con el bloque ANTERIOR. Antes se pegaba al siguiente y la nota de la
+      // tabla de categorias acababa encabezando el grafico de la hoja de despues.
+      function esCab(k){
+        if(/section-heading|card-title/.test(String(k.el.className||''))) return true;
+        return !!(k.el.querySelector && k.el.querySelector('input,select,button'));
+      }
       for(var q=0;q<sl.kids.length;q++){
         var k=sl.kids[q];
         if(k.h<2){ items.push({els:[k.el],h:0}); continue; }
+        var esNota = k.h<90 && !esCab(k) && !(k.el.querySelector && k.el.querySelector('canvas,table,h1,h2,h3,.section-heading'));
+        if(esNota && items.length && items[items.length-1].h>=46){
+          items[items.length-1].els.push(k.el); items[items.length-1].h+=k.h; continue;
+        }
         // Un titulo arrastra consigo TODO lo que encabeza (barra de filtros,
         // pie, y por fin el bloque con cuerpo). Si solo se ata al siguiente, el
         // titulo se queda en una hoja y su tabla aparece en la otra.
@@ -3593,7 +3612,10 @@ async function exportForecastPDF(){
         if(/section-heading|card-title/.test(String(e.className||''))) return true;
         return e.getBoundingClientRect().height<46;
       }
-      for(var vuelta=0; vuelta<12; vuelta++){
+      // DESACTIVADO (noviembre 2026): igualar alturas bajaba el texto de un
+      // grafico a la hoja siguiente aunque cupiera debajo, y la clienta recibia
+      // graficos sin su explicacion. Mejor una hoja con hueco abajo.
+      for(var vuelta=0; vuelta<0; vuelta++){
         var hubo=false, pgs=[].slice.call(wrap.children);
         for(var i=0;i<pgs.length-1;i++){
           var p=pgs[i], q=pgs[i+1];
